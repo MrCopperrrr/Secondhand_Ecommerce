@@ -19,13 +19,13 @@ const CATEGORIES = [
 ];
 
 const PRICE_PRESETS = [
-  { id: 'all', label: 'Tất cả giá', min: 0, max: 100000000 },
-  { id: 'over5m', label: 'Trên 5 triệu', min: 5000000, max: 100000000 },
-  { id: '3m-5m', label: 'Từ 3 đến 5 triệu', min: 3000000, max: 5000000 },
-  { id: '1m-3m', label: 'Từ 1 đến 3 triệu', min: 1000000, max: 3000000 },
-  { id: '500k-1m', label: 'Từ 500 ngàn đến 1 triệu', min: 500000, max: 1000000 },
-  { id: '100k-500k', label: 'Từ 100 ngàn đến 500 ngàn', min: 100000, max: 500000 },
-  { id: 'under100k', label: 'Dưới 100 ngàn', min: 0, max: 100000 },
+  { id: 'all', label: 'Tất cả giá', min: 0, max: 100 },
+  { id: 'over5m', label: 'Trên 5 triệu', min: 5, max: 100 },
+  { id: '3m-5m', label: 'Từ 3 đến 5 triệu', min: 3, max: 5 },
+  { id: '1m-3m', label: 'Từ 1 đến 3 triệu', min: 1, max: 3 },
+  { id: '500k-1m', label: 'Từ 500 ngàn đến 1 triệu', min: 0.5, max: 1 },
+  { id: '100k-500k', label: 'Từ 100 ngàn đến 500 ngàn', min: 0.1, max: 0.5 },
+  { id: 'under100k', label: 'Dưới 100 ngàn', min: 0, max: 0.1 },
 ];
 
 const FilterSidebar: React.FC<FilterSidebarProps> = ({
@@ -36,14 +36,20 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedPricePreset, setSelectedPricePreset] = useState('all');
   const [minPrice, setMinPrice] = useState(0);
-  const [maxPrice, setMaxPrice] = useState(100); // Đơn vị triệu cho thanh trượt
-  
-  // Logic trượt thủ công cho thanh trượt 2 đầu (giả lập UI)
+  const [maxPrice, setMaxPrice] = useState(100); 
+
   const handleMinSlider = (value: number) => {
-    if (value <= maxPrice) setMinPrice(value);
+    if (value <= maxPrice) {
+      setMinPrice(value);
+      onPriceChange?.(value, maxPrice);
+    }
   };
+
   const handleMaxSlider = (value: number) => {
-    if (value >= minPrice) setMaxPrice(value);
+    if (value >= minPrice) {
+      setMaxPrice(value);
+      onPriceChange?.(minPrice, value);
+    }
   };
 
   return (
@@ -78,10 +84,11 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
         <h3 className="text-sm font-bold uppercase text-[#191C1F] mb-4 tracking-tight">KHU VỰC</h3>
         <div className="relative">
           <select
-            className="w-full border border-gray-200 rounded-none p-3 text-sm text-[#686868] outline-none bg-white appearance-none pr-10"
+            className="w-full border border-gray-200 rounded-none p-3 text-sm text-[#191C1F] outline-none bg-white appearance-none pr-10"
             onChange={(e) => onLocationChange?.(e.target.value)}
+            defaultValue="all"
           >
-            <option value="">Chọn khu vực/Campus</option>
+            <option value="all">Tất cả khu vực/Campus</option>
             <option value="campus1">Campus Đại học Bách Khoa</option>
             <option value="campus2">Campus Đại học Kinh tế</option>
             <option value="campus3">Campus Đại học Sư phạm</option>
@@ -98,26 +105,22 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
       <div className="mb-6">
         <h3 className="text-sm font-bold uppercase text-[#191C1F] mb-4 tracking-tight">KHOẢNG GIÁ</h3>
         
-        {/* Dual Range Slider (Custom CSS) */}
         <div className="relative h-12 flex items-center px-2 mb-4">
-          <div className="absolute w-full h-1 bg-gray-200 rounded-none transition-all"></div>
-          {/* Active track between knobs */}
+          <div className="absolute w-full h-1 bg-gray-200 rounded-none"></div>
           <div 
-            className="absolute h-1 bg-[#1E40AF] transition-all"
+            className="absolute h-1 bg-[#1E40AF]"
             style={{ 
-              left: `calc(${(minPrice / 100) * 100}% + ${(7 - (minPrice / 100) * 14) + 3}px)`, 
+              left: `calc(${(minPrice / 100) * 100}% + ${(7 - (minPrice / 100) * 14) + 2}px)`, 
               width: `calc(${(maxPrice - minPrice)}% - ${( (maxPrice - minPrice) / 100 ) * 14}px)` 
             }}
           ></div>
-          {/* Min Knob */}
           <input 
-            type="range" min="0" max="100" value={minPrice} 
+            type="range" min="0" max="100" step="0.1" value={minPrice} 
             onChange={(e) => handleMinSlider(Number(e.target.value))}
             className="absolute w-full h-1 appearance-none bg-transparent pointer-events-none custom-slider z-10"
           />
-          {/* Max Knob */}
           <input 
-            type="range" min="0" max="100" value={maxPrice} 
+            type="range" min="0" max="100" step="0.1" value={maxPrice} 
             onChange={(e) => handleMaxSlider(Number(e.target.value))}
             className="absolute w-full h-1 appearance-none bg-transparent pointer-events-none custom-slider z-20"
           />
@@ -137,12 +140,24 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
 
         <div className="space-y-4">
           <input
-            type="text"
+            type="number"
+            value={minPrice}
+            onChange={(e) => {
+              const val = Number(e.target.value);
+              setMinPrice(val);
+              onPriceChange?.(val, maxPrice);
+            }}
             placeholder="Giá thấp nhất"
             className="w-full border border-gray-200 rounded-none p-3 text-sm text-[#191C1F] outline-none bg-white placeholder-gray-400"
           />
           <input
-            type="text"
+            type="number"
+            value={maxPrice}
+            onChange={(e) => {
+              const val = Number(e.target.value);
+              setMaxPrice(val);
+              onPriceChange?.(minPrice, val);
+            }}
             placeholder="Giá cao nhất"
             className="w-full border border-gray-200 rounded-none p-3 text-sm text-[#191C1F] outline-none bg-white placeholder-gray-400"
           />
@@ -154,6 +169,8 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
             <div key={range.id} className="flex items-center gap-3 group cursor-pointer" 
               onClick={() => {
                 setSelectedPricePreset(range.id);
+                setMinPrice(range.min);
+                setMaxPrice(range.max);
                 onPriceChange?.(range.min, range.max);
               }}>
               <div className={`w-4 h-4 rounded-full border flex items-center justify-center transition-all ${
