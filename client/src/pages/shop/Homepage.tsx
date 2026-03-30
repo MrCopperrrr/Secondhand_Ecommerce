@@ -21,8 +21,13 @@ const Homepage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedLocation, setSelectedLocation] = useState('all');
-  const [priceRange, setPriceRange] = useState({ min: 0, max: 50000000 }); // In VND
+  const [priceRange, setPriceRange] = useState({ min: 0, max: 20000000 }); // Sửa lại max thành 20tr cho đồng bộ
   const [sortBy, setSortBy] = useState('newest');
+
+  // Tự động cuộn lên đầu trang khi chuyển trang
+  React.useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [currentPage]);
 
   const categoriesMap: Record<string, string> = {
     'all': 'Tất cả',
@@ -67,6 +72,17 @@ const Homepage: React.FC = () => {
     return result;
   }, [selectedCategory, selectedLocation, priceRange, sortBy]);
 
+  // Trích xuất danh sách campus duy nhất từ dữ liệu để truyền cho Sidebar
+  const uniqueCampuses = useMemo(() => {
+    const locations = new Map<string, string>();
+    DUMMY_PRODUCTS_RAW.forEach(p => {
+      if (p.proximity && p.proximityLabel) {
+        locations.set(p.proximity, p.proximityLabel);
+      }
+    });
+    return Array.from(locations.entries()).map(([id, label]) => ({ id, label }));
+  }, []);
+
   // Derived data for display
   const displayProducts = filteredProducts.map(p => ({
     ...p,
@@ -95,6 +111,7 @@ const Homepage: React.FC = () => {
       <div className="flex flex-col md:flex-row max-w-7xl mx-auto w-full bg-white">
         {/* Sidebar */}
         <FilterSidebar 
+          locations={uniqueCampuses}
           onCategoryChange={(cat) => { setSelectedCategory(cat); setCurrentPage(1); }}
           onLocationChange={(loc) => { setSelectedLocation(loc); setCurrentPage(1); }}
           onPriceChange={(min, max) => { setPriceRange({ min, max }); setCurrentPage(1); }}
