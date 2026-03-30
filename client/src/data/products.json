@@ -1,38 +1,113 @@
 [
   {
     "id": "1",
-    "name": "Apple Macbook Pro (chip M1, 8GB RAM, 256GB SSD...)",
-    "price": 20000000,
+    "name": "Apple Macbook Pro M1 2020 - 8GB/256GB - Like New",
+    "price": 18500000,
     "image": "https://images.unsplash.com/photo-1517336714460-d13d87704a42?w=400&q=80",
     "inStock": true,
-    "proximity": "<1km",
-    "category": "electronics"
+    "proximity": "campus1",
+    "proximityLabel": "Campus ĐH Bách Khoa",
+    "category": "electronics",
+    "createdAt": "2024-03-30T10:00:00Z"
   },
   {
     "id": "2",
-    "name": "MacBook Air M1 - 8GB/256GB - Fullbox",
-    "price": 14200000,
-    "image": "https://images.unsplash.com/photo-1611186871348-b1ec696e52c9?w=400&q=80",
+    "name": "Tai nghe Sony WH-1000XM4 - Chống ồn đỉnh cao",
+    "price": 4200000,
+    "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&q=80",
     "inStock": true,
-    "proximity": "Tại Campus BK",
-    "category": "electronics"
+    "proximity": "campus2",
+    "proximityLabel": "Campus ĐH Kinh tế",
+    "category": "electronics",
+    "createdAt": "2024-03-29T15:30:00Z"
   },
   {
     "id": "3",
-    "name": "Giáo trình Giải tích 1 + 2 (Bách Khoa)",
-    "price": 50000,
+    "name": "Giáo trình Giải tích 1 & 2 - Rất mới",
+    "price": 45000,
     "image": "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=400&q=80",
     "inStock": true,
-    "proximity": "Cách bạn 500m",
-    "category": "books"
+    "proximity": "campus1",
+    "proximityLabel": "Campus ĐH Bách Khoa",
+    "category": "books",
+    "createdAt": "2024-03-28T09:00:00Z"
   },
   {
     "id": "4",
-    "name": "Bàn học sinh viên gỗ ép - 1m2",
-    "price": 350000,
+    "name": "Bàn học sinh viên gỗ ép - Chắc chắn",
+    "price": 320000,
     "image": "https://images.unsplash.com/photo-1518455027359-f3f816b1a22a?w=400&q=80",
     "inStock": false,
-    "proximity": "Tại Campus Kinh tế",
-    "category": "furniture"
+    "proximity": "campus2",
+    "proximityLabel": "Campus ĐH Kinh tế",
+    "category": "furniture",
+    "createdAt": "2024-03-27T14:20:00Z"
+  },
+  {
+    "id": "5",
+    "name": "Áo Hoodie Local Brand - Size L - Màu Đen",
+    "price": 250000,
+    "image": "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&q=80",
+    "inStock": true,
+    "proximity": "campus3",
+    "proximityLabel": "Campus ĐH Sư phạm",
+    "category": "clothing",
+    "createdAt": "2024-03-26T11:45:00Z"
+  },
+  {
+    "id": "6",
+    "name": "Máy tính Casio fx-580VN X - Fullbox",
+    "price": 550000,
+    "image": "https://images.unsplash.com/photo-1543286386-713bcd534bf5?w=400&q=80",
+    "inStock": true,
+    "proximity": "campus1",
+    "proximityLabel": "Campus ĐH Bách Khoa",
+    "category": "school",
+    "createdAt": "2024-03-25T16:10:00Z"
+  },
+  {
+    "id": "7",
+    "name": "Xe đạp Martin 107 - Còn tốt",
+    "price": 1200000,
+    "image": "https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=400&q=80",
+    "inStock": true,
+    "proximity": "campus3",
+    "proximityLabel": "Campus ĐH Sư phạm",
+    "category": "transport",
+    "createdAt": "2024-03-24T08:20:00Z"
+  },
+  {
+    "id": "8",
+    "name": "Vợt cầu lông Yonex - Căng 10kg",
+    "price": 850000,
+    "image": "https://images.unsplash.com/photo-1617083277661-8406f59ba09d?w=400&q=80",
+    "inStock": true,
+    "proximity": "campus1",
+    "proximityLabel": "Campus ĐH Bách Khoa",
+    "category": "sports",
+    "createdAt": "2024-03-23T13:00:00Z"
+  },
+  {
+    "id": "9",
+    "name": "Tủ quần áo nhựa Duy Tân - 5 ngăn",
+    "price": 450000,
+    "priceOld": 900000,
+    "image": "https://images.unsplash.com/photo-1595428774223-ef52624120ec?w=400&q=80",
+    "inStock": true,
+    "proximity": "campus2",
+    "proximityLabel": "Campus ĐH Kinh tế",
+    "category": "furniture",
+    "createdAt": "2024-03-22T10:15:00Z"
+  },
+  {
+    "id": "10",
+    "name": "Chuột không dây Logitech M331 - Silent",
+    "price": 280000,
+    "image": "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=400&q=80",
+    "inStock": true,
+    "proximity": "campus1",
+    "proximityLabel": "Campus ĐH Bách Khoa",
+    "category": "electronics",
+    "createdAt": "2024-03-21T17:40:00Z"
   }
 ]
