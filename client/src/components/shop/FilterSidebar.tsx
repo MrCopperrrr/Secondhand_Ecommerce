@@ -7,6 +7,7 @@ interface FilterSidebarProps {
 }
 
 const CATEGORIES = [
+  { id: 'all', label: 'Tất cả' },
   { id: 'electronics', label: 'Đồ điện tử' },
   { id: 'books', label: 'Sách giáo trình' },
   { id: 'home', label: 'Đồ gia dụng' },
@@ -32,7 +33,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
   onLocationChange,
   onPriceChange,
 }) => {
-  const [selectedCategory, setSelectedCategory] = useState('electronics');
+  const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedPricePreset, setSelectedPricePreset] = useState('all');
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(100); // Đơn vị triệu cho thanh trượt
