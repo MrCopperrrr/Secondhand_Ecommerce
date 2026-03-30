@@ -19,14 +19,16 @@ const CATEGORIES = [
 ];
 
 const PRICE_PRESETS = [
-  { id: 'all', label: 'Tất cả giá', min: 0, max: 100 },
-  { id: 'over5m', label: 'Trên 5 triệu', min: 5, max: 100 },
-  { id: '3m-5m', label: 'Từ 3 đến 5 triệu', min: 3, max: 5 },
-  { id: '1m-3m', label: 'Từ 1 đến 3 triệu', min: 1, max: 3 },
-  { id: '500k-1m', label: 'Từ 500 ngàn đến 1 triệu', min: 0.5, max: 1 },
-  { id: '100k-500k', label: 'Từ 100 ngàn đến 500 ngàn', min: 0.1, max: 0.5 },
-  { id: 'under100k', label: 'Dưới 100 ngàn', min: 0, max: 0.1 },
+  { id: 'all', label: 'Tất cả giá', min: 0, max: 100000000 },
+  { id: 'over5m', label: 'Trên 5 triệu', min: 5000000, max: 100000000 },
+  { id: '3m-5m', label: 'Từ 3 đến 5 triệu', min: 3000000, max: 5000000 },
+  { id: '1m-3m', label: 'Từ 1 đến 3 triệu', min: 1000000, max: 3000000 },
+  { id: '500k-1m', label: 'Từ 500 ngàn đến 1 triệu', min: 500000, max: 1000000 },
+  { id: '100k-500k', label: 'Từ 100 ngàn đến 500 ngàn', min: 100000, max: 500000 },
+  { id: 'under100k', label: 'Dưới 100 ngàn', min: 0, max: 100000 },
 ];
+
+const MAX_LIMIT = 50000000; // 50 triệu VND làm mốc max cho thanh trượt
 
 const FilterSidebar: React.FC<FilterSidebarProps> = ({
   onCategoryChange,
@@ -36,7 +38,10 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedPricePreset, setSelectedPricePreset] = useState('all');
   const [minPrice, setMinPrice] = useState(0);
-  const [maxPrice, setMaxPrice] = useState(100); 
+  const [maxPrice, setMaxPrice] = useState(MAX_LIMIT); 
+
+  // Tính step linh hoạt: (max - min) / 50
+  const sliderStep = MAX_LIMIT / 100;
 
   const handleMinSlider = (value: number) => {
     if (value <= maxPrice) {
@@ -105,22 +110,23 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
       <div className="mb-6">
         <h3 className="text-sm font-bold uppercase text-[#191C1F] mb-4 tracking-tight">KHOẢNG GIÁ</h3>
         
+        {/* Dual Range Slider */}
         <div className="relative h-12 flex items-center px-2 mb-4">
           <div className="absolute w-full h-1 bg-gray-200 rounded-none"></div>
           <div 
             className="absolute h-1 bg-[#1E40AF]"
             style={{ 
-              left: `calc(${(minPrice / 100) * 100}% + ${(7 - (minPrice / 100) * 14) + 2}px)`, 
-              width: `calc(${(maxPrice - minPrice)}% - ${( (maxPrice - minPrice) / 100 ) * 14}px)` 
+              left: `calc(${(minPrice / MAX_LIMIT) * 100}% + ${(7 - (minPrice / MAX_LIMIT) * 14) + 2}px)`, 
+              width: `calc(${( (maxPrice - minPrice) / MAX_LIMIT ) * 100}% - ${( (maxPrice - minPrice) / MAX_LIMIT ) * 14}px)` 
             }}
           ></div>
           <input 
-            type="range" min="0" max="100" step="0.1" value={minPrice} 
+            type="range" min="0" max={MAX_LIMIT} step={sliderStep} value={minPrice} 
             onChange={(e) => handleMinSlider(Number(e.target.value))}
             className="absolute w-full h-1 appearance-none bg-transparent pointer-events-none custom-slider z-10"
           />
           <input 
-            type="range" min="0" max="100" step="0.1" value={maxPrice} 
+            type="range" min="0" max={MAX_LIMIT} step={sliderStep} value={maxPrice} 
             onChange={(e) => handleMaxSlider(Number(e.target.value))}
             className="absolute w-full h-1 appearance-none bg-transparent pointer-events-none custom-slider z-20"
           />
