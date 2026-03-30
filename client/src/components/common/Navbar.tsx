@@ -68,9 +68,9 @@ const Navbar: React.FC = () => {
           </div>
 
           {/* Search Bar */}
-          <div className="flex-1 max-w-2xl px-4">
+          <div className="flex-1 max-w-3xl px-4">
             <div className="flex bg-white rounded-none overflow-hidden border border-gray-200 shadow-sm">
-              <div className="relative w-1/3 border-r border-gray-200 bg-[#F2F4F5]">
+              <div className="relative w-1/4 border-r border-gray-200 bg-[#F2F4F5]">
                 <select
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
