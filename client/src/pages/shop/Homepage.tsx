@@ -21,7 +21,7 @@ const Homepage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedLocation, setSelectedLocation] = useState('all');
-  const [priceRange, setPriceRange] = useState({ min: 0, max: 100 }); // In millions for slider
+  const [priceRange, setPriceRange] = useState({ min: 0, max: 50000000 }); // In VND
   const [sortBy, setSortBy] = useState('newest');
 
   const categoriesMap: Record<string, string> = {
@@ -50,11 +50,10 @@ const Homepage: React.FC = () => {
       result = result.filter(p => p.proximity === selectedLocation);
     }
 
-    // 3. Filter by Price (Converted from millions to actual value)
+    // 3. Filter by Price (Raw VND values)
     result = result.filter(p => {
-      const minActual = priceRange.min * 1000000;
-      const maxActual = priceRange.max === 100 ? 999000000 : priceRange.max * 1000000;
-      return p.price >= minActual && p.price <= maxActual;
+      const isOverLimit = priceRange.max >= 50000000;
+      return p.price >= priceRange.min && (isOverLimit ? true : p.price <= priceRange.max);
     });
 
     // 4. Sort
