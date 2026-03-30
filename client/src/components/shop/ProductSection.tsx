@@ -21,8 +21,8 @@ interface ProductSectionProps {
 
 const SORT_OPTIONS = [
   { value: 'newest', label: 'Mới nhất' },
-  { value: 'price-low', label: 'Giá thấp đến cao' },
-  { value: 'price-high', label: 'Giá cao đến thấp' },
+  { value: 'price-asc', label: 'Giá thấp đến cao' },
+  { value: 'price-desc', label: 'Giá cao đến thấp' },
   { value: 'popular', label: 'Phổ biến nhất' },
 ];
 
