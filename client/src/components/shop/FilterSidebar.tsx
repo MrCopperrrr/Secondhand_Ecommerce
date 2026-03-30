@@ -29,7 +29,7 @@ const PRICE_PRESETS = [
 ];
 
 const MAX_LIMIT = 20000000; // 20 triệu VND
-const FIXED_STEP = 100000;  // Bước nhảy 100k VND
+const FIXED_STEP = 100000;  // 100k VND
 
 const FilterSidebar: React.FC<FilterSidebarProps> = ({
   onCategoryChange,
@@ -40,6 +40,32 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
   const [selectedPricePreset, setSelectedPricePreset] = useState('all');
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(MAX_LIMIT); 
+
+  // Hàm định dạng số có dấu chấm phân cách
+  const formatVND = (value: number) => {
+    return value.toLocaleString('vi-VN');
+  };
+
+  // Hàm loại bỏ dấu chấm để lấy giá trị số nguyên
+  const parseVND = (value: string) => {
+    const numericValue = parseInt(value.replace(/\D/g, ''), 10);
+    return isNaN(numericValue) ? 0 : numericValue;
+  };
+
+  const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let val = parseVND(e.target.value);
+    if (val > MAX_LIMIT) val = MAX_LIMIT; // Chốt chặn max
+    if (val > maxPrice) val = maxPrice; // Min không được vượt max
+    setMinPrice(val);
+    onPriceChange?.(val, maxPrice);
+  };
+
+  const handleMaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let val = parseVND(e.target.value);
+    if (val > MAX_LIMIT) val = MAX_LIMIT; // Chốt chặn max
+    setMaxPrice(val);
+    onPriceChange?.(minPrice, val);
+  };
 
   const handleMinSlider = (value: number) => {
     if (value <= maxPrice) {
@@ -57,18 +83,6 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
 
   return (
     <aside className="w-full md:w-64 bg-white p-6 border-r border-gray-100 hidden md:block rounded-none select-none">
-      {/* CSS Reset cho Input Number để ẩn nút tăng giảm đen */}
-      <style>{`
-        input[type="number"]::-webkit-inner-spin-button, 
-        input[type="number"]::-webkit-outer-spin-button { 
-          -webkit-appearance: none; 
-          margin: 0; 
-        }
-        input[type="number"] {
-          -moz-appearance: textfield;
-        }
-      `}</style>
-
       {/* DANH MỤC */}
       <div className="mb-6">
         <h3 className="text-sm font-bold uppercase text-[#191C1F] mb-4 tracking-tight">DANH MỤC</h3>
@@ -156,26 +170,16 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
 
         <div className="space-y-4">
           <input
-            type="number"
-            value={minPrice}
-            step={FIXED_STEP}
-            onChange={(e) => {
-              const val = Number(e.target.value);
-              setMinPrice(val);
-              onPriceChange?.(val, maxPrice);
-            }}
+            type="text"
+            value={formatVND(minPrice)}
+            onChange={handleMinChange}
             placeholder="Giá thấp nhất"
             className="w-full border border-gray-200 rounded-none p-3 text-sm text-[#191C1F] outline-none bg-white placeholder-gray-400"
           />
           <input
-            type="number"
-            value={maxPrice}
-            step={FIXED_STEP}
-            onChange={(e) => {
-              const val = Number(e.target.value);
-              setMaxPrice(val);
-              onPriceChange?.(minPrice, val);
-            }}
+            type="text"
+            value={formatVND(maxPrice)}
+            onChange={handleMaxChange}
             placeholder="Giá cao nhất"
             className="w-full border border-gray-200 rounded-none p-3 text-sm text-[#191C1F] outline-none bg-white placeholder-gray-400"
           />
@@ -187,9 +191,12 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
             <div key={range.id} className="flex items-center gap-3 group cursor-pointer" 
               onClick={() => {
                 setSelectedPricePreset(range.id);
-                setMinPrice(range.min);
-                setMaxPrice(range.max);
-                onPriceChange?.(range.min, range.max);
+                // Clamp these values just in case preset max is > Sidebar max
+                const actualMin = Math.min(range.min, MAX_LIMIT);
+                const actualMax = Math.min(range.max, MAX_LIMIT);
+                setMinPrice(actualMin);
+                setMaxPrice(actualMax);
+                onPriceChange?.(actualMin, actualMax);
               }}>
               <div className={`w-4 h-4 rounded-full border flex items-center justify-center transition-all ${
                 selectedPricePreset === range.id ? 'border-[#1E40AF] bg-[#1E40AF]' : 'border-gray-300 bg-white'
