@@ -44,7 +44,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           {inStock ? (
             <span className="text-[#2DB224] font-medium">Còn hàng</span>
           ) : (
-            <span className="text-[#686868]">Hết hàng</span>
+            <span className="text-[#EE1919] font-medium">Hết hàng</span>
           )}
           <span className="text-[#2DB224] font-medium">{proximity}</span>
         </div>
