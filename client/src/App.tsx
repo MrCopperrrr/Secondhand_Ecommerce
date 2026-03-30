@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Navbar from './components/Navbar';
+import Navbar from './components/common/Navbar';
+import Footer from './components/common/Footer';
 
 // Auth Pages
 import Login from './pages/auth/Login';
@@ -16,10 +17,10 @@ import Chat from './pages/communication/Chat';
 const App: React.FC = () => {
   return (
     <Router>
-      <div className="app-container min-h-screen bg-gray-50">
+      <div className="app-container flex flex-col min-h-screen bg-gray-50">
         <Navbar />
         
-        <main>
+        <main className="flex-grow">
           <Routes>
             <Route path="/" element={<Homepage />} />
             <Route path="/login" element={<Login />} />
@@ -29,6 +30,8 @@ const App: React.FC = () => {
             <Route path="/chat" element={<Chat />} />
           </Routes>
         </main>
+
+        <Footer />
       </div>
     </Router>
   );
