@@ -1,0 +1,37 @@
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Navbar from './components/Navbar';
+
+// Auth Pages
+import Login from './pages/auth/Login';
+import Register from './pages/auth/Register';
+
+// Shop Pages
+import Homepage from './pages/shop/Homepage';
+import ProductDetail from './pages/shop/ProductDetail';
+
+// Other Modules
+import CreateProduct from './pages/seller/CreateProduct';
+import Chat from './pages/communication/Chat';
+
+const App: React.FC = () => {
+  return (
+    <Router>
+      <div className="app-container min-h-screen bg-gray-50">
+        <Navbar />
+        
+        <main>
+          <Routes>
+            <Route path="/" element={<Homepage />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/product/:id" element={<ProductDetail />} />
+            <Route path="/sell" element={<CreateProduct />} />
+            <Route path="/chat" element={<Chat />} />
+          </Routes>
+        </main>
+      </div>
+    </Router>
+  );
+}
+
+export default App;
