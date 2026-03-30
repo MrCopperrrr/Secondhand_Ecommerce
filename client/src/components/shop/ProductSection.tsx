@@ -26,7 +26,7 @@ const SORT_OPTIONS = [
   { value: 'popular', label: 'Phổ biến nhất' },
 ];
 
-const PRODUCTS_PER_PAGE = 12;
+const PRODUCTS_PER_PAGE = 40;
 
 const ProductSection: React.FC<ProductSectionProps> = ({
   products,
@@ -37,6 +37,10 @@ const ProductSection: React.FC<ProductSectionProps> = ({
 }) => {
   const [sortValue, setSortValue] = useState('newest');
   const totalPages = Math.ceil(totalCount / PRODUCTS_PER_PAGE);
+
+  // Logic phân trang: chỉ lấy sản phẩm của trang hiện tại
+  const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE;
+  const currentProducts = products.slice(startIndex, startIndex + PRODUCTS_PER_PAGE);
 
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
@@ -49,7 +53,7 @@ const ProductSection: React.FC<ProductSectionProps> = ({
       {/* Toolbar */}
       <div className="bg-white rounded-none border border-white p-4 mb-6 flex items-center justify-between">
         <div className="text-sm text-[#686868]">
-          Hiển thị <span className="font-semibold text-[#191C1F]">{totalCount}</span> kết quả
+          Hiển thị <span className="font-semibold text-[#191C1F]">{currentProducts.length}</span> trên <span className="font-semibold text-[#191C1F]">{totalCount}</span> kết quả
         </div>
 
         <div className="flex items-center gap-2">
@@ -66,9 +70,9 @@ const ProductSection: React.FC<ProductSectionProps> = ({
         </div>
       </div>
 
-      {/* Product Grid */}
+      {/* Product Grid: 4 Cột */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
-        {products.map((product) => (
+        {currentProducts.map((product) => (
           <ProductCard
             key={product.id}
             {...product}
