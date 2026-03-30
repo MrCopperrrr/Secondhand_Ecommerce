@@ -15,15 +15,18 @@ import {
 } from 'lucide-react';
 
 const Navbar: React.FC = () => {
-  const [selectedCategory, setSelectedCategory] = useState('Danh mục');
+  const [selectedCategory, setSelectedCategory] = useState('Tất cả');
 
   const categories = [
-    'Danh mục',
-    'Điện tử',
-    'Thời trang',
-    'Sách & Văn phòng',
-    'Thể thao',
-    'Khác',
+    'Tất cả',
+    'Đồ điện tử',
+    'Sách giáo trình',
+    'Đồ gia dụng',
+    'Dụng cụ học tập',
+    'Quần áo',
+    'Đồ nội thất',
+    'Phương tiện di chuyển',
+    'Dụng cụ thể thao',
   ];
 
   return (
@@ -65,13 +68,13 @@ const Navbar: React.FC = () => {
           </div>
 
           {/* Search Bar */}
-          <div className="flex-1 max-w-2xl">
+          <div className="flex-1 max-w-2xl px-4">
             <div className="flex bg-white rounded-none overflow-hidden border border-gray-200 shadow-sm">
-              <div className="relative w-1/4 border-r border-gray-200">
+              <div className="relative w-1/3 border-r border-gray-200 bg-[#F2F4F5]">
                 <select
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="w-full h-11 px-3 py-2 text-sm font-medium text-[#191C1F] bg-white rounded-none focus:outline-none appearance-none cursor-pointer"
+                  className="w-full h-11 px-3 py-2 text-sm font-medium text-[#191C1F] bg-[#F2F4F5] rounded-none focus:outline-none appearance-none cursor-pointer"
                 >
                   {categories.map((cat) => (
                     <option key={cat} value={cat}>{cat}</option>
