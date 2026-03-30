@@ -53,7 +53,11 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
         <h3 className="text-sm font-bold uppercase text-[#191C1F] mb-4 tracking-tight">DANH MỤC</h3>
         <div className="space-y-4">
           {CATEGORIES.map((cat) => (
-            <div key={cat.id} className="flex items-center gap-3 group cursor-pointer" onClick={() => setSelectedCategory(cat.id)}>
+            <div key={cat.id} className="flex items-center gap-3 group cursor-pointer" 
+              onClick={() => {
+                setSelectedCategory(cat.id);
+                onCategoryChange?.(cat.id);
+              }}>
               <div className={`w-4 h-4 rounded-full border flex items-center justify-center transition-all ${
                 selectedCategory === cat.id ? 'border-[#1E40AF] bg-[#1E40AF]' : 'border-gray-300 bg-white'
               }`}>
@@ -147,7 +151,11 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
         {/* Price Presets */}
         <div className="mt-6 space-y-4">
           {PRICE_PRESETS.map((range) => (
-            <div key={range.id} className="flex items-center gap-3 group cursor-pointer" onClick={() => setSelectedPricePreset(range.id)}>
+            <div key={range.id} className="flex items-center gap-3 group cursor-pointer" 
+              onClick={() => {
+                setSelectedPricePreset(range.id);
+                onPriceChange?.(range.min, range.max);
+              }}>
               <div className={`w-4 h-4 rounded-full border flex items-center justify-center transition-all ${
                 selectedPricePreset === range.id ? 'border-[#1E40AF] bg-[#1E40AF]' : 'border-gray-300 bg-white'
               }`}>
