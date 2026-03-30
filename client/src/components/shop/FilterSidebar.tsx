@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
 
+interface LocationOption {
+  id: string;
+  label: string;
+}
+
 interface FilterSidebarProps {
+  locations?: LocationOption[];
   onCategoryChange?: (category: string) => void;
   onLocationChange?: (location: string) => void;
   onPriceChange?: (min: number, max: number) => void;
@@ -32,6 +38,7 @@ const MAX_LIMIT = 20000000; // 20 triệu VND
 const FIXED_STEP = 100000;  // 100k VND
 
 const FilterSidebar: React.FC<FilterSidebarProps> = ({
+  locations = [],
   onCategoryChange,
   onLocationChange,
   onPriceChange,
@@ -41,12 +48,8 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(MAX_LIMIT); 
 
-  // Hàm định dạng số có dấu chấm phân cách
-  const formatVND = (value: number) => {
-    return value.toLocaleString('vi-VN');
-  };
-
-  // Hàm loại bỏ dấu chấm để lấy giá trị số nguyên
+  // Format VND helpers
+  const formatVND = (value: number) => value.toLocaleString('vi-VN');
   const parseVND = (value: string) => {
     const numericValue = parseInt(value.replace(/\D/g, ''), 10);
     return isNaN(numericValue) ? 0 : numericValue;
@@ -54,15 +57,15 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
 
   const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let val = parseVND(e.target.value);
-    if (val > MAX_LIMIT) val = MAX_LIMIT; // Chốt chặn max
-    if (val > maxPrice) val = maxPrice; // Min không được vượt max
+    if (val > MAX_LIMIT) val = MAX_LIMIT;
+    if (val > maxPrice) val = maxPrice;
     setMinPrice(val);
     onPriceChange?.(val, maxPrice);
   };
 
   const handleMaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let val = parseVND(e.target.value);
-    if (val > MAX_LIMIT) val = MAX_LIMIT; // Chốt chặn max
+    if (val > MAX_LIMIT) val = MAX_LIMIT;
     setMaxPrice(val);
     onPriceChange?.(minPrice, val);
   };
@@ -108,19 +111,19 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
 
       <div className="border-t border-gray-200 my-6"></div>
 
-      {/* KHU VỰC */}
+      {/* KHU VỰC (Động) */}
       <div className="mb-6">
         <h3 className="text-sm font-bold uppercase text-[#191C1F] mb-4 tracking-tight">KHU VỰC</h3>
         <div className="relative">
           <select
-            className="w-full border border-gray-200 rounded-none p-3 text-sm text-[#191C1F] outline-none bg-white appearance-none pr-10"
+            className="w-full border border-gray-200 rounded-none p-3 text-sm text-[#191C1F] outline-none bg-white appearance-none pr-10 cursor-pointer"
             onChange={(e) => onLocationChange?.(e.target.value)}
             defaultValue="all"
           >
-            <option value="all" className="text-sm">Tất cả khu vực/Campus</option>
-            <option value="campus1">Campus Đại học Bách Khoa</option>
-            <option value="campus2">Campus Đại học Kinh tế</option>
-            <option value="campus3">Campus Đại học Sư phạm</option>
+            <option value="all">Tất cả khu vực/Campus</option>
+            {locations.map((loc) => (
+              <option key={loc.id} value={loc.id}>{loc.label}</option>
+            ))}
           </select>
           <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
@@ -134,7 +137,6 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
       <div className="mb-6">
         <h3 className="text-sm font-bold uppercase text-[#191C1F] mb-4 tracking-tight">KHOẢNG GIÁ</h3>
         
-        {/* Dual Range Slider */}
         <div className="relative h-12 flex items-center px-2 mb-4">
           <div className="absolute w-full h-1 bg-gray-200 rounded-none"></div>
           <div 
@@ -191,7 +193,6 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
             <div key={range.id} className="flex items-center gap-3 group cursor-pointer" 
               onClick={() => {
                 setSelectedPricePreset(range.id);
-                // Clamp these values just in case preset max is > Sidebar max
                 const actualMin = Math.min(range.min, MAX_LIMIT);
                 const actualMax = Math.min(range.max, MAX_LIMIT);
                 setMinPrice(actualMin);
