@@ -5,8 +5,8 @@
   "description": "Backend for Secondhand Ecommerce",
   "main": "src/index.ts",
   "scripts": {
-  "dev": "nodemon --exec tsx index.ts"
-},
+    "dev": "nodemon --exec tsx index.ts"
+  },
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",

@@ -1,29 +1,41 @@
 import { MongoClient, Db, Collection } from 'mongodb'
 import 'dotenv/config'
-const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@2hand.kgjhxgg.mongodb.net/?appName=2hand`
-if(!uri){
-    console.error("Error: MONGODB_URI isn't exist in .env file")
-    process.exit(1)
-}
-class DatabaseService{
-    private client: MongoClient
-    private db: Db
-    constructor(){
-        this.client= new MongoClient(uri)
-        this.db= this.client.db(process.env.DB_NAME)
+import { User } from '../models/users.schemas.js'
+
+const username = process.env.DB_USERNAME?.trim()
+const password = process.env.DB_PASSWORD?.trim()
+const dbName = process.env.DB_NAME?.trim()
+
+const uri = process.env.MONGODB_URI ||`mongodb+srv://${username}:${password}@2hand.kgjhxgg.mongodb.net/?appName=2hand`
+
+class DatabaseService {
+  private client: MongoClient
+  private db: Db
+
+  constructor() {
+    this.client = new MongoClient(uri)
+    // Sử dụng tên DB từ file .env
+    this.db = this.client.db(dbName)
+  }
+
+  async connect() {
+    try {
+      await this.client.connect()
+      await this.db.command({ ping: 1 })
+      console.log(`Pinged your deployment. You successfully connected to MongoDB!`)
+    } catch (err) {
+      console.error("Error in connecting to database: ", err)
+      throw err
     }
-    async connect(){
-        try {
-          await this.client.connect()
-        // Send a ping to confirm a successful connection
-        await this.db.command({ ping: 1 });
-        console.log("Pinged your deployment. You successfully connected to MongoDB!");
-      } catch(err) {
-        // Ensures that the client will close when you finish/error
-        console.error("Error in connecting to database: ", err)
-        throw err
-      }
-      }
+  }
+  get users(): Collection<User>{
+    return this.db.collection('users')
+  }
+  // Getter để lấy instance của database khi cần dùng 
+  get database(): Db {
+    return this.db
+  }
 }
-const databaseService = new DatabaseService ()
+
+const databaseService = new DatabaseService()
 export default databaseService

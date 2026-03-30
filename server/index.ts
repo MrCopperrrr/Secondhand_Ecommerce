@@ -1,7 +1,7 @@
 import express from 'express'
 import databaseService from './src/services/database.services.js'
 const app = express()
-const port= 4000
+const port= process.env.PORT
 
 app.use(express.json())
 databaseService.connect()
