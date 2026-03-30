@@ -28,7 +28,8 @@ const PRICE_PRESETS = [
   { id: 'under100k', label: 'Dưới 100 ngàn', min: 0, max: 100000 },
 ];
 
-const MAX_LIMIT = 50000000; // 50 triệu VND làm mốc max cho thanh trượt
+const MAX_LIMIT = 20000000; // 20 triệu VND
+const FIXED_STEP = 100000;  // Bước nhảy 100k VND
 
 const FilterSidebar: React.FC<FilterSidebarProps> = ({
   onCategoryChange,
@@ -39,9 +40,6 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
   const [selectedPricePreset, setSelectedPricePreset] = useState('all');
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(MAX_LIMIT); 
-
-  // Tính step linh hoạt: (max - min) / 50
-  const sliderStep = MAX_LIMIT / 100;
 
   const handleMinSlider = (value: number) => {
     if (value <= maxPrice) {
@@ -59,6 +57,18 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
 
   return (
     <aside className="w-full md:w-64 bg-white p-6 border-r border-gray-100 hidden md:block rounded-none select-none">
+      {/* CSS Reset cho Input Number để ẩn nút tăng giảm đen */}
+      <style>{`
+        input[type="number"]::-webkit-inner-spin-button, 
+        input[type="number"]::-webkit-outer-spin-button { 
+          -webkit-appearance: none; 
+          margin: 0; 
+        }
+        input[type="number"] {
+          -moz-appearance: textfield;
+        }
+      `}</style>
+
       {/* DANH MỤC */}
       <div className="mb-6">
         <h3 className="text-sm font-bold uppercase text-[#191C1F] mb-4 tracking-tight">DANH MỤC</h3>
@@ -93,7 +103,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
             onChange={(e) => onLocationChange?.(e.target.value)}
             defaultValue="all"
           >
-            <option value="all">Tất cả khu vực/Campus</option>
+            <option value="all" className="text-sm">Tất cả khu vực/Campus</option>
             <option value="campus1">Campus Đại học Bách Khoa</option>
             <option value="campus2">Campus Đại học Kinh tế</option>
             <option value="campus3">Campus Đại học Sư phạm</option>
@@ -121,12 +131,12 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
             }}
           ></div>
           <input 
-            type="range" min="0" max={MAX_LIMIT} step={sliderStep} value={minPrice} 
+            type="range" min="0" max={MAX_LIMIT} step={FIXED_STEP} value={minPrice} 
             onChange={(e) => handleMinSlider(Number(e.target.value))}
             className="absolute w-full h-1 appearance-none bg-transparent pointer-events-none custom-slider z-10"
           />
           <input 
-            type="range" min="0" max={MAX_LIMIT} step={sliderStep} value={maxPrice} 
+            type="range" min="0" max={MAX_LIMIT} step={FIXED_STEP} value={maxPrice} 
             onChange={(e) => handleMaxSlider(Number(e.target.value))}
             className="absolute w-full h-1 appearance-none bg-transparent pointer-events-none custom-slider z-20"
           />
@@ -148,6 +158,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
           <input
             type="number"
             value={minPrice}
+            step={FIXED_STEP}
             onChange={(e) => {
               const val = Number(e.target.value);
               setMinPrice(val);
@@ -159,6 +170,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
           <input
             type="number"
             value={maxPrice}
+            step={FIXED_STEP}
             onChange={(e) => {
               const val = Number(e.target.value);
               setMaxPrice(val);
