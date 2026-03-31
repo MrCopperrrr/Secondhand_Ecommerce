@@ -5,6 +5,7 @@ import { Eye, EyeOff } from 'lucide-react';
 
 interface AuthInputProps {
   label: string;
+  labelRight?: React.ReactNode;
   type?: 'text' | 'email' | 'password';
   placeholder?: string;
   value?: string;
@@ -14,6 +15,7 @@ interface AuthInputProps {
 
 export function AuthInput({
   label,
+  labelRight,
   type = 'text',
   placeholder,
   value,
@@ -26,16 +28,19 @@ export function AuthInput({
 
   return (
     <div className="mb-4">
-      <label className="block text-sm font-medium text-[#191C1F] mb-2">
-        {label}
-      </label>
+      <div className="flex items-center justify-between mb-2">
+        <label className="block text-sm font-medium text-[#191C1F]">
+          {label}
+        </label>
+        {labelRight && <div className="text-sm">{labelRight}</div>}
+      </div>
       <div className="relative">
         <input
           type={inputType}
           placeholder={placeholder}
           value={value}
           onChange={(e) => onChange?.(e.target.value)}
-          className="w-full px-4 py-3 border border-[#C9CFD2] rounded-lg text-[#191C1F] placeholder-[#686868] focus:outline-none focus:border-[#1E40AF] focus:ring-1 focus:ring-[#1E40AF] transition"
+          className="w-full px-4 py-3 border border-[#C9CFD2] rounded-lg text-[#191C1F] placeholder-[#686868] bg-white focus:outline-none focus:border-[#1E40AF] focus:ring-1 focus:ring-[#1E40AF] transition"
         />
         {isPassword && showPasswordToggle && (
           <button

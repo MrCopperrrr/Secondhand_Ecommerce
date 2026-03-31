@@ -50,25 +50,25 @@ export function AuthCard({ initialTab = 'login' }: { initialTab?: 'login' | 'reg
             // Login Form
             <>
               <AuthInput
-                label="Email hoặc Tên người dùng"
+                label="Email sinh viên"
                 type="text"
-                placeholder="Nhập email hoặc tên người dùng"
+                placeholder="Nhập email sinh viên"
                 value={formData.username}
                 onChange={(value) => handleInputChange('username', value)}
               />
               <AuthInput
                 label="Mật khẩu"
+                labelRight={
+                  <Link to="/forgot-password" title="Quên mật khẩu" className="text-sm font-medium text-[#1E40AF] hover:underline">
+                    Quên mật khẩu?
+                  </Link>
+                }
                 type="password"
                 placeholder="Nhập mật khẩu"
                 value={formData.password}
                 onChange={(value) => handleInputChange('password', value)}
                 showPasswordToggle
               />
-              <div className="flex justify-end mb-6">
-                <Link to="/forgot-password" title="Quên mật khẩu" className="text-sm font-medium text-[#1E40AF] hover:underline">
-                  Quên mật khẩu?
-                </Link>
-              </div>
             </>
           ) : (
             // Register Form
