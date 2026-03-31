@@ -115,22 +115,22 @@ const Navbar: React.FC = () => {
                   <User size={20} className="text-[#FFFFFF]" />
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48 rounded-none border-gray-200 shadow-lg mt-2">
+              <DropdownMenuContent align="end" className="w-48 bg-white border-gray-200 shadow-lg mt-2 p-0">
                 {!isLoggedIn ? (
                   <>
-                    <DropdownMenuItem className="cursor-pointer py-2 focus:bg-gray-100 rounded-none">
-                      <Link to="/login" className="w-full h-full">Đăng nhập</Link>
+                    <DropdownMenuItem asChild className="cursor-pointer py-3 px-4 focus:bg-gray-100 outline-none">
+                      <Link to="/login">Đăng nhập</Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem className="cursor-pointer py-2 focus:bg-gray-100 rounded-none border-t border-gray-100">
-                      <Link to="/register" className="w-full h-full">Đăng ký</Link>
+                    <DropdownMenuItem asChild className="cursor-pointer py-3 px-4 focus:bg-gray-100 outline-none border-t border-gray-100">
+                      <Link to="/register">Đăng ký</Link>
                     </DropdownMenuItem>
                   </>
                 ) : (
                   <>
-                    <DropdownMenuItem className="cursor-pointer py-2 focus:bg-gray-100 rounded-none">
-                      <Link to="/profile" className="w-full h-full">Hồ sơ của tôi</Link>
+                    <DropdownMenuItem asChild className="cursor-pointer py-3 px-4 focus:bg-gray-100 outline-none">
+                      <Link to="/profile">Hồ sơ của tôi</Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem className="cursor-pointer py-2 focus:bg-gray-100 rounded-none border-t border-gray-100 text-red-600">
+                    <DropdownMenuItem className="cursor-pointer py-3 px-4 focus:bg-gray-100 outline-none border-t border-gray-100 text-red-600">
                       Đăng xuất
                     </DropdownMenuItem>
                   </>
