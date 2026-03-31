@@ -4,24 +4,28 @@ import FilterSidebar from '../../components/shop/FilterSidebar';
 import ProductSection from '../../components/shop/ProductSection';
 import DUMMY_PRODUCTS_RAW from '../../data/products.json';
 
-// Define product type
+// Define product type matching new schema
 interface Product {
-  id: string;
+  product_id: string;
+  seller_id: string;
   name: string;
-  price: number;
-  image: string;
-  inStock: boolean;
-  proximity: string;
-  proximityLabel?: string;
   category: string;
-  createdAt: string;
+  condition: string;
+  price: number;
+  description: string;
+  campus: string;
+  images: string[];
+  status: string;
+  is_featured: boolean;
+  views: number;
+  created_at: string;
 }
 
 const Homepage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedLocation, setSelectedLocation] = useState('all');
-  const [priceRange, setPriceRange] = useState({ min: 0, max: 20000000 }); // Sửa lại max thành 20tr cho đồng bộ
+  const [priceRange, setPriceRange] = useState({ min: 0, max: 20000000 });
   const [sortBy, setSortBy] = useState('newest');
 
   // Tự động cuộn lên đầu trang khi chuyển trang
@@ -31,33 +35,33 @@ const Homepage: React.FC = () => {
 
   const categoriesMap: Record<string, string> = {
     'all': 'Tất cả',
-    'electronics': 'Đồ điện tử',
-    'books': 'Sách giáo trình',
-    'home': 'Đồ gia dụng',
-    'school': 'Dụng cụ học tập',
-    'clothing': 'Quần áo',
-    'furniture': 'Đồ nội thất',
-    'transport': 'Phương tiện di chuyển',
-    'sports': 'Dụng cụ thể thao'
+    'Đồ điện tử': 'Đồ điện tử',
+    'Sách giáo trình': 'Sách giáo trình',
+    'Đồ gia dụng': 'Đồ gia dụng',
+    'Dụng cụ học tập': 'Dụng cụ học tập',
+    'Quần áo': 'Quần áo',
+    'Đồ nội thất': 'Đồ nội thất',
+    'Phương tiện di chuyển': 'Phương tiện di chuyển',
+    'Dụng cụ thể thao': 'Dụng cụ thể thao'
   };
 
   // Filter and Sort Logic
   const filteredProducts = useMemo(() => {
     let result = [...DUMMY_PRODUCTS_RAW] as Product[];
 
-    // 1. Filter by Category
+    // 1. Filter by Category (Matching Vietnamese labels)
     if (selectedCategory !== 'all') {
       result = result.filter(p => p.category === selectedCategory);
     }
 
     // 2. Filter by Location
     if (selectedLocation !== 'all' && selectedLocation !== '') {
-      result = result.filter(p => p.proximity === selectedLocation);
+      result = result.filter(p => p.campus === selectedLocation);
     }
 
-    // 3. Filter by Price (Raw VND values)
+    // 3. Filter by Price
     result = result.filter(p => {
-      const isOverLimit = priceRange.max >= 50000000;
+      const isOverLimit = priceRange.max >= 20000000;
       return p.price >= priceRange.min && (isOverLimit ? true : p.price <= priceRange.max);
     });
 
@@ -65,29 +69,25 @@ const Homepage: React.FC = () => {
     result.sort((a, b) => {
       if (sortBy === 'price-asc') return a.price - b.price;
       if (sortBy === 'price-desc') return b.price - a.price;
-      // Default: Newest (using createdAt string)
-      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
     });
 
     return result;
   }, [selectedCategory, selectedLocation, priceRange, sortBy]);
 
-  // Trích xuất danh sách campus duy nhất từ dữ liệu để truyền cho Sidebar
+  // Trích xuất danh sách campus duy nhất từ dữ liệu mới
   const uniqueCampuses = useMemo(() => {
-    const locations = new Map<string, string>();
+    const locations = new Set<string>();
     DUMMY_PRODUCTS_RAW.forEach(p => {
-      if (p.proximity && p.proximityLabel) {
-        locations.set(p.proximity, p.proximityLabel);
+      if (p.campus) {
+        locations.add(p.campus);
       }
     });
-    return Array.from(locations.entries()).map(([id, label]) => ({ id, label }));
+    return Array.from(locations).map(label => ({ id: label, label }));
   }, []);
 
-  // Derived data for display
-  const displayProducts = filteredProducts.map(p => ({
-    ...p,
-    proximity: p.proximityLabel || p.proximity
-  }));
+  // Derived data with matching ProductCardProps
+  const displayProducts = filteredProducts;
 
   interface BreadcrumbItem {
     label: string;

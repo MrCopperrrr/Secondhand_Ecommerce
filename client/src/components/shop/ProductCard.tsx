@@ -1,27 +1,30 @@
 import React from 'react';
 
 interface ProductCardProps {
-  id: string;
+  product_id: string;
   name: string;
   price: number;
-  image: string;
-  inStock: boolean;
-  proximity: string;
+  images: string[];
+  status: string;
+  campus: string;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({
   name,
   price,
-  image,
-  inStock,
-  proximity,
+  images,
+  status,
+  campus,
 }) => {
+  const inStock = status === 'Active';
+  const mainImage = images && images.length > 0 ? images[0] : 'https://via.placeholder.com/400';
+
   return (
     <div className="bg-white rounded-none border border-gray-200 overflow-hidden hover:shadow-md transition-shadow group cursor-pointer">
       {/* Product Image */}
       <div className="relative w-full aspect-square bg-gray-100 overflow-hidden rounded-none">
         <img
-          src={image}
+          src={mainImage}
           alt={name}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
@@ -46,7 +49,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           ) : (
             <span className="text-[#EE1919] font-medium">Hết hàng</span>
           )}
-          <span className="text-[#2DB224] font-medium">{proximity}</span>
+          <span className="text-[#2DB224] font-medium">{campus}</span>
         </div>
       </div>
     </div>
