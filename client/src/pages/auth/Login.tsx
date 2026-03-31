@@ -1,10 +1,14 @@
 import React from 'react';
+import { AuthCard } from '../../components/auth/auth-card';
+import { BlobBackground } from '../../components/auth/blob-background';
+import { DecorationShape } from '../../components/auth/decoration-shape';
 
 const Login: React.FC = () => {
     return (
-        <div className="p-8">
-            <h1 className="text-2xl font-bold">STT 2: Đăng nhập (FR-02)</h1>
-            <p>Màn hình đăng nhập.</p>
+        <div className="relative min-h-screen flex items-center justify-center p-4 bg-[#F2FAFF] overflow-hidden">
+            <BlobBackground />
+            <DecorationShape />
+            <AuthCard initialTab="login" />
         </div>
     );
 };
