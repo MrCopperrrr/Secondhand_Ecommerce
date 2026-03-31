@@ -5,7 +5,7 @@ import { DecorationShape } from '../../components/auth/decoration-shape';
 
 const ForgotPassword: React.FC = () => {
     return (
-        <div className="relative min-h-screen flex items-center justify-center p-4">
+        <div className="relative min-h-screen flex items-center justify-center p-4 bg-[#F2FAFF] overflow-hidden">
             <BlobBackground />
             <DecorationShape />
             <ForgotPasswordCard />
