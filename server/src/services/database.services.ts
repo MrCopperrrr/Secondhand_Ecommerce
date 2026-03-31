@@ -1,7 +1,7 @@
 import { MongoClient, Db, Collection } from 'mongodb'
 import 'dotenv/config'
-import { User } from '../models/users.schemas.js'
-
+import  User from '../models/users.schemas.js'
+import { RefreshToken } from '../models/users.schemas.js'
 const username = process.env.DB_USERNAME?.trim()
 const password = process.env.DB_PASSWORD?.trim()
 const dbName = process.env.DB_NAME?.trim()
@@ -31,10 +31,14 @@ class DatabaseService {
   get users(): Collection<User>{
     return this.db.collection('users')
   }
+
   // Getter để lấy instance của database khi cần dùng 
   get database(): Db {
     return this.db
   }
+  get refreshTokens(): Collection<RefreshToken> {
+  return this.db.collection('refresh_tokens')
+}
 }
 
 const databaseService = new DatabaseService()
