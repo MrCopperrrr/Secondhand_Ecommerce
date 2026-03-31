@@ -7,15 +7,18 @@ import {
   User,
   Search,
   ChevronDown,
-  // Twitter,
-  // Facebook,
   Share2,
-  // Youtube,
-  // Instagram,
 } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '../ui/dropdown-menu';
 
 const Navbar: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('Tất cả');
+  const [isLoggedIn] = useState(false); // Giả lập trạng thái đăng nhập
 
   const categories = [
     'Tất cả',
@@ -31,7 +34,7 @@ const Navbar: React.FC = () => {
 
   return (
     <nav className="w-full bg-[#57B7F5]">
-      {/* Top Utility Bar */}
+      {/* ... (Top Utility Bar remains same) */}
       <div className="border-b border-white/20">
         <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between">
           <div className="text-[#FFFFFF] text-sm font-medium">
@@ -105,14 +108,35 @@ const Navbar: React.FC = () => {
             <Link to="/chat" className="hover:opacity-80 transition-opacity">
               <MessageCircle size={20} className="text-[#FFFFFF]" />
             </Link>
-            <div className="flex items-center gap-2">
-              <Link to="/login" className="text-white text-sm font-medium hover:underline">
-                Đăng nhập
-              </Link>
-              <Link to="/profile" className="hover:opacity-80 transition-opacity">
-                <User size={20} className="text-[#FFFFFF]" />
-              </Link>
-            </div>
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="hover:opacity-80 transition-opacity outline-none">
+                  <User size={20} className="text-[#FFFFFF]" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48 rounded-none border-gray-200 shadow-lg mt-2">
+                {!isLoggedIn ? (
+                  <>
+                    <DropdownMenuItem className="cursor-pointer py-2 focus:bg-gray-100 rounded-none">
+                      <Link to="/login" className="w-full h-full">Đăng nhập</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem className="cursor-pointer py-2 focus:bg-gray-100 rounded-none border-t border-gray-100">
+                      <Link to="/register" className="w-full h-full">Đăng ký</Link>
+                    </DropdownMenuItem>
+                  </>
+                ) : (
+                  <>
+                    <DropdownMenuItem className="cursor-pointer py-2 focus:bg-gray-100 rounded-none">
+                      <Link to="/profile" className="w-full h-full">Hồ sơ của tôi</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem className="cursor-pointer py-2 focus:bg-gray-100 rounded-none border-t border-gray-100 text-red-600">
+                      Đăng xuất
+                    </DropdownMenuItem>
+                  </>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>
