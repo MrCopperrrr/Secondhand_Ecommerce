@@ -40,7 +40,7 @@ export function AuthInput({
           placeholder={placeholder}
           value={value}
           onChange={(e) => onChange?.(e.target.value)}
-          className="w-full px-4 py-3 border border-[#C9CFD2] rounded-lg text-[#191C1F] placeholder-[#686868] bg-white focus:outline-none focus:border-[#1E40AF] focus:ring-1 focus:ring-[#1E40AF] transition"
+          className="w-full px-4 py-3 border border-[#C9CFD2] rounded-none text-[#191C1F] placeholder-[#686868] bg-white focus:outline-none focus:border-[#1E40AF] focus:ring-1 focus:ring-[#1E40AF] transition"
         />
         {isPassword && showPasswordToggle && (
           <button

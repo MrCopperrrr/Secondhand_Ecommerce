@@ -10,7 +10,7 @@ export function AuthTabs({ activeTab, onTabChange }: AuthTabsProps) {
     <div className="flex gap-0 mb-8 border-b border-[#C9CFD2]">
       <button
         onClick={() => onTabChange('login')}
-        className={`flex-1 py-4 text-center font-medium transition-colors ${
+        className={`flex-1 py-4 text-center text-xl font-bold transition-colors ${
           activeTab === 'login'
             ? 'text-[#191C1F] border-b-2 border-[#1E40AF]'
             : 'text-[#686868] hover:text-[#191C1F]'
@@ -20,7 +20,7 @@ export function AuthTabs({ activeTab, onTabChange }: AuthTabsProps) {
       </button>
       <button
         onClick={() => onTabChange('register')}
-        className={`flex-1 py-4 text-center font-medium transition-colors ${
+        className={`flex-1 py-4 text-center text-xl font-bold transition-colors ${
           activeTab === 'register'
             ? 'text-[#191C1F] border-b-2 border-[#1E40AF]'
             : 'text-[#686868] hover:text-[#191C1F]'
