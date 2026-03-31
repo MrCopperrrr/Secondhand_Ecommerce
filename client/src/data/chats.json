@@ -1,0 +1,24 @@
+[
+  {
+    "room_id": "R001",
+    "buyer_id": "U002",
+    "seller_id": "U001",
+    "product_id": "00000001",
+    "messages": [
+      {
+        "message_id": "M001",
+        "sender_id": "U002",
+        "content": "Chào bạn",
+        "timestamp": "2026-03-24T11:41:00Z",
+        "status": "Read"
+      },
+      {
+        "message_id": "M002",
+        "sender_id": "U001",
+        "content": "Mình mang đến trường",
+        "timestamp": "2026-03-24T11:42:00Z",
+        "status": "Read"
+      }
+    ]
+  }
+]
