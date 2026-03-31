@@ -3,12 +3,12 @@ import ProductCard from './ProductCard';
 import Pagination from './Pagination';
 
 interface Product {
-  id: string;
+  product_id: string;
   name: string;
   price: number;
-  image: string;
-  inStock: boolean;
-  proximity: string;
+  images: string[];
+  status: string;
+  campus: string;
 }
 
 interface ProductSectionProps {
@@ -74,7 +74,7 @@ const ProductSection: React.FC<ProductSectionProps> = ({
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
         {currentProducts.map((product) => (
           <ProductCard
-            key={product.id}
+            key={product.product_id}
             {...product}
           />
         ))}
