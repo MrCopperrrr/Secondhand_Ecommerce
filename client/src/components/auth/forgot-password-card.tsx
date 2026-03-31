@@ -92,8 +92,8 @@ export function ForgotPasswordCard() {
       {/* Card */}
       <div className="bg-[#FFFFFF] rounded-lg shadow-lg p-8">
         {/* Header */}
-        <div className="border-b border-[#C9CFD2] pb-4 mb-6">
-          <h2 className="text-xl font-bold text-[#191C1F]">Quên mật khẩu</h2>
+        <div className="mb-8 border-b-2 border-[#1E40AF] w-fit pr-4">
+          <h2 className="text-xl font-bold text-[#191C1F] pb-2">Quên mật khẩu</h2>
         </div>
 
         {/* Step 3A: Verification */}
@@ -110,7 +110,7 @@ export function ForgotPasswordCard() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Nhập email sinh viên"
-                  className="w-full border border-[#C9CFD2] rounded-lg px-4 py-3 text-[#191C1F] placeholder-[#77878F] focus:outline-none focus:ring-2 focus:ring-[#1E40AF] focus:border-transparent"
+                  className="w-full border border-[#C9CFD2] rounded-lg px-4 py-3 text-[#191C1F] placeholder-[#77878F] bg-white focus:outline-none focus:ring-1 focus:ring-[#1E40AF] transition"
                 />
                 <button
                   type="button"
@@ -138,7 +138,7 @@ export function ForgotPasswordCard() {
                 onChange={(e) => setOtp(e.target.value)}
                 placeholder="Nhập mã xác thực nhận được từ email"
                 maxLength={6}
-                className="w-full border border-[#C9CFD2] rounded-lg px-4 py-3 text-[#191C1F] placeholder-[#77878F] focus:outline-none focus:ring-2 focus:ring-[#1E40AF] focus:border-transparent tracking-widest text-center"
+                className="w-full border border-[#C9CFD2] rounded-lg px-4 py-3 text-[#191C1F] placeholder-[#77878F] bg-white focus:outline-none focus:ring-1 focus:ring-[#1E40AF] transition tracking-widest text-center font-bold"
               />
             </div>
 
@@ -167,7 +167,7 @@ export function ForgotPasswordCard() {
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   placeholder="Nhập mật khẩu mới"
-                  className="w-full border border-[#C9CFD2] rounded-lg px-4 py-3 text-[#191C1F] placeholder-[#77878F] focus:outline-none focus:ring-2 focus:ring-[#1E40AF] focus:border-transparent pr-10"
+                  className="w-full border border-[#C9CFD2] rounded-lg px-4 py-3 text-[#191C1F] placeholder-[#77878F] bg-white focus:outline-none focus:ring-1 focus:ring-[#1E40AF] transition pr-10"
                 />
                 <button
                   type="button"
@@ -190,7 +190,7 @@ export function ForgotPasswordCard() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Xác nhận mật khẩu mới"
-                  className="w-full border border-[#C9CFD2] rounded-lg px-4 py-3 text-[#191C1F] placeholder-[#77878F] focus:outline-none focus:ring-2 focus:ring-[#1E40AF] focus:border-transparent pr-10"
+                  className="w-full border border-[#C9CFD2] rounded-lg px-4 py-3 text-[#191C1F] placeholder-[#77878F] bg-white focus:outline-none focus:ring-1 focus:ring-[#1E40AF] transition pr-10"
                 />
                 <button
                   type="button"
