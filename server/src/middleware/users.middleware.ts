@@ -1,16 +1,51 @@
-import { NextFunction, Request, Response } from "express";
 import { checkSchema } from 'express-validator'
 import userService from "../services/users.services.js";
+import databaseService from '../services/database.services.js';
 
-export const loginValidator= (req: Request, res:  Response, next: NextFunction) => {
-    const {email, password}= req.body
-    if(!email || !password){
-        return res.status(400).json({
-            error:'Missing email or password'
-        })
+export const loginValidator= checkSchema({
+    email:{
+        notEmpty: true,
+        isEmail: {
+            errorMessage: 'Email is invalid'
+        },
+        trim: true,
+        custom: {
+            options: async (value, {req}) =>{
+            const user= await databaseService.users.findOne({email: value})
+            if(!user){
+                throw new Error('User not found')
+            }
+            req.user=user
+            return true
+            }
+        }
+    },
+    password: {
+        notEmpty: {
+            errorMessage: 'password is required'
+        },
+        isLength: {
+            options:{
+                min: 6,
+                max: 50
+            }
+        },
+        isString: {
+            errorMessage: 'password must be a string'
+        },
+        isStrongPassword:{
+            options:{
+                minLength: 6,
+                minLowercase: 1,
+                minUppercase: 1,
+                minNumbers: 1,
+                minSymbols: 1
+            }
+        },
+        errorMessage: 'password must be at least 6 characters and contain at least 1 lowercase, 1 uppercase, 1 number, 1 symbol'
     }
-    next()
-}
+})
+
 export const registerValidator= checkSchema({
     name:{
         notEmpty: true,
@@ -83,13 +118,5 @@ export const registerValidator= checkSchema({
                 return true
             }
         }
-    },
-    date_of_birth: {
-        isISO8601: {
-            options: {
-                strict: true,
-                strictSeparator: true
-            }
-        }
-    } 
+    }
 })

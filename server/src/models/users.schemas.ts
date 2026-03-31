@@ -9,7 +9,6 @@ interface UserType{
     email: string
     role?: UserRole
     password: string
-    date_of_birth?: Date
     phone_number: string
     email_verify_token?: string
     created_at: Date
@@ -23,7 +22,6 @@ export default class User {
     email: string
     password: string
     role: UserRole
-    date_of_birth?: Date
     phone_number: string
     email_verify_token: string
     created_at?: Date
@@ -35,11 +33,34 @@ export default class User {
         this.username= user.username
         this.email= user.email
         this.password= user.password
-        this.date_of_birth= user.date_of_birth
         this.phone_number= user.phone_number
         this.email_verify_token=user.email_verify_token || ''
         this.created_at= user.created_at || new Date()
         this.role=user.role || UserRole.User
+    }
+}
+interface RefreshTokenType {
+    _id?: ObjectId
+    user_id: ObjectId
+    token: string
+    created_at: Date
+    iat?: number 
+    exp?: number 
+}
+export class RefreshToken {
+    _id?: ObjectId
+    user_id: ObjectId
+    token: string
+    created_at: Date
+    iat?: number 
+    exp?: number 
+    constructor(refreshToken: RefreshTokenType) {
+        this._id = refreshToken._id
+        this.user_id = refreshToken.user_id
+        this.token = refreshToken.token
+        this.created_at = refreshToken.created_at || new Date()
+        this.iat = refreshToken.iat
+        this.exp = refreshToken.exp
     }
 }
 interface Address{
