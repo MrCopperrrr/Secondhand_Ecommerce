@@ -1,19 +1,26 @@
 [
-    {
-        "id": "1",
-        "username": "NguyenVanA",
-        "email": "nguyenvana@example.edu.vn",
-        "password": "NguyenVanA123",
-        "profilePicture": "https://example.com/profile-picture.jpg",
-        "phonenumber": "123-456-7890",
-        "address": "258 Lý Thường Kiệt",
-        "city": "TPHCM",
-        "ward": "Phường Diên Hồng",
-        "campus": "Campus ĐH Bách Khoa",
-        "studentcard": "https://example.com/student-card.jpg",
-        "paymentcard": "Vietcombank Visa Platinum **** **** **** 1234",
-        "banking": "Vietcombank ******1234",
-        "ewallet": "MoMo 0******123",
-        "product": ""
-    }
+  {
+    "user_id": "U001",
+    "full_name": "Nguyễn Văn A",
+    "email": "example@example.edu.vn",
+    "phone": "0123456789",
+    "avatar_url": "https://example.com/avatars/u001.jpg",
+    "role": "User",
+    "status": "Active",
+    "is_student_verified": true,
+    "presence_status": "Online",
+    "last_seen": "2026-03-31T15:45:00Z"
+  },
+  {
+    "user_id": "U002",
+    "full_name": "Nina",
+    "email": "nina.student@gmail.com",
+    "phone": "0987654321",
+    "avatar_url": "https://example.com/avatars/u002.jpg",
+    "role": "User",
+    "status": "Pending",
+    "is_student_verified": false,
+    "presence_status": "Offline",
+    "last_seen": "2026-03-31T10:00:00Z"
+  }
 ]
