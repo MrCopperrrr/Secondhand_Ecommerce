@@ -5,6 +5,7 @@ import Footer from './components/common/Footer';
 // Auth Pages
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
+import ForgotPassword from './pages/auth/ForgotPassword';
 
 // Shop Pages
 import Homepage from './pages/shop/Homepage';
@@ -25,6 +26,7 @@ const App: React.FC = () => {
             <Route path="/" element={<Homepage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/product/:id" element={<ProductDetail />} />
             <Route path="/sell" element={<CreateProduct />} />
             <Route path="/chat" element={<Chat />} />

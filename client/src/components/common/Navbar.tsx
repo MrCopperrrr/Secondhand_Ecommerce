@@ -105,9 +105,14 @@ const Navbar: React.FC = () => {
             <Link to="/chat" className="hover:opacity-80 transition-opacity">
               <MessageCircle size={20} className="text-[#FFFFFF]" />
             </Link>
-            <Link to="/profile" className="hover:opacity-80 transition-opacity">
-              <User size={20} className="text-[#FFFFFF]" />
-            </Link>
+            <div className="flex items-center gap-2">
+              <Link to="/login" className="text-white text-sm font-medium hover:underline">
+                Đăng nhập
+              </Link>
+              <Link to="/profile" className="hover:opacity-80 transition-opacity">
+                <User size={20} className="text-[#FFFFFF]" />
+              </Link>
+            </div>
           </div>
         </div>
       </div>

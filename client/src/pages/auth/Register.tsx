@@ -1,10 +1,14 @@
 import React from 'react';
+import { AuthCard } from '../../components/auth/auth-card';
+import { BlobBackground } from '../../components/auth/blob-background';
+import { DecorationShape } from '../../components/auth/decoration-shape';
 
 const Register: React.FC = () => {
     return (
-        <div className="p-8">
-            <h1 className="text-2xl font-bold">STT 1: Đăng ký (FR-01)</h1>
-            <p>Màn hình đăng ký tài khoản sinh viên.</p>
+        <div className="relative min-h-screen flex items-center justify-center p-4">
+            <BlobBackground />
+            <DecorationShape />
+            <AuthCard initialTab="register" />
         </div>
     );
 };
