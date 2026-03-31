@@ -1,20 +1,20 @@
 import { ObjectId } from 'mongodb'
 import { UserRole } from '../constants/enums.js'
 interface UserType{
-    _id: ObjectId
-    avatar: string
-    first_name: string
-    last_name: string
+    _id?: ObjectId
+    avatar?: string
+    first_name?: string
+    last_name?: string
     username: string
     email: string
     role?: UserRole
     password: string
-    date_of_birth: Date
+    date_of_birth?: Date
     phone_number: string
     email_verify_token?: string
     created_at: Date
 }
-export class User {
+export default class User {
     _id?: ObjectId
     avatar?: string
     first_name: string
@@ -23,15 +23,15 @@ export class User {
     email: string
     password: string
     role: UserRole
-    date_of_birth: Date
+    date_of_birth?: Date
     phone_number: string
     email_verify_token: string
     created_at?: Date
     constructor(user: UserType){
-        this._id=user._id || ''
+        this._id=user._id
         this.avatar=user.avatar || '' //Default avatar
-        this.first_name=user.first_name
-        this.last_name=user.last_name
+        this.first_name=user.first_name || ''
+        this.last_name=user.last_name || ''
         this.username= user.username
         this.email= user.email
         this.password= user.password
