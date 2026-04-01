@@ -10,18 +10,25 @@ interface FilterSidebarProps {
   onCategoryChange?: (category: string) => void;
   onLocationChange?: (location: string) => void;
   onPriceChange?: (min: number, max: number) => void;
+  onStatusChange?: (status: string) => void;
 }
 
 const CATEGORIES = [
   { id: 'all', label: 'Tất cả' },
-  { id: 'electronics', label: 'Đồ điện tử' },
-  { id: 'books', label: 'Sách giáo trình' },
-  { id: 'home', label: 'Đồ gia dụng' },
-  { id: 'school', label: 'Dụng cụ học tập' },
-  { id: 'clothing', label: 'Quần áo' },
-  { id: 'furniture', label: 'Đồ nội thất' },
-  { id: 'transport', label: 'Phương tiện di chuyển' },
-  { id: 'sports', label: 'Dụng cụ thể thao' },
+  { id: 'Đồ điện tử', label: 'Đồ điện tử' },
+  { id: 'Sách giáo trình', label: 'Sách giáo trình' },
+  { id: 'Đồ gia dụng', label: 'Đồ gia dụng' },
+  { id: 'Dụng cụ học tập', label: 'Dụng cụ học tập' },
+  { id: 'Quần áo', label: 'Quần áo' },
+  { id: 'Đồ nội thất', label: 'Đồ nội thất' },
+  { id: 'Phương tiện di chuyển', label: 'Phương tiện di chuyển' },
+  { id: 'Dụng cụ thể thao', label: 'Dụng cụ thể thao' },
+];
+
+const STATUS_OPTIONS = [
+  { id: 'all', label: 'Tất cả' },
+  { id: 'Active', label: 'Còn hàng' },
+  { id: 'Sold', label: 'Hết hàng' },
 ];
 
 const PRICE_PRESETS = [
@@ -42,8 +49,10 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
   onCategoryChange,
   onLocationChange,
   onPriceChange,
+  onStatusChange,
 }) => {
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedStatus, setSelectedStatus] = useState('all');
   const [selectedPricePreset, setSelectedPricePreset] = useState('all');
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(MAX_LIMIT); 
@@ -103,6 +112,31 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
               </div>
               <span className={`text-sm ${selectedCategory === cat.id ? 'font-bold text-[#1E40AF]' : 'text-[#686868]'}`}>
                 {cat.label}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="border-t border-gray-200 my-6"></div>
+      
+      {/* STATUS FILTER */}
+      <div className="mb-6">
+        <h3 className="text-sm font-bold uppercase text-[#191C1F] mb-4 tracking-tight">TRẠNG THÁI</h3>
+        <div className="space-y-4">
+          {STATUS_OPTIONS.map((status) => (
+            <div key={status.id} className="flex items-center gap-3 cursor-pointer"
+              onClick={() => {
+                setSelectedStatus(status.id);
+                onStatusChange?.(status.id);
+              }}>
+              <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${
+                selectedStatus === status.id ? 'border-[#1E40AF] bg-[#1E40AF]' : 'border-gray-300'
+              }`}>
+                {selectedStatus === status.id && <div className="w-1.5 h-1.5 rounded-full bg-white"></div>}
+              </div>
+              <span className={`text-sm ${selectedStatus === status.id ? 'font-bold text-[#1E40AF]' : 'text-[#686868]'}`}>
+                {status.label}
               </span>
             </div>
           ))}
