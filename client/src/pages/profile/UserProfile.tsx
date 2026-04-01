@@ -13,7 +13,8 @@ const UserProfile: React.FC = () => {
       <Breadcrumbs
         items={[
           { label: 'Trang chủ', href: '/' },
-          { label: 'Hồ sơ cá nhân' },
+          { label: 'Tài khoản' },
+          { label: 'hồ sơ cá nhân' },
         ]}
       />
 

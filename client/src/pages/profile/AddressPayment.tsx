@@ -11,8 +11,8 @@ const AddressPayment: React.FC = () => {
       <Breadcrumbs
         items={[
           { label: 'Trang chủ', href: '/' },
-          { label: 'Hồ sơ cá nhân', href: '/profile' },
-          { label: 'Địa chỉ & Thanh toán' },
+          { label: 'Tài khoản' },
+          { label: 'địa chỉ & thanh toán' },
         ]}
       />
 
