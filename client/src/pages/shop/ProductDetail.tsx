@@ -49,7 +49,7 @@ const ProductDetail: React.FC = () => {
   const statusLabel = product.status === 'Active' ? 'Còn hàng' : 'Hết hàng';
 
   return (
-    <div className="flex flex-col min-h-screen bg-white font-outfit">
+    <div className="flex flex-col min-h-screen bg-white font-roboto">
       <Breadcrumbs
         items={[
           { label: 'Trang chủ', href: '/' },

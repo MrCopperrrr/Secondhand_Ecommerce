@@ -27,7 +27,7 @@ export function AddToCartModal({ isOpen, onClose, productName, productImage }: A
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity duration-300">
       <div 
-        className="relative w-full max-w-md bg-white rounded-none shadow-2xl overflow-hidden font-outfit animate-in fade-in zoom-in duration-300"
+        className="relative w-full max-w-md bg-white rounded-none shadow-2xl overflow-hidden font-roboto animate-in fade-in zoom-in duration-300"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}

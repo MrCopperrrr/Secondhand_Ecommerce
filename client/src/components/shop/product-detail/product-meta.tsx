@@ -16,7 +16,7 @@ export function ProductMeta({
   proximity,
 }: ProductMetaProps) {
   return (
-    <div className="space-y-4 font-outfit">
+    <div className="space-y-4 font-roboto">
       {/* First Grid Row: ID and Category */}
       <div className="grid grid-cols-2 gap-x-8 gap-y-3">
         <div className="flex gap-2 text-sm">

@@ -23,7 +23,7 @@ export function OrderSummary({
   onCheckout,
 }: OrderSummaryProps) {
   return (
-    <div className="bg-white rounded-none border border-[#C9CFD2] p-6 h-fit font-outfit shadow-sm">
+    <div className="bg-white rounded-none border border-[#C9CFD2] p-6 h-fit font-roboto shadow-sm">
       <h2 className="text-2xl font-bold text-[#191C1F] mb-6">
         Thành tiền
       </h2>

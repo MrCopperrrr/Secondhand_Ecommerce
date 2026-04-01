@@ -25,7 +25,7 @@ export function CheckoutSummary({ items, onCheckout }: CheckoutSummaryProps) {
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
-    <div className="bg-white rounded-none border-2 border-[#1E40AF] p-8 sticky top-24 font-outfit shadow-md">
+    <div className="bg-white rounded-none border-2 border-[#1E40AF] p-8 sticky top-24 font-roboto shadow-md">
       <h2 className="text-xl font-bold text-[#191C1F] mb-8 pb-4 border-b-2 border-[#1E40AF] inline-block uppercase">
         Đơn hàng của bạn
       </h2>

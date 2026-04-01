@@ -4,7 +4,7 @@ import { ShoppingCart } from 'lucide-react';
 
 export function EmptyCart() {
   return (
-    <div className="flex flex-col items-center justify-center py-24 bg-white border-2 border-dashed border-[#C9CFD2] rounded-none font-outfit shadow-sm">
+    <div className="flex flex-col items-center justify-center py-24 bg-white border-2 border-dashed border-[#C9CFD2] rounded-none font-roboto shadow-sm">
       <div className="mb-8 p-6 bg-gray-50 rounded-full border border-gray-100">
         <ShoppingCart size={80} className="text-[#C9CFD2]" />
       </div>

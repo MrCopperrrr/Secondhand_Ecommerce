@@ -6,7 +6,7 @@ interface ProductDescriptionProps {
 
 export function ProductDescription({ description }: ProductDescriptionProps) {
   return (
-    <div className="mt-12 font-outfit">
+    <div className="mt-12 font-roboto">
       <hr className="border-[#C9CFD2] mb-8" />
       <h2 className="text-sm font-bold text-[#686868] mb-4 uppercase">
         Mô tả sản phẩm:

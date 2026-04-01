@@ -27,8 +27,7 @@ export function CartItem({
   onRemove,
 }: CartItemProps) {
   return (
-    <div
-      className={`flex items-center gap-4 p-5 border-b border-gray-100 transition-opacity font-outfit ${
+    <div className={`flex items-center gap-4 p-5 border-b border-gray-100 transition-opacity font-roboto ${
         !inStock ? 'opacity-50' : ''
       }`}
     >

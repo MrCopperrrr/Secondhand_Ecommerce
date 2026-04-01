@@ -62,7 +62,7 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <nav className="w-full bg-[#57B7F5]">
+    <nav className="sticky top-0 z-50 bg-[#57B7F5] shadow-lg font-roboto">
       {/* ... (Top Utility Bar remains same) */}
       <div className="border-b border-white/20">
         <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between">

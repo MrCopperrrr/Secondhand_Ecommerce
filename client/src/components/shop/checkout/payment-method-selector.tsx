@@ -36,7 +36,7 @@ export function PaymentMethodSelector({
   onMethodChange,
 }: PaymentMethodSelectorProps) {
   return (
-    <div className="bg-white rounded-none border border-[#C9CFD2] p-8 mt-8 font-outfit shadow-sm">
+    <div className="bg-white rounded-none border border-[#C9CFD2] p-8 mt-8 font-roboto shadow-sm">
       <h2 className="text-xl font-bold text-[#191C1F] mb-8 pb-4 border-b-2 border-[#1E40AF] inline-block uppercase">
         Phương thức thanh toán
       </h2>

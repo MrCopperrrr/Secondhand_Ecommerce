@@ -9,7 +9,7 @@ interface SuccessCardProps {
 
 export function SuccessCard({ orderId = '1001' }: SuccessCardProps) {
   return (
-    <div className="w-full max-w-lg mx-auto bg-white rounded-none p-10 shadow-2xl border-2 border-[#2DB224] font-outfit text-center">
+    <div className="w-full max-w-lg mx-auto bg-white rounded-none p-10 shadow-2xl border-2 border-[#2DB224] font-roboto text-center">
       {/* Success Icon */}
       <SuccessIcon />
 

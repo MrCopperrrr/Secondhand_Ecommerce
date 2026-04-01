@@ -16,7 +16,7 @@ export function SellerCard({
   otherProductsCount = 5,
 }: SellerCardProps) {
   return (
-    <div className="font-outfit pt-4">
+    <div className="font-roboto pt-4">
       {/* Label - Bold, 686868 */}
       <h3 className="text-sm font-bold text-[#686868] mb-4">Thông tin người bán:</h3>
 
