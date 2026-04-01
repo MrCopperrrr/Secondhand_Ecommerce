@@ -1,11 +1,38 @@
 import React from 'react';
+import Breadcrumbs from '../../components/shop/Breadcrumbs';
+import { ProfileSidebar } from '../../components/profile/profile-sidebar';
+import { ProfileHeader } from '../../components/profile/profile-header';
+import { AddressManagement } from '../../components/profile/address-management';
 
 const AddressPayment: React.FC = () => {
-    return (
-        <div className="p-8">
-            <h1 className="text-2xl font-bold">STT 5: Địa chỉ & Thanh toán (FR-05, 06, 07)</h1>
-        </div>
-    );
+  return (
+    <div className="flex flex-col min-h-screen bg-[#F2F4F5] font-roboto">
+      {/* Breadcrumbs */}
+      <Breadcrumbs
+        items={[
+          { label: 'Trang chủ', href: '/' },
+          { label: 'Hồ sơ cá nhân', href: '/profile' },
+          { label: 'Địa chỉ & Thanh toán' },
+        ]}
+      />
+
+      {/* Main Content */}
+      <div className="flex flex-1 w-full max-w-7xl mx-auto">
+        <ProfileSidebar activeTab="address" />
+
+        {/* Content Area */}
+        <main className="flex-1 p-8">
+          <div className="max-w-4xl">
+            {/* Profile Header */}
+            <ProfileHeader name="Nguyễn Văn A" isVerified={true} />
+
+            {/* Address Management */}
+            <AddressManagement />
+          </div>
+        </main>
+      </div>
+    </div>
+  );
 };
 
 export default AddressPayment;
