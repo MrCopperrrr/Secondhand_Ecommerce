@@ -133,6 +133,8 @@ export function BillingForm({ onFormChange }: BillingFormProps) {
     campus: '',
   });
 
+  const [errors, setErrors] = useState<Partial<Record<keyof BillingFormData, string>>>({});
+
   const provinceOptions = useMemo(() => PROVINCES_DATA.map(p => p.name), []);
   
   const wardOptions = useMemo(() => {
@@ -146,13 +148,31 @@ export function BillingForm({ onFormChange }: BillingFormProps) {
     return UNIVERSITIES_DATA[formData.province] || [];
   }, [formData.province]);
 
+  const validateField = (field: keyof BillingFormData, value: string) => {
+    if (field === 'campus') return ''; // Campus is optional
+    if (!value || value.trim() === '') {
+      return 'Trường này là bắt buộc';
+    }
+    if (field === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+      return 'Email không hợp lệ';
+    }
+    if (field === 'phone' && !/^\d{10,11}$/.test(value)) {
+      return 'Số điện thoại không hợp lệ';
+    }
+    return '';
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>, field: keyof BillingFormData) => {
-    const newData = { ...formData, [field]: e.target.value };
+    const value = e.target.value;
+    const newData = { ...formData, [field]: value };
     
     if (field === 'province') {
       newData.ward = '';
       newData.campus = '';
     }
+    
+    const error = validateField(field, value);
+    setErrors(prev => ({ ...prev, [field]: error }));
     
     setFormData(newData);
     onFormChange(newData);
@@ -164,6 +184,10 @@ export function BillingForm({ onFormChange }: BillingFormProps) {
       newData.ward = '';
       newData.campus = '';
     }
+    
+    const error = validateField(field, value);
+    setErrors(prev => ({ ...prev, [field]: error }));
+
     setFormData(newData);
     onFormChange(newData);
   };
@@ -177,78 +201,106 @@ export function BillingForm({ onFormChange }: BillingFormProps) {
       {/* Row 1: Full Name */}
       <div className="grid grid-cols-1 gap-6">
         <div>
-          <label className="block text-sm font-normal text-[#191C1F] mb-2">Họ và tên</label>
+          <label className="block text-sm font-normal text-[#191C1F] mb-2">
+            Họ và tên <span className="text-red-500">*</span>
+          </label>
           <input
             type="text"
             value={formData.fullName}
             onChange={(e) => handleChange(e, 'fullName')}
-            className="w-full px-4 py-3 border border-gray-200 rounded-none text-[#191C1F] focus:outline-none focus:border-[#1E40AF] transition-all"
+            className={`w-full px-4 py-3 border rounded-none text-[#191C1F] focus:outline-none transition-all ${
+              errors.fullName ? 'border-red-500' : 'border-gray-200 focus:border-[#1E40AF]'
+            }`}
             placeholder="Ví dụ: Nguyễn Văn A"
           />
+          {errors.fullName && <p className="text-red-500 text-xs mt-1">{errors.fullName}</p>}
         </div>
       </div>
 
       {/* Row 2: Phone & Email */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <label className="block text-sm font-normal text-[#191C1F] mb-2">Số điện thoại</label>
+          <label className="block text-sm font-normal text-[#191C1F] mb-2">
+            Số điện thoại <span className="text-red-500">*</span>
+          </label>
           <input
             type="tel"
             value={formData.phone}
             onChange={(e) => handleChange(e, 'phone')}
-            className="w-full px-4 py-3 border border-gray-200 rounded-none text-[#191C1F] focus:outline-none focus:border-[#1E40AF] transition-all"
+            className={`w-full px-4 py-3 border rounded-none text-[#191C1F] focus:outline-none transition-all ${
+              errors.phone ? 'border-red-500' : 'border-gray-200 focus:border-[#1E40AF]'
+            }`}
             placeholder="09xx xxx xxx"
           />
+          {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
         </div>
         <div>
-          <label className="block text-sm font-normal text-[#191C1F] mb-2">Email</label>
+          <label className="block text-sm font-normal text-[#191C1F] mb-2">
+            Email <span className="text-red-500">*</span>
+          </label>
           <input
             type="email"
             value={formData.email}
             onChange={(e) => handleChange(e, 'email')}
-            className="w-full px-4 py-3 border border-gray-200 rounded-none text-[#191C1F] focus:outline-none focus:border-[#1E40AF] transition-all"
+            className={`w-full px-4 py-3 border rounded-none text-[#191C1F] focus:outline-none transition-all ${
+              errors.email ? 'border-red-500' : 'border-gray-200 focus:border-[#1E40AF]'
+            }`}
             placeholder="example@gmail.com"
           />
+          {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
         </div>
       </div>
 
       {/* Row 3: Address */}
       <div className="grid grid-cols-1 gap-6">
         <div>
-          <label className="block text-sm font-normal text-[#191C1F] mb-2">Địa chỉ</label>
+          <label className="block text-sm font-normal text-[#191C1F] mb-2">
+            Địa chỉ <span className="text-red-500">*</span>
+          </label>
           <input
             type="text"
             value={formData.address}
             onChange={(e) => handleChange(e, 'address')}
-            className="w-full px-4 py-3 border border-gray-200 rounded-none text-[#191C1F] focus:outline-none focus:border-[#1E40AF] transition-all"
+            className={`w-full px-4 py-3 border rounded-none text-[#191C1F] focus:outline-none transition-all ${
+              errors.address ? 'border-red-500' : 'border-gray-200 focus:border-[#1E40AF]'
+            }`}
             placeholder="Số nhà, tên đường..."
           />
+          {errors.address && <p className="text-red-500 text-xs mt-1">{errors.address}</p>}
         </div>
       </div>
 
       {/* Row 4: Province & Ward */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <SearchableSelect
-          label="Tỉnh/Thành phố"
-          value={formData.province}
-          options={provinceOptions}
-          onChange={(val) => handleSelectChange('province', val)}
-          placeholder="Chọn tỉnh thành..."
-        />
-        <SearchableSelect
-          label="Phường"
-          value={formData.ward}
-          options={wardOptions}
-          onChange={(val) => handleSelectChange('ward', val)}
-          placeholder={formData.province ? "Chọn phường..." : "Vui lòng chọn tỉnh thành trước"}
-          disabled={!formData.province}
-        />
+        <div className="space-y-1">
+          <SearchableSelect
+            label={<span>Tỉnh/Thành phố <span className="text-red-500">*</span></span> as any}
+            value={formData.province}
+            options={provinceOptions}
+            onChange={(val) => handleSelectChange('province', val)}
+            placeholder="Chọn tỉnh thành..."
+          />
+          {errors.province && <p className="text-red-500 text-xs">{errors.province}</p>}
+        </div>
+        <div className="space-y-1">
+          <SearchableSelect
+            label={<span>Phường <span className="text-red-500">*</span></span> as any}
+            value={formData.ward}
+            options={wardOptions}
+            onChange={(val) => handleSelectChange('ward', val)}
+            placeholder={formData.province ? "Chọn phường..." : "Vui lòng chọn tỉnh thành trước"}
+            disabled={!formData.province}
+          />
+          {errors.ward && <p className="text-red-500 text-xs">{errors.ward}</p>}
+        </div>
       </div>
 
       {/* Row 5: Delivery Method & Campus */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <label className="block text-sm font-normal text-[#191C1F] mb-2">Lựa chọn giao hàng</label>
+          <label className="block text-sm font-normal text-[#191C1F] mb-2">
+            Lựa chọn giao hàng <span className="text-red-500">*</span>
+          </label>
           <div className="relative">
             <select
               value={formData.deliveryMethod}
