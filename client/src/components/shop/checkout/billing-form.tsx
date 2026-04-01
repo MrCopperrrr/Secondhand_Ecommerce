@@ -25,7 +25,7 @@ interface BillingFormData {
 }
 
 interface BillingFormProps {
-  onFormChange: (data: BillingFormData) => void;
+  onFormChange: (data: BillingFormData, isValid: boolean) => void;
 }
 
 const normalizeStr = (str: string) => {
@@ -179,9 +179,18 @@ export function BillingForm({ onFormChange }: BillingFormProps) {
     return newErrors;
   };
 
+  const checkOverallValidity = (data: BillingFormData, currentErrors: Partial<Record<keyof BillingFormData, string>>) => {
+    const requiredFields: Array<keyof BillingFormData> = ['fullName', 'phone', 'email', 'address', 'province', 'ward', 'deliveryMethod'];
+    const hasAllRequired = requiredFields.every(f => data[f] && data[f].trim() !== '');
+    const hasNoErrors = requiredFields.every(f => !currentErrors[f]);
+    return hasAllRequired && hasNoErrors;
+  };
+
   // Run validation when data changes or touched
   useEffect(() => {
-    onFormChange(formData);
+    const currentErrors = validate(formData);
+    const isValid = checkOverallValidity(formData, currentErrors);
+    onFormChange(formData, isValid);
   }, [formData, onFormChange]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>, field: keyof BillingFormData) => {
@@ -195,7 +204,6 @@ export function BillingForm({ onFormChange }: BillingFormProps) {
     
     setFormData(newData);
     setTouched(prev => ({ ...prev, [field]: true }));
-    validate(newData, field);
   };
 
   const handleSelectChange = (field: keyof BillingFormData, value: string) => {
@@ -206,7 +214,6 @@ export function BillingForm({ onFormChange }: BillingFormProps) {
     }
     setFormData(newData);
     setTouched(prev => ({ ...prev, [field]: true }));
-    validate(newData, field);
   };
 
   return (

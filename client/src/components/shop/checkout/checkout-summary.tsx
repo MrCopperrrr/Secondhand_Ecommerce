@@ -16,9 +16,10 @@ interface CheckoutSummaryProps {
   items: CheckoutItem[];
   shippingFee: number;
   onCheckout: () => void;
+  isFormValid: boolean;
 }
 
-export function CheckoutSummary({ items, shippingFee, onCheckout }: CheckoutSummaryProps) {
+export function CheckoutSummary({ items, shippingFee, onCheckout, isFormValid }: CheckoutSummaryProps) {
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const serviceFee = Math.round(subtotal * 0.05);
   const total = subtotal + shippingFee + serviceFee;
@@ -73,7 +74,7 @@ export function CheckoutSummary({ items, shippingFee, onCheckout }: CheckoutSumm
         </div>
       </div>
 
-      {/* Total */}
+      {/* Total Section */}
       <div className="border-t border-[#C9CFD2] pt-6 mb-8 mt-8">
         <div className="flex justify-between items-center">
           <span className="text-sm font-bold text-[#191C1F]">Tổng cộng</span>
@@ -86,10 +87,21 @@ export function CheckoutSummary({ items, shippingFee, onCheckout }: CheckoutSumm
       {/* Checkout Button */}
       <button
         onClick={onCheckout}
-        className="w-full bg-[#1E40AF] hover:bg-blue-800 text-white font-bold py-3.5 rounded-none transition-all duration-300 uppercase tracking-widest text-sm"
+        disabled={!isFormValid}
+        className={`w-full font-bold py-3.5 rounded-none transition-all duration-300 uppercase tracking-widest text-sm ${
+          isFormValid 
+            ? 'bg-[#1E40AF] hover:bg-blue-800 text-white cursor-pointer' 
+            : 'bg-gray-300 text-gray-500 cursor-not-allowed opacity-70'
+        }`}
       >
-        THANH TOÁN
+        {isFormValid ? 'THANH TOÁN' : 'Vui lòng hoàn tất thông tin'}
       </button>
+      
+      {!isFormValid && (
+        <p className="mt-2 text-center text-[10px] text-gray-400 italic">
+          * Vui lòng điền đầy đủ các thông tin bắt buộc
+        </p>
+      )}
     </div>
   );
 }
