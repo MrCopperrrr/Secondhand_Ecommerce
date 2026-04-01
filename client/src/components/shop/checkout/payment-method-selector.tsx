@@ -1,5 +1,5 @@
 import React from 'react';
-import { CreditCard, Wallet, Truck, DollarSign } from 'lucide-react';
+import { CreditCard, Wallet, Truck, DollarSign, PiggyBank, Banknote, Landmark } from 'lucide-react';
 
 type PaymentMethod = 'cod' | 'bank' | 'ewallet' | 'card';
 
@@ -17,7 +17,7 @@ const PAYMENT_METHODS = [
   {
     id: 'bank' as const,
     label: 'Tài khoản ngân hàng',
-    icon: Truck,
+    icon: Landmark,
   },
   {
     id: 'ewallet' as const,
