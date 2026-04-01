@@ -5,7 +5,7 @@ import { RegisterReqBody } from "../models/requests/users.requests.js"
 import { UserRole, TokenType } from '../constants/enums.js';
 import { hashPassword } from '../utils/crypto.js';
 import { signToken } from '../utils/jwt.js';
-
+import { ObjectId } from 'mongodb';
 
 class UserService{
     private signAccessAndRefreshToken(user_id: string){
@@ -14,8 +14,19 @@ class UserService{
             this.signRefreshToken(user_id)
         ])
     }
+    async logout(refresh_token: string){
+        const result= await databaseService.refreshTokens.deleteOne({token: refresh_token})
+        return result
+    }
     async login(user_id: string){
         const [access_token, refresh_token]= await this.signAccessAndRefreshToken(user_id)
+        await databaseService.refreshTokens.insertOne(
+        new RefreshToken({
+            user_id: new ObjectId(user_id),
+            token: refresh_token,
+            created_at: new Date()
+        })
+    )
         return {
             access_token,
             refresh_token
@@ -55,7 +66,7 @@ class UserService{
             new User({
             username: name,          
             email: email,
-            password: hashPassword(payload.password), 
+            password: hashPassword(payload.password.trim()), 
             role: UserRole.User,
             phone_number: phone_number,   
             created_at: new Date()

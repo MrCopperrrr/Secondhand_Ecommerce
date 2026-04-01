@@ -14,7 +14,7 @@ export const validate = (validations: RunnableValidationChains<ValidationChain>)
     for (const key in errorsObject) {
     entityError[key] = errorsObject[key].msg
     }
-        res.status(400).json({
+        res.status(422).json({
             errors: entityError
         })
     }
