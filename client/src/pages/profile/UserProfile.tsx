@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { CheckCircle, Eye, EyeOff, Folder, ChevronDown } from 'lucide-react';
+import { CheckCircle, Eye, EyeOff, Folder, ChevronDown, X } from 'lucide-react';
 import Breadcrumbs from '../../components/shop/Breadcrumbs';
 import { ProfileSidebar } from '../../components/profile/profile-sidebar';
 
@@ -21,6 +21,7 @@ const UserProfile: React.FC = () => {
   });
 
   const [studentCardFile, setStudentCardFile] = useState<File | null>(null);
+  const [studentCardPreview, setStudentCardPreview] = useState<string | null>(null);
   const [avatarUrl, setAvatarUrl] = useState('https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=128&h=128&fit=crop');
   const [dragActive, setDragActive] = useState(false);
 
@@ -34,6 +35,12 @@ const UserProfile: React.FC = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleStudentCardChange = (file: File) => {
+    setStudentCardFile(file);
+    const url = URL.createObjectURL(file);
+    setStudentCardPreview(url);
   };
 
   const handleDrag = (e: React.DragEvent) => {
@@ -51,7 +58,7 @@ const UserProfile: React.FC = () => {
     e.stopPropagation();
     setDragActive(false);
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      setStudentCardFile(e.dataTransfer.files[0]);
+      handleStudentCardChange(e.dataTransfer.files[0]);
     }
   };
 
@@ -60,6 +67,12 @@ const UserProfile: React.FC = () => {
       const url = URL.createObjectURL(e.target.files[0]);
       setAvatarUrl(url);
     }
+  };
+
+  const removeStudentCard = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setStudentCardFile(null);
+    setStudentCardPreview(null);
   };
 
   return (
@@ -79,11 +92,11 @@ const UserProfile: React.FC = () => {
           <div className="max-w-5xl">
             {/* THÔNG TIN CHUNG */}
             <section className="mb-12">
-              <h2 className="text-2xl font-bold text-[#191C1F] mb-8">Thông tin chung</h2>
+              <h2 className="text-2xl font-bold text-[#191C1F] mb-10">Thông tin chung</h2>
               
-              <div className="flex items-center gap-8 mb-12 h-28">
+              <div className="flex items-start gap-8 mb-12">
                 <div className="flex flex-col items-center gap-3">
-                  <div className="w-28 h-28 rounded-full overflow-hidden shrink-0 border border-gray-100 flex items-center justify-center">
+                  <div className="w-28 h-28 rounded-full overflow-hidden shrink-0 border border-gray-100 flex items-center justify-center shadow-sm">
                     <img 
                       src={avatarUrl} 
                       alt="Avatar" 
@@ -98,13 +111,14 @@ const UserProfile: React.FC = () => {
                       onChange={handleAvatarChange}
                       ref={avatarInputRef}
                     />
-                    <div className="px-4 py-1.5 border border-[#C9CFD2] text-[#686868] text-xs bg-white hover:bg-gray-50 transition-colors rounded-sm">
+                    <div className="px-4 py-1.5 border border-[#C9CFD2] text-[#686868] text-xs bg-white hover:bg-gray-50 transition-colors">
                       Thay đổi
                     </div>
                   </label>
                 </div>
 
-                <div className="flex items-center gap-3 h-full">
+                {/* Name and tick container aligned to avatar center (28/2 = 14) -> h-28 flex items-center */}
+                <div className="flex items-center gap-3 h-28">
                   <h3 className="text-3xl font-bold text-[#191C1F] whitespace-nowrap">{formData.fullName}</h3>
                   <CheckCircle size={32} className="text-[#2DB224] fill-white" />
                 </div>
@@ -219,7 +233,7 @@ const UserProfile: React.FC = () => {
               <h2 className="text-2xl font-bold text-[#191C1F] mb-6">Xác thực sinh viên</h2>
               
               <div 
-                className={`w-full border-2 border-dashed py-24 flex flex-col items-center justify-center bg-white mb-6 transition-all cursor-pointer relative ${
+                className={`w-full border-2 border-dashed py-8 flex flex-col items-center justify-center bg-white mb-6 transition-all cursor-pointer relative min-h-[300px] overflow-hidden ${
                   dragActive ? 'border-[#1E40AF] bg-blue-50' : 'border-[#C9CFD2] bg-white'
                 }`}
                 onDragEnter={handleDrag}
@@ -232,17 +246,38 @@ const UserProfile: React.FC = () => {
                   type="file" 
                   className="hidden" 
                   ref={studentCardInputRef}
-                  onChange={(e) => e.target.files && setStudentCardFile(e.target.files[0])}
+                  onChange={(e) => e.target.files && e.target.files[0] && handleStudentCardChange(e.target.files[0])}
                   accept="image/*"
                 />
                 
-                <Folder size={48} className={`mb-4 transition-all ${dragActive ? 'text-[#1E40AF]' : 'text-[#1E40AF] opacity-40'}`} />
-                <p className="text-[#191C1F] font-medium mb-1">
-                  {studentCardFile ? `Đã chọn: ${studentCardFile.name}` : 'Tải ảnh lên để xác thực sinh viên'}
-                </p>
-                <p className="text-sm text-[#686868]">Dung lượng tối đa 5MB. Định dạng: .jpg .jpeg .png</p>
+                {studentCardPreview ? (
+                  <div className="relative w-full h-full max-w-md max-h-[400px] group">
+                    <img 
+                      src={studentCardPreview} 
+                      alt="Student Card Preview" 
+                      className="w-full h-full object-contain"
+                    />
+                    <button 
+                      onClick={removeStudentCard}
+                      className="absolute top-2 right-2 bg-red-500 text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
+                    >
+                      <X size={16} />
+                    </button>
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <p className="text-white font-bold">Bấm hoặc kéo thả để thay đổi</p>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <Folder size={48} className={`mb-4 transition-all ${dragActive ? 'text-[#1E40AF]' : 'text-[#1E40AF] opacity-40'}`} />
+                    <p className="text-[#191C1F] font-medium mb-1 text-center px-4">
+                      Tải ảnh lên để xác thực sinh viên
+                    </p>
+                    <p className="text-sm text-[#686868]">Dung lượng tối đa 5MB. Định dạng: .jpg .jpeg .png</p>
+                  </>
+                )}
                 
-                {dragActive && (
+                {dragActive && !studentCardPreview && (
                   <div className="absolute inset-0 bg-[#1E40AF] opacity-10 pointer-events-none" />
                 )}
               </div>
