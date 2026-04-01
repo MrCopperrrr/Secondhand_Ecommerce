@@ -97,7 +97,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
     <aside className="w-full md:w-64 bg-white p-6 border-r border-gray-100 hidden md:block rounded-none select-none">
       {/* DANH MỤC */}
       <div className="mb-6">
-        <h3 className="text-sm font-bold uppercase text-[#191C1F] mb-4 tracking-tight">DANH MỤC</h3>
+        <h3 className="text-sm font-bold text-[#191C1F] mb-4 tracking-tight">Danh mục</h3>
         <div className="space-y-4">
           {CATEGORIES.map((cat) => (
             <div key={cat.id} className="flex items-center gap-3 group cursor-pointer" 
@@ -122,7 +122,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
       
       {/* STATUS FILTER */}
       <div className="mb-6">
-        <h3 className="text-sm font-bold uppercase text-[#191C1F] mb-4 tracking-tight">TRẠNG THÁI</h3>
+        <h3 className="text-sm font-bold text-[#191C1F] mb-4 tracking-tight">Trạng thái</h3>
         <div className="space-y-4">
           {STATUS_OPTIONS.map((status) => (
             <div key={status.id} className="flex items-center gap-3 cursor-pointer"
@@ -147,7 +147,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
 
       {/* KHU VỰC (Động) */}
       <div className="mb-6">
-        <h3 className="text-sm font-bold uppercase text-[#191C1F] mb-4 tracking-tight">KHU VỰC</h3>
+        <h3 className="text-sm font-bold text-[#191C1F] mb-4 tracking-tight">Khu vực</h3>
         <div className="relative">
           <select
             className="w-full border border-gray-200 rounded-none p-3 text-sm text-[#191C1F] outline-none bg-white appearance-none pr-10 cursor-pointer"
@@ -169,7 +169,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
 
       {/* KHOẢNG GIÁ */}
       <div className="mb-6">
-        <h3 className="text-sm font-bold uppercase text-[#191C1F] mb-4 tracking-tight">KHOẢNG GIÁ</h3>
+        <h3 className="text-sm font-bold text-[#191C1F] mb-4 tracking-tight">Khoảng giá</h3>
         
         <div className="relative h-12 flex items-center px-2 mb-4">
           <div className="absolute w-full h-1 bg-gray-200 rounded-none"></div>

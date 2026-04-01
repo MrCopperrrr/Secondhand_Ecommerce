@@ -8,7 +8,7 @@ import { StudentVerificationZone } from '../../components/profile/student-verifi
 
 const UserProfile: React.FC = () => {
   return (
-    <div className="flex flex-col min-h-screen bg-[#F2F4F5] font-roboto">
+    <div className="flex flex-col min-h-screen bg-white font-roboto">
       {/* Breadcrumbs */}
       <Breadcrumbs
         items={[

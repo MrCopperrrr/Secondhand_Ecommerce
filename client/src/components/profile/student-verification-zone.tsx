@@ -78,17 +78,17 @@ export const StudentVerificationZone: React.FC = () => {
             onChange={handleFileSelect}
             className="hidden"
           />
-          <div className="px-6 py-2 border-2 border-[#1E40AF] text-[#1E40AF] rounded-lg font-bold hover:bg-blue-50 transition-colors text-center uppercase tracking-wide text-sm">
-            TẢI ẢNH
+          <div className="px-6 py-2 border-2 border-[#1E40AF] text-[#1E40AF] rounded-lg font-bold hover:bg-blue-50 transition-colors text-center text-sm">
+            Tải ảnh
           </div>
         </label>
 
         <button
           onClick={handleSubmit}
-          className="flex-1 px-6 py-2 bg-[#1E40AF] text-white rounded-lg font-bold hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 uppercase tracking-wide text-sm shadow-sm"
+          className="flex-1 px-6 py-2 bg-[#1E40AF] text-white rounded-lg font-bold hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 text-sm shadow-sm"
         >
           <Upload size={18} />
-          XÁC THỰC
+          Xác thực
         </button>
       </div>
     </div>

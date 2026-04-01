@@ -186,7 +186,7 @@ export const AddressManagement: React.FC = () => {
       </div>
 
       {/* Add Address Button */}
-      <button className="w-full py-3 border-2 border-[#1E40AF] rounded-lg text-[#1E40AF] font-bold uppercase tracking-wide hover:bg-blue-50 transition-colors shadow-sm text-sm">
+      <button className="w-full py-3 border-2 border-[#1E40AF] rounded-lg text-[#1E40AF] font-bold tracking-wide hover:bg-blue-50 transition-colors shadow-sm text-sm">
         <Plus size={20} className="inline mr-2" />
         Thêm địa chỉ
       </button>

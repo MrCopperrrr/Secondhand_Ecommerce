@@ -27,7 +27,7 @@ const AppContent: React.FC = () => {
   const isAuthPage = authPaths.includes(location.pathname);
 
   return (
-    <div className="app-container flex flex-col min-h-screen bg-gray-50 uppercase font-roboto">
+    <div className="app-container flex flex-col min-h-screen bg-white font-roboto">
       {!isAuthPage && <Navbar />}
       
       <main className="flex-grow">
