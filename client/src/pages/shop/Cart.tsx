@@ -93,30 +93,35 @@ const Cart: React.FC = () => {
           {/* Cart Items - Left Column (70%) */}
           <div className="lg:col-span-2">
             <div className="bg-white rounded-none border border-[#C9CFD2] overflow-hidden shadow-sm">
-              {/* Table Header */}
-              <div className="hidden md:flex gap-4 p-5 border-b border-[#C9CFD2] bg-gray-50">
-                <div className="w-5" /> 
-                <div className="w-24" /> 
+              {/* Box Title inside */}
+              <div className="p-6 pb-2">
+                <h2 className="text-3xl font-bold text-[#191C1F] uppercase tracking-tighter">
+                  Giỏ hàng
+                </h2>
+              </div>
+
+              {/* Table Header Row - Background #F2F4F5 */}
+              <div className="flex items-center gap-4 px-5 py-4 border-y border-gray-100 bg-[#F2F4F5] mt-4">
+                <div className="w-10" /> {/* Space for radio button */}
                 <div className="flex-1">
-                  <h3 className="text-sm font-bold text-[#191C1F] uppercase italic">Sản phẩm</h3>
+                  <h3 className="text-sm font-normal text-[#686868] uppercase">Sản phẩm</h3>
                 </div>
                 <div className="w-28 text-center px-2">
-                  <h3 className="text-sm font-bold text-[#191C1F] uppercase italic">Tình trạng</h3>
+                  <h3 className="text-sm font-normal text-[#686868] uppercase">Tình trạng</h3>
                 </div>
                 <div className="w-32 text-right px-2">
-                  <h3 className="text-sm font-bold text-[#191C1F] uppercase italic">Giá tiền</h3>
+                  <h3 className="text-sm font-normal text-[#686868] uppercase">Giá tiền</h3>
                 </div>
-                <div className="w-10" />
+                <div className="w-10" /> {/* Space for remove button */}
               </div>
 
               {/* Cart Items List */}
-              <div className="divide-y divide-gray-100">
+              <div className="divide-y divide-gray-50">
                 {cartItems.map((item) => (
                   <CartItem
                     key={item.id}
                     id={item.id}
                     name={item.name}
-                    description={item.description}
                     price={item.price}
                     image={item.image}
                     inStock={item.inStock}
