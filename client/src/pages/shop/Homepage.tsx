@@ -143,7 +143,7 @@ const Homepage: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col bg-white">
+    <div className="flex flex-col bg-white font-roboto">
       <Breadcrumbs items={breadcrumbItems} />
 
       <div className="flex flex-col md:flex-row max-w-7xl mx-auto w-full bg-white">

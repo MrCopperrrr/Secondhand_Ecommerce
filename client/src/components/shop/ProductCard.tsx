@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 interface ProductCardProps {
   product_id: string;
@@ -10,6 +11,7 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({
+  product_id,
   name,
   price,
   images,
@@ -20,7 +22,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const mainImage = images && images.length > 0 ? images[0] : 'https://via.placeholder.com/400';
 
   return (
-    <div className="bg-white rounded-none border border-gray-200 overflow-hidden hover:shadow-md transition-shadow group cursor-pointer">
+    <Link 
+      to={`/product/${product_id}`}
+      className="bg-white rounded-none border border-gray-200 overflow-hidden hover:shadow-md transition-shadow group cursor-pointer block font-roboto"
+    >
       {/* Product Image */}
       <div className="relative w-full aspect-square bg-gray-100 overflow-hidden rounded-none">
         <img
@@ -52,7 +57,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <span className="text-[#2DB224] font-medium">{campus}</span>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

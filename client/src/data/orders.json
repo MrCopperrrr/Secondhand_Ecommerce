@@ -42,5 +42,27 @@
     "status": "Completed",
     "meetup_otp": "123456",
     "created_at": "2026-03-28T00:05:00Z"
+  },
+  {
+    "order_id": "OR727798670659",
+    "buyer_id": "U_CURRENT_USER",
+    "seller_id": "U001",
+    "items": [
+      {
+        "product_id": "00000001",
+        "price": 20000000
+      }
+    ],
+    "subtotal": 20000000,
+    "shipping_fee": 20000,
+    "service_fee": 1000000,
+    "grand_total": 21020000,
+    "delivery_method": "Shipment",
+    "payment_method": "Bank Transfer",
+    "shipping_address_id": "AD_NEW",
+    "tracking_code": null,
+    "status": "Processing",
+    "meetup_otp": null,
+    "created_at": "2026-04-01T10:51:00.200788Z"
   }
 ]
