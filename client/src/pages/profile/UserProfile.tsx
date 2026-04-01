@@ -251,21 +251,27 @@ const UserProfile: React.FC = () => {
                 />
                 
                 {studentCardPreview ? (
-                  <div className="relative w-full h-full max-w-md max-h-[400px] group">
+                  <div className="relative w-full h-full max-w-md max-h-[400px] group flex items-center justify-center">
                     <img 
                       src={studentCardPreview} 
                       alt="Student Card Preview" 
                       className="w-full h-full object-contain"
                     />
-                    <button 
-                      onClick={removeStudentCard}
-                      className="absolute top-2 right-2 bg-red-500 text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
-                    >
-                      <X size={16} />
-                    </button>
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <p className="text-white font-bold">Bấm hoặc kéo thả để thay đổi</p>
+                    
+                    {/* Overlay for change hint */}
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                      <p className="text-white font-bold text-lg">Bấm để thay đổi</p>
                     </div>
+
+                    {/* Delete button - must be after overlay or have higher z-index */}
+                    <button 
+                      type="button"
+                      onClick={removeStudentCard}
+                      className="absolute top-4 right-4 bg-red-600 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-lg z-30 hover:bg-red-700 active:scale-95"
+                      title="Xóa ảnh"
+                    >
+                      <X size={20} />
+                    </button>
                   </div>
                 ) : (
                   <>
@@ -284,10 +290,10 @@ const UserProfile: React.FC = () => {
 
               <div className="flex justify-end gap-4">
                 <button className="px-12 py-3 border-2 border-[#1E40AF] text-[#1E40AF] font-bold text-sm bg-white hover:bg-gray-50 transition-all rounded-none">
-                  Xác thực
+                  XÁC THỰC
                 </button>
                 <button className="px-12 py-3 bg-[#1E40AF] border-2 border-[#1E40AF] text-white font-bold text-sm hover:bg-blue-800 transition-all rounded-none">
-                  Lưu
+                  LƯU
                 </button>
               </div>
             </section>
