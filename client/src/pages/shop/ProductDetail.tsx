@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Breadcrumbs from '../../components/shop/Breadcrumbs';
 import { ProductGallery } from '../../components/shop/product-detail/product-gallery';
@@ -6,6 +7,7 @@ import { ProductPricing } from '../../components/shop/product-detail/product-pri
 import { ProductMeta } from '../../components/shop/product-detail/product-meta';
 import { SellerCard } from '../../components/shop/product-detail/seller-card';
 import { ProductDescription } from '../../components/shop/product-detail/product-description';
+import { AddToCartModal } from '../../components/shop/product-detail/add-to-cart-modal';
 
 import products from '../../data/products.json';
 import { useCart } from '../../context/CartContext';
@@ -14,6 +16,7 @@ const ProductDetail: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { addToCart } = useCart();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Find the product by product_id
   const product = products.find((p: any) => p.product_id === id);
@@ -21,7 +24,7 @@ const ProductDetail: React.FC = () => {
   const handleAddToCart = () => {
     if (product) {
       addToCart(product);
-      alert('Đã thêm sản phẩm vào giỏ hàng!');
+      setIsModalOpen(true);
     }
   };
 
@@ -98,6 +101,13 @@ const ProductDetail: React.FC = () => {
         {/* Full Width Description Section */}
         <ProductDescription description={product.description} />
       </main>
+
+      <AddToCartModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        productName={product.name}
+        productImage={product.images[0]}
+      />
     </div>
   );
 }
