@@ -24,11 +24,12 @@ interface Product {
 const Homepage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedStatus, setSelectedStatus] = useState('all'); 
   const [selectedLocation, setSelectedLocation] = useState('all');
   const [priceRange, setPriceRange] = useState({ min: 0, max: 20000000 });
   const [sortBy, setSortBy] = useState('newest');
 
-  // Tự động cuộn lên đầu trang khi chuyển trang
+  // Scroll lên đầu khi đổi page
   React.useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [currentPage]);
@@ -45,48 +46,56 @@ const Homepage: React.FC = () => {
     'Dụng cụ thể thao': 'Dụng cụ thể thao'
   };
 
-  // Filter and Sort Logic
+  // FILTER + SORT
   const filteredProducts = useMemo(() => {
     let result = [...DUMMY_PRODUCTS_RAW] as Product[];
 
-    // 1. Filter by Category (Matching Vietnamese labels)
+    // Category
     if (selectedCategory !== 'all') {
       result = result.filter(p => p.category === selectedCategory);
     }
 
-    // 2. Filter by Location
+    // Status
+    if (selectedStatus !== 'all') {
+      result = result.filter(p => p.status === selectedStatus);
+    }
+
+    // Location
     if (selectedLocation !== 'all' && selectedLocation !== '') {
       result = result.filter(p => p.campus === selectedLocation);
     }
 
-    // 3. Filter by Price
-    result = result.filter(p => {
-      const isOverLimit = priceRange.max >= 20000000;
-      return p.price >= priceRange.min && (isOverLimit ? true : p.price <= priceRange.max);
-    });
+    // Price (clean, không hack)
+    result = result.filter(p =>
+      p.price >= priceRange.min && p.price <= priceRange.max
+    );
 
-    // 4. Sort
+    // Sort
     result.sort((a, b) => {
       if (sortBy === 'price-asc') return a.price - b.price;
       if (sortBy === 'price-desc') return b.price - a.price;
+      if (sortBy === 'popular') return b.views - a.views;
       return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
     });
 
     return result;
-  }, [selectedCategory, selectedLocation, priceRange, sortBy]);
+  }, [
+    selectedCategory,
+    selectedStatus,
+    selectedLocation,
+    priceRange,
+    sortBy
+  ]);
 
-  // Trích xuất danh sách campus duy nhất từ dữ liệu mới
+  // Unique campuses
   const uniqueCampuses = useMemo(() => {
     const locations = new Set<string>();
     DUMMY_PRODUCTS_RAW.forEach(p => {
-      if (p.campus) {
-        locations.add(p.campus);
-      }
+      if (p.campus) locations.add(p.campus);
     });
     return Array.from(locations).map(label => ({ id: label, label }));
   }, []);
 
-  // Derived data with matching ProductCardProps
   const displayProducts = filteredProducts;
 
   interface BreadcrumbItem {
@@ -99,28 +108,42 @@ const Homepage: React.FC = () => {
   ];
 
   if (selectedCategory !== 'all') {
-    breadcrumbItems.push({ label: categoriesMap[selectedCategory] || selectedCategory });
+    breadcrumbItems.push({
+      label: categoriesMap[selectedCategory] || selectedCategory
+    });
   }
 
   return (
     <div className="flex flex-col bg-white">
-      {/* Breadcrumbs */}
       <Breadcrumbs items={breadcrumbItems} />
 
-      {/* Main Content Layout */}
       <div className="flex flex-col md:flex-row max-w-7xl mx-auto w-full bg-white">
-        {/* Sidebar */}
+        
+        {/* SIDEBAR */}
         <FilterSidebar 
           locations={uniqueCampuses}
-          onCategoryChange={(cat) => { setSelectedCategory(cat); setCurrentPage(1); }}
-          onLocationChange={(loc) => { setSelectedLocation(loc); setCurrentPage(1); }}
-          onPriceChange={(min, max) => { setPriceRange({ min, max }); setCurrentPage(1); }}
+          onCategoryChange={(cat) => {
+            setSelectedCategory(cat);
+            setCurrentPage(1);
+          }}
+          onStatusChange={(status) => {   
+            setSelectedStatus(status);
+            setCurrentPage(1);
+          }}
+          onLocationChange={(loc) => {
+            setSelectedLocation(loc);
+            setCurrentPage(1);
+          }}
+          onPriceChange={(min, max) => {
+            setPriceRange({ min, max });
+            setCurrentPage(1);
+          }}
         />
 
-        {/* Product List Section */}
+        {/* PRODUCT LIST */}
         <ProductSection 
-          products={displayProducts} 
-          totalCount={displayProducts.length} 
+          products={displayProducts}
+          totalCount={displayProducts.length}
           currentPage={currentPage}
           onPageChange={(page) => setCurrentPage(page)}
           onSortChange={(sort) => setSortBy(sort)}
