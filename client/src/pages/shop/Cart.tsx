@@ -1,55 +1,26 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Breadcrumbs from '../../components/shop/Breadcrumbs';
 import { CartItem } from '../../components/shop/cart/cart-item';
 import { OrderSummary } from '../../components/shop/cart/order-summary';
 import { EmptyCart } from '../../components/shop/cart/empty-cart';
-
-// Mock cart items data
-const INITIAL_CART_ITEMS = [
-  {
-    id: 'product-1',
-    name: 'iPhone 13 Pro Max',
-    description: 'Điện thoại thông minh, màu đen, 256GB',
-    price: 15000000,
-    image: 'https://images.unsplash.com/photo-1511707267537-b85faf00021e?w=400&h=400&fit=crop',
-    inStock: true,
-  },
-  {
-    id: 'product-2',
-    name: 'MacBook Pro 14"',
-    description: 'Laptop cao cấp, M1 Pro, 16GB RAM',
-    price: 35000000,
-    image: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=400&fit=crop',
-    inStock: true,
-  },
-  {
-    id: 'product-3',
-    name: 'AirPods Pro',
-    description: 'Tai nghe không dây, chống ồn',
-    price: 4500000,
-    image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop',
-    inStock: false,
-  },
-  {
-    id: 'product-4',
-    name: 'iPad Air',
-    description: 'Máy tính bảng, 64GB, WiFi',
-    price: 12000000,
-    image: 'https://images.unsplash.com/photo-1542032604-787d440170a3?w=400&h=400&fit=crop',
-    inStock: true,
-  },
-];
+import { useCart } from '../../context/CartContext';
 
 const SHIPPING_FEE = 25000;
 const SERVICE_FEE_PERCENTAGE = 0.05;
 
 const Cart: React.FC = () => {
   const navigate = useNavigate();
-  const [removedItems, setRemovedItems] = useState<Set<string>>(new Set());
+  const { cartItems, removeFromCart } = useCart();
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
 
-  const visibleItems = INITIAL_CART_ITEMS.filter((item) => !removedItems.has(item.id));
+  // Initialize selected items with all available in-stock items on mount
+  useEffect(() => {
+    const inStockIds = cartItems
+      .filter(item => item.inStock)
+      .map(item => item.id);
+    setSelectedItems(new Set(inStockIds));
+  }, [cartItems.length]); // Re-run if item count changes (e.g. from detail page)
 
   const handleSelectItem = (id: string, selected: boolean) => {
     const newSelected = new Set(selectedItems);
@@ -62,16 +33,7 @@ const Cart: React.FC = () => {
   };
 
   const handleRemoveItem = (id: string) => {
-    const newRemoved = new Set(removedItems);
-    newRemoved.add(id);
-    setRemovedItems(newRemoved);
-    
-    // Also remove from selected if it was selected
-    if (selectedItems.has(id)) {
-      const newSelected = new Set(selectedItems);
-      newSelected.delete(id);
-      setSelectedItems(newSelected);
-    }
+    removeFromCart(id);
   };
 
   const calculations = useMemo(() => {
@@ -79,10 +41,10 @@ const Cart: React.FC = () => {
     let subtotal = 0;
 
     selectedItems.forEach((itemId) => {
-      const item = visibleItems.find((i) => i.id === itemId);
+      const item = cartItems.find((i) => i.id === itemId);
       if (item && item.inStock) {
-        itemCount++;
-        subtotal += item.price;
+        itemCount += item.quantity;
+        subtotal += item.price * item.quantity;
       }
     });
 
@@ -96,11 +58,11 @@ const Cart: React.FC = () => {
       serviceFee,
       total,
     };
-  }, [selectedItems, visibleItems]);
+  }, [selectedItems, cartItems]);
 
-  const hasAvailableItems = visibleItems.some((item) => item.inStock);
+  const hasAvailableItems = cartItems.some((item) => item.inStock);
 
-  if (visibleItems.length === 0) {
+  if (cartItems.length === 0) {
     return (
       <div className="flex flex-col min-h-screen bg-gray-50">
         <Breadcrumbs
@@ -149,7 +111,7 @@ const Cart: React.FC = () => {
 
               {/* Cart Items List */}
               <div className="divide-y divide-gray-100">
-                {visibleItems.map((item) => (
+                {cartItems.map((item) => (
                   <CartItem
                     key={item.id}
                     id={item.id}

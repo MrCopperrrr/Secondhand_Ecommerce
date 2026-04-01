@@ -8,20 +8,28 @@ import { SellerCard } from '../../components/shop/product-detail/seller-card';
 import { ProductDescription } from '../../components/shop/product-detail/product-description';
 
 import products from '../../data/products.json';
+import { useCart } from '../../context/CartContext';
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { addToCart } = useCart();
 
   // Find the product by product_id
   const product = products.find((p: any) => p.product_id === id);
 
   const handleAddToCart = () => {
-    alert('Đã thêm sản phẩm vào giỏ hàng!');
+    if (product) {
+      addToCart(product);
+      alert('Đã thêm sản phẩm vào giỏ hàng!');
+    }
   };
 
   const handleBuyNow = () => {
-    navigate('/checkout');
+    if (product) {
+      addToCart(product);
+      navigate('/checkout');
+    }
   };
 
   if (!product) {

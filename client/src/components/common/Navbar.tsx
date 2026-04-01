@@ -9,6 +9,7 @@ import {
   ChevronDown,
   Share2,
 } from 'lucide-react';
+import { useCart } from '../../context/CartContext';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,6 +22,7 @@ const Navbar: React.FC = () => {
   const [isLoggedIn] = useState(false); // Giả lập trạng thái đăng nhập
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
+  const { itemCount } = useCart();
 
   const categories = [
     'Tất cả',
@@ -132,8 +134,13 @@ const Navbar: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-4 flex-shrink-0">
-            <Link to="/cart" className="hover:opacity-80 transition-opacity">
+            <Link to="/cart" className="hover:opacity-80 transition-opacity relative">
               <ShoppingCart size={20} className="text-[#FFFFFF]" />
+              {itemCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-[#EE1919] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border-2 border-[#57B7F5]">
+                  {itemCount}
+                </span>
+              )}
             </Link>
             <Link to="/notifications" className="hover:opacity-80 transition-opacity">
               <Bell size={20} className="text-[#FFFFFF]" />

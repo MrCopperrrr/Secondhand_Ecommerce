@@ -4,31 +4,7 @@ import Breadcrumbs from '../../components/shop/Breadcrumbs';
 import { BillingForm } from '../../components/shop/checkout/billing-form';
 import { PaymentMethodSelector } from '../../components/shop/checkout/payment-method-selector';
 import { CheckoutSummary } from '../../components/shop/checkout/checkout-summary';
-
-// Mock cart items
-const CART_ITEMS = [
-  {
-    id: 'product-1',
-    name: 'iPhone 13 Pro Max 256GB - Màu đen',
-    price: 15000000,
-    image: 'https://images.unsplash.com/photo-1511707267537-b85faf00021e?w=400&h=400&fit=crop',
-    quantity: 1,
-  },
-  {
-    id: 'product-2',
-    name: 'AirPods Pro - Wireless Earbuds',
-    price: 5500000,
-    image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop',
-    quantity: 1,
-  },
-  {
-    id: 'product-3',
-    name: 'Apple Watch Series 7 - 45mm',
-    price: 9800000,
-    image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=400&fit=crop',
-    quantity: 1,
-  },
-];
+import { useCart } from '../../context/CartContext';
 
 interface BillingFormData {
   fullName: string;
@@ -45,6 +21,12 @@ type PaymentMethod = 'cod' | 'bank' | 'ewallet' | 'card';
 
 const Checkout: React.FC = () => {
   const navigate = useNavigate();
+  const { cartItems, clearCart } = useCart();
+  
+  // Filter only in-stock and selected items? 
+  // For now, let's just use all items in cart that are inStock
+  const itemsToCheckout = cartItems.filter(item => item.inStock);
+
   const [formData, setFormData] = useState<BillingFormData>({
     fullName: '',
     phone: '',
@@ -63,8 +45,9 @@ const Checkout: React.FC = () => {
   };
 
   const handleCheckout = () => {
-    console.log('Checkout processed:', { formData, paymentMethod, items: CART_ITEMS });
+    console.log('Checkout processed:', { formData, paymentMethod, items: itemsToCheckout });
     // After success, navigate to success page
+    clearCart();
     navigate('/checkout/success');
   };
 
@@ -98,7 +81,7 @@ const Checkout: React.FC = () => {
 
           {/* Right Column - Summary (35%) */}
           <div className="lg:col-span-1">
-            <CheckoutSummary items={CART_ITEMS} onCheckout={handleCheckout} />
+            <CheckoutSummary items={itemsToCheckout} onCheckout={handleCheckout} />
           </div>
         </div>
       </main>
