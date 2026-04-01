@@ -42,9 +42,10 @@ interface SearchableSelectProps {
   onChange: (value: string) => void;
   placeholder?: string;
   disabled?: boolean;
+  error?: string;
 }
 
-function SearchableSelect({ label, value, options, onChange, placeholder, disabled }: SearchableSelectProps) {
+function SearchableSelect({ label, value, options, onChange, placeholder, disabled, error }: SearchableSelectProps) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
   
@@ -67,12 +68,12 @@ function SearchableSelect({ label, value, options, onChange, placeholder, disabl
         <Popover.Trigger asChild>
           <button
             disabled={disabled}
-            className={`w-full flex items-center justify-between px-4 py-3 border border-gray-200 rounded-none text-[#191C1F] focus:outline-none focus:border-[#1E40AF] transition-all bg-white cursor-pointer disabled:bg-gray-50 disabled:cursor-not-allowed ${
-              !value ? 'text-gray-400' : ''
-            }`}
+            className={`w-full flex items-center justify-between px-4 py-3 border rounded-none text-[#191C1F] focus:outline-none transition-all bg-white cursor-pointer disabled:bg-gray-50 disabled:cursor-not-allowed ${
+              error ? 'border-red-500' : 'border-gray-200 focus:border-[#1E40AF]'
+            } ${!value ? 'text-gray-400' : ''}`}
           >
             <span className="truncate">{value || placeholder}</span>
-            <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
+            <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
           </button>
         </Popover.Trigger>
         
@@ -117,6 +118,7 @@ function SearchableSelect({ label, value, options, onChange, placeholder, disabl
           </Popover.Content>
         </Popover.Portal>
       </Popover.Root>
+      {error && <p className="mt-1.5 text-xs text-red-500">{error}</p>}
     </div>
   );
 }
@@ -134,6 +136,7 @@ export function BillingForm({ onFormChange }: BillingFormProps) {
   });
 
   const [errors, setErrors] = useState<Partial<Record<keyof BillingFormData, string>>>({});
+  const [touched, setTouched] = useState<Partial<Record<keyof BillingFormData, boolean>>>({});
 
   const provinceOptions = useMemo(() => PROVINCES_DATA.map(p => p.name), []);
   
@@ -148,19 +151,38 @@ export function BillingForm({ onFormChange }: BillingFormProps) {
     return UNIVERSITIES_DATA[formData.province] || [];
   }, [formData.province]);
 
-  const validateField = (field: keyof BillingFormData, value: string) => {
-    if (field === 'campus') return ''; // Campus is optional
-    if (!value || value.trim() === '') {
-      return 'Trường này là bắt buộc';
+  const validate = (data: BillingFormData, field?: keyof BillingFormData) => {
+    const newErrors: Partial<Record<keyof BillingFormData, string>> = { ...errors };
+    
+    const checkField = (f: keyof BillingFormData) => {
+      if (f === 'campus') return; // campus is optional
+      
+      const val = data[f];
+      if (!val || (typeof val === 'string' && val.trim() === '')) {
+        newErrors[f] = 'Trường này không được để trống';
+      } else if (f === 'email' && !/\S+@\S+\.\S+/.test(val)) {
+        newErrors[f] = 'Email không hợp lệ';
+      } else if (f === 'phone' && !/^[0-9]{10}$/.test(val.replace(/\s/g, ''))) {
+        newErrors[f] = 'Số điện thoại không hợp lệ (10 số)';
+      } else {
+        delete newErrors[f];
+      }
+    };
+
+    if (field) {
+      checkField(field);
+    } else {
+      (Object.keys(data) as Array<keyof BillingFormData>).forEach(checkField);
     }
-    if (field === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-      return 'Email không hợp lệ';
-    }
-    if (field === 'phone' && !/^\d{10,11}$/.test(value)) {
-      return 'Số điện thoại không hợp lệ';
-    }
-    return '';
+
+    setErrors(newErrors);
+    return newErrors;
   };
+
+  // Run validation when data changes or touched
+  useEffect(() => {
+    onFormChange(formData);
+  }, [formData, onFormChange]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>, field: keyof BillingFormData) => {
     const value = e.target.value;
@@ -171,11 +193,9 @@ export function BillingForm({ onFormChange }: BillingFormProps) {
       newData.campus = '';
     }
     
-    const error = validateField(field, value);
-    setErrors(prev => ({ ...prev, [field]: error }));
-    
     setFormData(newData);
-    onFormChange(newData);
+    setTouched(prev => ({ ...prev, [field]: true }));
+    validate(newData, field);
   };
 
   const handleSelectChange = (field: keyof BillingFormData, value: string) => {
@@ -184,12 +204,9 @@ export function BillingForm({ onFormChange }: BillingFormProps) {
       newData.ward = '';
       newData.campus = '';
     }
-    
-    const error = validateField(field, value);
-    setErrors(prev => ({ ...prev, [field]: error }));
-
     setFormData(newData);
-    onFormChange(newData);
+    setTouched(prev => ({ ...prev, [field]: true }));
+    validate(newData, field);
   };
 
   return (
@@ -201,111 +218,103 @@ export function BillingForm({ onFormChange }: BillingFormProps) {
       {/* Row 1: Full Name */}
       <div className="grid grid-cols-1 gap-6">
         <div>
-          <label className="block text-sm font-normal text-[#191C1F] mb-2">
-            Họ và tên <span className="text-red-500">*</span>
-          </label>
+          <label className="block text-sm font-normal text-[#191C1F] mb-2">Họ và tên</label>
           <input
             type="text"
             value={formData.fullName}
             onChange={(e) => handleChange(e, 'fullName')}
+            onBlur={() => setTouched(prev => ({ ...prev, fullName: true }))}
             className={`w-full px-4 py-3 border rounded-none text-[#191C1F] focus:outline-none transition-all ${
-              errors.fullName ? 'border-red-500' : 'border-gray-200 focus:border-[#1E40AF]'
+              touched.fullName && errors.fullName ? 'border-red-500' : 'border-gray-200 focus:border-[#1E40AF]'
             }`}
             placeholder="Ví dụ: Nguyễn Văn A"
           />
-          {errors.fullName && <p className="text-red-500 text-xs mt-1">{errors.fullName}</p>}
+          {touched.fullName && errors.fullName && <p className="mt-1.5 text-xs text-red-500">{errors.fullName}</p>}
         </div>
       </div>
 
       {/* Row 2: Phone & Email */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <label className="block text-sm font-normal text-[#191C1F] mb-2">
-            Số điện thoại <span className="text-red-500">*</span>
-          </label>
+          <label className="block text-sm font-normal text-[#191C1F] mb-2">Số điện thoại</label>
           <input
             type="tel"
             value={formData.phone}
             onChange={(e) => handleChange(e, 'phone')}
+            onBlur={() => setTouched(prev => ({ ...prev, phone: true }))}
             className={`w-full px-4 py-3 border rounded-none text-[#191C1F] focus:outline-none transition-all ${
-              errors.phone ? 'border-red-500' : 'border-gray-200 focus:border-[#1E40AF]'
+              touched.phone && errors.phone ? 'border-red-500' : 'border-gray-200 focus:border-[#1E40AF]'
             }`}
             placeholder="09xx xxx xxx"
           />
-          {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
+          {touched.phone && errors.phone && <p className="mt-1.5 text-xs text-red-500">{errors.phone}</p>}
         </div>
         <div>
-          <label className="block text-sm font-normal text-[#191C1F] mb-2">
-            Email <span className="text-red-500">*</span>
-          </label>
+          <label className="block text-sm font-normal text-[#191C1F] mb-2">Email</label>
           <input
             type="email"
             value={formData.email}
             onChange={(e) => handleChange(e, 'email')}
+            onBlur={() => setTouched(prev => ({ ...prev, email: true }))}
             className={`w-full px-4 py-3 border rounded-none text-[#191C1F] focus:outline-none transition-all ${
-              errors.email ? 'border-red-500' : 'border-gray-200 focus:border-[#1E40AF]'
+              touched.email && errors.email ? 'border-red-500' : 'border-gray-200 focus:border-[#1E40AF]'
             }`}
             placeholder="example@gmail.com"
           />
-          {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+          {touched.email && errors.email && <p className="mt-1.5 text-xs text-red-500">{errors.email}</p>}
         </div>
       </div>
 
       {/* Row 3: Address */}
       <div className="grid grid-cols-1 gap-6">
         <div>
-          <label className="block text-sm font-normal text-[#191C1F] mb-2">
-            Địa chỉ <span className="text-red-500">*</span>
-          </label>
+          <label className="block text-sm font-normal text-[#191C1F] mb-2">Địa chỉ</label>
           <input
             type="text"
             value={formData.address}
             onChange={(e) => handleChange(e, 'address')}
+            onBlur={() => setTouched(prev => ({ ...prev, address: true }))}
             className={`w-full px-4 py-3 border rounded-none text-[#191C1F] focus:outline-none transition-all ${
-              errors.address ? 'border-red-500' : 'border-gray-200 focus:border-[#1E40AF]'
+              touched.address && errors.address ? 'border-red-500' : 'border-gray-200 focus:border-[#1E40AF]'
             }`}
             placeholder="Số nhà, tên đường..."
           />
-          {errors.address && <p className="text-red-500 text-xs mt-1">{errors.address}</p>}
+          {touched.address && errors.address && <p className="mt-1.5 text-xs text-red-500">{errors.address}</p>}
         </div>
       </div>
 
       {/* Row 4: Province & Ward */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="space-y-1">
-          <SearchableSelect
-            label={<span>Tỉnh/Thành phố <span className="text-red-500">*</span></span> as any}
-            value={formData.province}
-            options={provinceOptions}
-            onChange={(val) => handleSelectChange('province', val)}
-            placeholder="Chọn tỉnh thành..."
-          />
-          {errors.province && <p className="text-red-500 text-xs">{errors.province}</p>}
-        </div>
-        <div className="space-y-1">
-          <SearchableSelect
-            label={<span>Phường <span className="text-red-500">*</span></span> as any}
-            value={formData.ward}
-            options={wardOptions}
-            onChange={(val) => handleSelectChange('ward', val)}
-            placeholder={formData.province ? "Chọn phường..." : "Vui lòng chọn tỉnh thành trước"}
-            disabled={!formData.province}
-          />
-          {errors.ward && <p className="text-red-500 text-xs">{errors.ward}</p>}
-        </div>
+        <SearchableSelect
+          label="Tỉnh/Thành phố"
+          value={formData.province}
+          options={provinceOptions}
+          onChange={(val) => handleSelectChange('province', val)}
+          placeholder="Chọn tỉnh thành..."
+          error={touched.province ? errors.province : undefined}
+        />
+        <SearchableSelect
+          label="Phường"
+          value={formData.ward}
+          options={wardOptions}
+          onChange={(val) => handleSelectChange('ward', val)}
+          placeholder={formData.province ? "Chọn phường..." : "Vui lòng chọn tỉnh thành trước"}
+          disabled={!formData.province}
+          error={touched.ward ? errors.ward : undefined}
+        />
       </div>
 
       {/* Row 5: Delivery Method & Campus */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <label className="block text-sm font-normal text-[#191C1F] mb-2">
-            Lựa chọn giao hàng <span className="text-red-500">*</span>
-          </label>
+          <label className="block text-sm font-normal text-[#191C1F] mb-2">Lựa chọn giao hàng</label>
           <div className="relative">
             <select
               value={formData.deliveryMethod}
               onChange={(e) => handleChange(e, 'deliveryMethod')}
-              className="w-full appearance-none px-4 py-3 border border-gray-200 rounded-none text-[#191C1F] focus:outline-none focus:border-[#1E40AF] transition-all bg-white cursor-pointer"
+              className={`w-full appearance-none px-4 py-3 border rounded-none text-[#191C1F] focus:outline-none transition-all bg-white cursor-pointer ${
+                touched.deliveryMethod && errors.deliveryMethod ? 'border-red-500' : 'border-gray-200 focus:border-[#1E40AF]'
+              }`}
             >
               <option value="shipping">Vận chuyển</option>
               <option value="meetup">Meetup</option>
@@ -314,6 +323,7 @@ export function BillingForm({ onFormChange }: BillingFormProps) {
               <ChevronDown className="w-4 h-4 text-gray-500" />
             </div>
           </div>
+          {touched.deliveryMethod && errors.deliveryMethod && <p className="mt-1.5 text-xs text-red-500">{errors.deliveryMethod}</p>}
         </div>
 
         <SearchableSelect
@@ -323,6 +333,7 @@ export function BillingForm({ onFormChange }: BillingFormProps) {
           onChange={(val) => handleSelectChange('campus', val)}
           placeholder={formData.province ? "Chọn trường..." : "Vui lòng chọn tỉnh thành trước"}
           disabled={!formData.province}
+          // No error for campus as it's optional
         />
       </div>
     </div>
