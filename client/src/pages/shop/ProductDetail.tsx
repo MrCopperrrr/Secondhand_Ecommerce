@@ -7,35 +7,14 @@ import { ProductMeta } from '../../components/shop/product-detail/product-meta';
 import { SellerCard } from '../../components/shop/product-detail/seller-card';
 import { ProductDescription } from '../../components/shop/product-detail/product-description';
 
-// Mock product data
-const MOCK_PRODUCT = {
-  id: 'PROD-001',
-  title: 'Apple MacBook Pro M1 8GB RAM 256GB SSD - Like new 99%',
-  price: 28500000,
-  category: 'Đồ điện tử',
-  status: 'Còn hàng' as const,
-  condition: 'Like new 99%',
-  location: 'Đại học Công nghệ, TP.HCM',
-  proximity: '<1km',
-  images: [
-    'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&h=800&fit=crop',
-    'https://images.unsplash.com/photo-1525373365065-eac3e64b6ebb?w=800&h=800&fit=crop',
-    'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=800&h=800&fit=crop',
-    'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&h=800&fit=crop',
-  ],
-  seller: {
-    name: 'Nguyễn Văn A',
-    avatar:
-      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop',
-    rating: 5,
-    isOnline: true,
-  },
-  description: `MacBook Pro M1 2021 được sử dụng rất cẩn thận, máy hoạt động hoàn hảo như ngày đầu tiên.\n\nChi tiết tình trạng:\n- CPU M1 8-core, GPU 7-core\n- 8GB RAM LPDDR4X\n- 256GB SSD\n- Pin sạc 100%, thời gian sử dụng còn lâu\n\nPhụ kiện kèm theo:\n- Sạc 30W USB-C (chính hãng Apple)\n- Cáp sạc original\n- Hộp carton original (đầy đủ)\n\nDán film bảo vệ toàn bộ màn hình, không có trầy xước hay vết tì vết nào. Máy rất sạch sẽ, bảo quản kỹ lưỡng.\n\nMua từ Apple Store tháng 2/2021, còn bảo hành đến tháng 2/2025 (có thể chuyển quyền sở hữu).\n\nGiá đã là tốt nhất, không thương lượng. Có thể giao tận nơi hoặc gặp tại campus.`,
-};
+import products from '../../data/products.json';
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+
+  // Find the product by product_id
+  const product = products.find((p: any) => p.product_id === id);
 
   const handleAddToCart = () => {
     alert('Đã thêm sản phẩm vào giỏ hàng!');
@@ -45,12 +24,28 @@ const ProductDetail: React.FC = () => {
     navigate('/checkout');
   };
 
+  if (!product) {
+    return (
+      <div className="flex flex-col min-h-screen bg-gray-50 items-center justify-center font-outfit">
+        <h1 className="text-2xl font-bold mb-4">Không tìm thấy sản phẩm!</h1>
+        <button 
+           onClick={() => navigate('/')}
+           className="bg-[#1E40AF] text-white px-6 py-2 font-bold"
+        >
+          QUAY VỀ TRANG CHỦ
+        </button>
+      </div>
+    );
+  }
+
+  const statusLabel = product.status === 'Active' ? 'Còn hàng' : 'Hết hàng';
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 font-outfit">
       <Breadcrumbs
         items={[
           { label: 'Trang chủ', href: '/' },
-          { label: 'Đồ điện tử', href: '/' },
+          { label: product.category, href: `/?category=${encodeURIComponent(product.category)}` },
           { label: 'Chi tiết sản phẩm' },
         ]}
       />
@@ -60,37 +55,37 @@ const ProductDetail: React.FC = () => {
         {/* Two Column Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
           {/* Left: Gallery */}
-          <ProductGallery images={MOCK_PRODUCT.images} alt={MOCK_PRODUCT.title} />
+          <ProductGallery images={product.images} alt={product.name} />
 
           {/* Right: Product Info */}
           <div className="space-y-8">
             <ProductInfo
-              title={MOCK_PRODUCT.title}
-              price={MOCK_PRODUCT.price}
+              title={product.name}
+              price={product.price}
               onAddToCart={handleAddToCart}
               onBuyNow={handleBuyNow}
             />
 
             <ProductMeta
-              productId={id || MOCK_PRODUCT.id}
-              category={MOCK_PRODUCT.category}
-              status={MOCK_PRODUCT.status}
-              condition={MOCK_PRODUCT.condition}
-              location={MOCK_PRODUCT.location}
-              proximity={MOCK_PRODUCT.proximity}
+              productId={product.product_id}
+              category={product.category}
+              status={statusLabel as any}
+              condition={product.condition}
+              location={product.campus}
+              proximity={product.proximity || 'Chưa rõ'}
             />
 
             <SellerCard
-              sellerName={MOCK_PRODUCT.seller.name}
-              sellerAvatar={MOCK_PRODUCT.seller.avatar}
-              rating={MOCK_PRODUCT.seller.rating}
-              isOnline={MOCK_PRODUCT.seller.isOnline}
+              sellerName={product.seller?.name || 'Người bán'}
+              sellerAvatar={product.seller?.avatar || 'https://via.placeholder.com/100'}
+              rating={product.seller?.rating || 5}
+              isOnline={product.seller?.isOnline || false}
             />
           </div>
         </div>
 
         {/* Full Width Description */}
-        <ProductDescription description={MOCK_PRODUCT.description} />
+        <ProductDescription description={product.description} />
       </main>
     </div>
   );

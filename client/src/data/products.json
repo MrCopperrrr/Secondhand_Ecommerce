@@ -6,105 +6,94 @@
     "category": "Đồ điện tử",
     "condition": "Mới 100%",
     "price": 20000000,
-    "description": "Macbook Pro M1 mới mua màu xám, ngoại hình đẹp không bị trầy. Máy sử dụng chip M1, được trang bị sẵn 8GB RAM và 256GB bộ nhớ trong. Còn bảo hành, kèm hộp và sạc",
+    "description": "Macbook Pro M1 mới mua màu xám, ngoại hình đẹp không bị trầy. Máy sử dụng chip M1, được trang bị sẵn 8GB RAM và 256GB bộ nhớ trong. Còn bảo hành, kèm hộp và sạc. Pin sạc 100%, thời gian sử dụng còn lâu.\n\nPhụ kiện kèm theo:\n- Sạc 30W USB-C (chính hãng Apple)\n- Cáp sạc original\n- Hộp carton original (đầy đủ)\n\nDán film bảo vệ toàn bộ màn hình, không có trầy xước hay vết tì vết nào. Máy rất sạch sẽ, bảo quản kỹ lưỡng.",
     "campus": "Trường ĐH Bách khoa TPHCM",
     "images": [
-      "https://example.com/images/mac1.jpg",
-      "https://example.com/images/mac2.jpg"
+      "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&h=800&fit=crop",
+      "https://images.unsplash.com/photo-1525373365065-eac3e64b6ebb?w=800&h=800&fit=crop"
     ],
     "status": "Active",
     "is_featured": false,
     "views": 150,
-    "created_at": "2026-03-20T08:00:00Z"
+    "created_at": "2026-03-20T08:00:00Z",
+    "seller": {
+      "name": "Nguyên Văn A",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop",
+      "rating": 5,
+      "isOnline": true
+    },
+    "proximity": "<1km"
   },
   {
     "product_id": "00000002",
     "seller_id": "U002",
-    "name": "Apple iPhone 17 Pro Max 2TB",
+    "name": "iPhone 13 Pro Max 256GB - Màu đen",
     "category": "Đồ điện tử",
-    "condition": "Mới 100%",
-    "price": 60000000,
-    "description": "Sản phẩm mới 100%, còn hộp",
-    "campus": "Trường ĐH Bách khoa TPHCM",
-    "images": ["https://example.com/images/iphone.jpg"],
+    "condition": "Like New 99%",
+    "price": 15000000,
+    "description": "iPhone 13 Pro Max màu đen, bản 256GB. Máy còn rất mới, không trầy xước. Đầy đủ phụ kiện cáp sạc. Pin còn 92%.",
+    "campus": "Trường ĐH Khoa học Tự nhiên",
+    "images": [
+      "https://images.unsplash.com/photo-1511707267537-b85faf00021e?w=800&h=800&fit=crop"
+    ],
     "status": "Active",
     "is_featured": true,
-    "views": 220,
-    "created_at": "2026-03-27T10:00:00Z"
+    "views": 240,
+    "created_at": "2026-03-21T10:30:00Z",
+    "seller": {
+      "name": "Trần Thị B",
+      "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop",
+      "rating": 4,
+      "isOnline": false
+    },
+    "proximity": "1.5km"
   },
   {
     "product_id": "00000003",
     "seller_id": "U003",
-    "name": "Giáo trình Giải tích 2",
+    "name": "Sách Giáo Trình Giải Tích 1",
     "category": "Sách giáo trình",
-    "condition": "Khá Mới 90%",
-    "price": 30000,
-    "description": "Sách đã qua sử dụng",
-    "campus": "Trường ĐH Bách khoa TPHCM",
-    "images": ["https://example.com/images/iphone.jpg"],
+    "condition": "Mới 95%",
+    "price": 50000,
+    "description": "Sách giải tích 1 cho sinh viên năm nhất. Sách còn mới, ít ghi chép. Phù hợp cho các bạn ôn thi.",
+    "campus": "Trường ĐH Công nghệ thông tin",
+    "images": [
+      "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=800&h=800&fit=crop"
+    ],
     "status": "Active",
-    "is_featured": true,
-    "views": 320,
-    "created_at": "2026-03-27T10:00:00Z"
+    "is_featured": false,
+    "views": 85,
+    "created_at": "2026-03-22T09:00:00Z",
+    "seller": {
+      "name": "Lê Văn C",
+      "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop",
+      "rating": 3,
+      "isOnline": true
+    },
+    "proximity": "3.0km"
   },
   {
     "product_id": "00000004",
-    "seller_id": "U004",
-    "name": "Giáo trình Xác suất thống kê",
-    "category": "Sách giáo trình",
-    "condition": "Khá Mới 90%",
-    "price": 40000,
-    "description": "Sách đã qua sử dụng",
+    "seller_id": "U001",
+    "name": "Bàn học cũ - Gỗ tự nhiên",
+    "category": "Đồ nội thất",
+    "condition": "Cũ",
+    "price": 350000,
+    "description": "Bàn học bằng gỗ tự nhiên, chắc chắn. Kích thước 1.2m x 0.6m. Thích hợp cho sinh viên.",
     "campus": "Trường ĐH Bách khoa TPHCM",
-    "images": ["https://example.com/images/iphone.jpg"],
+    "images": [
+      "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=800&h=800&fit=crop"
+    ],
     "status": "Active",
-    "is_featured": true,
-    "views": 1320,
-    "created_at": "2026-03-28T10:00:00Z"
-  },
-  {
-    "product_id": "00000005",
-    "seller_id": "U005",
-    "name": "Giáo trình Minna no Nihongo - Sơ cấp",
-    "category": "Sách giáo trình",
-    "condition": "Khá Mới 90%",
-    "price": 50000,
-    "description": "Sách đã qua sử dụng, còn mới 90%",
-    "campus": "Trường ĐH Bách khoa TPHCM",
-    "images": ["https://example.com/images/iphone.jpg"],
-    "status": "Sold",
-    "is_featured": true,
-    "views": 420,
-    "created_at": "2026-03-28T10:00:00Z"
-  },
-  {
-    "product_id": "00000006",
-    "seller_id": "U005",
-    "name": "Giáo trình Minna no Nihongo - Trung cấp",
-    "category": "Sách giáo trình",
-    "condition": "Khá Mới 90%",
-    "price": 50000,
-    "description": "Sách đã qua sử dụng, còn mới 90%",
-    "campus": "Trường ĐH HUTECH",
-    "images": ["https://example.com/images/iphone.jpg"],
-    "status": "Active",
-    "is_featured": true,
-    "views": 320,
-    "created_at": "2026-03-28T10:00:00Z"
-  },
-  {
-    "product_id": "00000007",
-    "seller_id": "U006",
-    "name": "Xe đạp - cũ",
-    "category": "Phương tiện di chuyển",
-    "condition": "Đã qua sử dụng - 50%",
-    "price": 1000000,
-    "description": "Xe đạp đã qua sử dụng, còn tốt 50%",
-    "campus": "Trường ĐH Kinh tế TPHCM",
-    "images": ["https://example.com/images/iphone.jpg"],
-    "status": "Active",
-    "is_featured": true,
-    "views": 20,
-    "created_at": "2026-03-28T10:00:00Z"
+    "is_featured": false,
+    "views": 120,
+    "created_at": "2026-03-18T14:20:00Z",
+    "seller": {
+      "name": "Nguyễn Văn A",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop",
+      "rating": 5,
+      "isOnline": true
+    },
+    "proximity": "<1km"
   }
 ]
