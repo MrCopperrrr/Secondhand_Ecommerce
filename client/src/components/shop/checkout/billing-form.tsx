@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import PROVINCES_DATA_RAW from '../../data/provinces.json';
+import PROVINCES_DATA_RAW from '../../../data/provinces.json';
 
 interface ProvinceData {
   id: number;
