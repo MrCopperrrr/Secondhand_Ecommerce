@@ -56,8 +56,8 @@ export function OrderSummary({
       {/* Grand Total */}
       <div className="mb-8">
         <div className="flex justify-between items-center">
-          <span className="text-sm font-bold text-[#191C1F]">Tổng cộng</span>
-          <span className="text-base font-bold text-[#000000]">
+          <span className="text-xl font-bold text-[#191C1F]">Tổng cộng</span>
+          <span className="text-xl font-bold text-[#000000]">
             {formatPrice(total)} VND
           </span>
         </div>

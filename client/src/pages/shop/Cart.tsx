@@ -95,7 +95,7 @@ const Cart: React.FC = () => {
             <div className="bg-white rounded-none border border-[#C9CFD2] overflow-hidden shadow-sm">
               {/* Box Title inside */}
               <div className="p-6 pb-2">
-                <h2 className="text-3xl font-bold text-[#191C1F] uppercase tracking-tighter">
+                <h2 className="text-3xl font-bold text-[#191C1F] tracking-tighter">
                   Giỏ hàng
                 </h2>
               </div>
@@ -104,13 +104,13 @@ const Cart: React.FC = () => {
               <div className="flex items-center gap-4 px-5 py-4 border-y border-gray-100 bg-[#F2F4F5] mt-4">
                 <div className="w-10" /> {/* Space for radio button */}
                 <div className="flex-1">
-                  <h3 className="text-sm font-normal text-[#686868] uppercase">Sản phẩm</h3>
+                  <h3 className="text-sm font-normal text-[#686868]">Sản phẩm</h3>
                 </div>
                 <div className="w-28 text-center px-2">
-                  <h3 className="text-sm font-normal text-[#686868] uppercase">Tình trạng</h3>
+                  <h3 className="text-sm font-normal text-[#686868]">Tình trạng</h3>
                 </div>
                 <div className="w-32 text-right px-2">
-                  <h3 className="text-sm font-normal text-[#686868] uppercase">Giá tiền</h3>
+                  <h3 className="text-sm font-normal text-[#686868]">Giá tiền</h3>
                 </div>
                 <div className="w-10" /> {/* Space for remove button */}
               </div>
