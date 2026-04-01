@@ -1,5 +1,3 @@
-import React from 'react';
-
 interface ProductMetaProps {
   productId: string;
   category: string;
@@ -19,50 +17,35 @@ export function ProductMeta({
 }: ProductMetaProps) {
   return (
     <div className="space-y-4 font-outfit">
-      {/* Meta Info Grid */}
-      <div className="grid grid-cols-2 gap-4 border border-[#C9CFD2] rounded-none p-6 bg-white">
-        <div>
-          <p className="text-sm text-[#686868] mb-1">ID sản phẩm</p>
-          <p className="text-sm font-bold text-[#191C1F]">{productId}</p>
+      {/* First Grid Row: ID and Category */}
+      <div className="grid grid-cols-2 gap-x-8 gap-y-3">
+        <div className="flex gap-2 text-sm">
+          <span className="font-bold text-[#686868]">ID:</span>
+          <span className="font-bold text-[#000000]">{productId}</span>
         </div>
-        <div>
-          <p className="text-sm text-[#686868] mb-1">Danh mục</p>
-          <a
-            href="#"
-            className="text-sm font-bold text-[#1E40AF] hover:underline"
-          >
-            {category}
-          </a>
+        <div className="flex gap-2 text-sm">
+          <span className="font-bold text-[#686868]">Danh mục:</span>
+          <span className="font-bold text-[#000000]">{category}</span>
         </div>
-        <div>
-          <p className="text-sm text-[#686868] mb-1">Trạng thái</p>
-          <span
-            className={`inline-block text-xs font-bold px-2 py-1 ${
-              status === 'Còn hàng'
-                ? 'bg-green-100 text-[#2DB224]'
-                : 'bg-red-100 text-red-600'
-            }`}
-          >
-            {status.toUpperCase()}
-          </span>
+
+        {/* Second Row: Status and Condition */}
+        <div className="flex gap-2 text-sm">
+          <span className="font-bold text-[#2DB224]">{status}</span>
         </div>
-        <div>
-          <p className="text-sm text-[#686868] mb-1">Tình trạng</p>
-          <p className="text-sm font-bold text-[#191C1F]">{condition}</p>
+        <div className="flex gap-2 text-sm">
+          <span className="font-bold text-[#686868]">Tình trạng:</span>
+          <span className="font-bold text-[#000000]">{condition}</span>
         </div>
       </div>
 
-      {/* Location & Proximity */}
-      <div className="border border-[#C9CFD2] rounded-none p-6 bg-white">
-        <div className="flex justify-between items-start">
-          <div>
-            <p className="text-sm text-[#686868] mb-2">Vị trí</p>
-            <p className="text-base font-bold text-[#191C1F]">{location}</p>
-          </div>
-          <div className="text-right">
-            <p className="text-sm text-[#686868] mb-2">Khoảng cách</p>
-            <p className="text-base font-bold text-[#2DB224]">{proximity}</p>
-          </div>
+      {/* Location Row (based on image) */}
+      <div className="flex justify-between items-center text-sm pt-2">
+        <div className="flex gap-2">
+          <span className="font-bold text-[#686868]">Trường/Campus:</span>
+          <span className="font-bold text-[#000000]">{location}</span>
+        </div>
+        <div className="font-bold text-[#2DB224]">
+          {proximity}
         </div>
       </div>
     </div>

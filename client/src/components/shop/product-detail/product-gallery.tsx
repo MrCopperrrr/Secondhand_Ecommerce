@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface ProductGalleryProps {
@@ -19,66 +19,70 @@ export function ProductGallery({ images, alt }: ProductGalleryProps) {
 
   if (!images || images.length === 0) {
     return (
-      <div className="w-full aspect-square bg-gray-100 rounded-lg flex items-center justify-center border border-[#C9CFD2]">
+      <div className="w-full aspect-square bg-gray-100 flex items-center justify-center border border-[#C9CFD2]">
         <span className="text-gray-400 text-sm">Không có hình ảnh</span>
       </div>
     );
   }
 
+  // To show 6 thumbnails, we might need a subset or scrolling. 
+  // For now let's just show up to 6 or let it scroll but styled as the picture.
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* Main Hero Image */}
-      <div className="relative w-full aspect-square bg-white rounded-lg overflow-hidden border border-[#C9CFD2]">
+      <div className="relative w-full aspect-[4/3] bg-white overflow-hidden border border-[#C9CFD2]">
         <img
           src={images[selectedIndex]}
           alt={alt}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-contain p-4"
         />
       </div>
 
       {/* Thumbnail Carousel */}
-      {images.length > 1 && (
-        <div className="flex items-center gap-3">
-          {/* Previous Button */}
-          <button
-            onClick={handlePrevious}
-            className="flex-shrink-0 w-10 h-10 rounded-full bg-[#1E40AF] flex items-center justify-center hover:bg-blue-900 transition-colors"
-            aria-label="Previous image"
-          >
-            <ChevronLeft size={20} className="text-white" />
-          </button>
+      <div className="flex items-center gap-2">
+        {/* Previous Button */}
+        <button
+          onClick={handlePrevious}
+          className="flex-shrink-0 w-10 h-10 rounded-full bg-[#1E40AF] flex items-center justify-center hover:bg-blue-800 transition-colors"
+          aria-label="Previous image"
+        >
+          <ChevronLeft size={24} className="text-white" />
+        </button>
 
-          {/* Thumbnails */}
-          <div className="flex gap-2 flex-1 overflow-x-auto no-scrollbar">
-            {images.map((image, index) => (
-              <button
-                key={index}
-                onClick={() => setSelectedIndex(index)}
-                className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
-                  selectedIndex === index
-                    ? 'border-[#1E40AF] shadow-md'
-                    : 'border-[#C9CFD2]'
-                }`}
-              >
-                <img
-                  src={image}
-                  alt={`${alt} - thumbnail ${index + 1}`}
-                  className="w-full h-full object-cover"
-                />
-              </button>
-            ))}
-          </div>
-
-          {/* Next Button */}
-          <button
-            onClick={handleNext}
-            className="flex-shrink-0 w-10 h-10 rounded-full bg-[#1E40AF] flex items-center justify-center hover:bg-blue-900 transition-colors"
-            aria-label="Next image"
-          >
-            <ChevronRight size={20} className="text-white" />
-          </button>
+        {/* Thumbnails Container */}
+        <div className="flex gap-2 flex-1 items-center justify-between overflow-hidden">
+          {images.slice(0, 6).map((image, index) => (
+            <button
+              key={index}
+              onClick={() => setSelectedIndex(index)}
+              className={`flex-1 aspect-square overflow-hidden border-2 transition-all ${
+                selectedIndex === index
+                  ? 'border-[#1E40AF]'
+                  : 'border-[#C9CFD2]'
+              }`}
+            >
+              <img
+                src={image}
+                alt={`${alt} - thumbnail ${index + 1}`}
+                className="w-full h-full object-cover"
+              />
+            </button>
+          ))}
+          {/* Fill gaps if less than 6 images */}
+          {images.length < 6 && [...Array(6 - images.length)].map((_, i) => (
+            <div key={`empty-${i}`} className="flex-1 aspect-square bg-gray-50 border border-[#C9CFD2]" />
+          ))}
         </div>
-      )}
+
+        {/* Next Button */}
+        <button
+          onClick={handleNext}
+          className="flex-shrink-0 w-10 h-10 rounded-full bg-[#1E40AF] flex items-center justify-center hover:bg-blue-800 transition-colors"
+          aria-label="Next image"
+        >
+          <ChevronRight size={24} className="text-white" />
+        </button>
+      </div>
     </div>
   );
 }

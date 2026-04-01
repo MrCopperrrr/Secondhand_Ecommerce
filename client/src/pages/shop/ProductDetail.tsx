@@ -1,4 +1,3 @@
-import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Breadcrumbs from '../../components/shop/Breadcrumbs';
 import { ProductGallery } from '../../components/shop/product-detail/product-gallery';
@@ -49,7 +48,7 @@ const ProductDetail: React.FC = () => {
   const statusLabel = product.status === 'Active' ? 'Còn hàng' : 'Hết hàng';
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 font-outfit">
+    <div className="flex flex-col min-h-screen bg-white font-outfit">
       <Breadcrumbs
         items={[
           { label: 'Trang chủ', href: '/' },
@@ -59,40 +58,45 @@ const ProductDetail: React.FC = () => {
       />
 
       {/* Main Content */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-10">
-        {/* Two Column Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-8">
+        {/* Two Column Layout (1:1 approximately) */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
           {/* Left: Gallery */}
           <ProductGallery images={product.images} alt={product.name} />
 
-          {/* Right: Product Info */}
-          <div className="space-y-8">
-            <ProductInfo
-              title={product.name}
-              price={product.price}
-              onAddToCart={handleAddToCart}
-              onBuyNow={handleBuyNow}
-            />
+          {/* Right: Product Details Stack */}
+          <div className="flex flex-col h-full justify-between">
+            <div className="space-y-6">
+              <ProductInfo
+                title={product.name}
+                price={product.price}
+                onAddToCart={handleAddToCart}
+                onBuyNow={handleBuyNow}
+              />
 
-            <ProductMeta
-              productId={product.product_id}
-              category={product.category}
-              status={statusLabel as any}
-              condition={product.condition}
-              location={product.campus}
-              proximity={product.proximity || 'Chưa rõ'}
-            />
+              <ProductMeta
+                productId={product.product_id}
+                category={product.category}
+                status={statusLabel as any}
+                condition={product.condition}
+                location={product.campus}
+                proximity={product.proximity || '<1km'}
+              />
+            </div>
 
-            <SellerCard
-              sellerName={product.seller?.name || 'Người bán'}
-              sellerAvatar={product.seller?.avatar || 'https://via.placeholder.com/100'}
-              rating={product.seller?.rating || 5}
-              isOnline={product.seller?.isOnline || false}
-            />
+            <div className="mt-8 pt-8 border-t border-gray-100">
+              <SellerCard
+                sellerName={product.seller?.name || 'Người bán'}
+                sellerAvatar={product.seller?.avatar || 'https://via.placeholder.com/100'}
+                rating={product.seller?.rating || 5}
+                isOnline={product.seller?.isOnline || true}
+                otherProductsCount={5}
+              />
+            </div>
           </div>
         </div>
 
-        {/* Full Width Description */}
+        {/* Full Width Description Section */}
         <ProductDescription description={product.description} />
       </main>
     </div>
