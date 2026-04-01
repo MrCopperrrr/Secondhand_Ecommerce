@@ -1,0 +1,172 @@
+[
+  {
+    "id": 1,
+    "name": "Tỉnh Tuyên Quang",
+    "wards": ["Phường Tân Quang", "Phường Phan Thiết", "Phường Minh Xuân", "Phường Ỷ La", "Phường Hưng Thành"]
+  },
+  {
+    "id": 2,
+    "name": "Tỉnh Lào Cai",
+    "wards": ["Phường Lào Cai", "Phường Phố Mới", "Phường Bắc Cường", "Phường Nam Cường", "Phường Kim Tân"]
+  },
+  {
+    "id": 3,
+    "name": "Tỉnh Thái Nguyên",
+    "wards": ["Phường Phan Đình Phùng", "Phường Trưng Vương", "Phường Quang Trung", "Phường Đồng Quang", "Phường Gia Sàng"]
+  },
+  {
+    "id": 4,
+    "name": "Tỉnh Phú Thọ",
+    "wards": ["Phường Gia Cẩm", "Phường Tiên Cát", "Phường Thọ Sơn", "Phường Bạch Hạc", "Phường Thanh Miếu"]
+  },
+  {
+    "id": 5,
+    "name": "Tỉnh Bắc Ninh",
+    "wards": ["Phường Tiền An", "Phường Vệ An", "Phường Ninh Xá", "Phường Đại Phúc", "Phường Võ Cường"]
+  },
+  {
+    "id": 6,
+    "name": "Tỉnh Hưng Yên",
+    "wards": ["Phường Hiến Nam", "Phường An Tảo", "Phường Lam Sơn", "Phường Lê Lợi", "Phường Quang Trung"]
+  },
+  {
+    "id": 7,
+    "name": "Thành phố Hải Phòng",
+    "wards": ["Quận Hồng Bàng", "Quận Ngô Quyền", "Quận Lê Chân", "Quận Hải An", "Quận Đồ Sơn"]
+  },
+  {
+    "id": 8,
+    "name": "Tỉnh Ninh Bình",
+    "wards": ["Phường Vân Giang", "Phường Thanh Bình", "Phường Phúc Thành", "Phường Nam Bình", "Phường Ninh Sơn"]
+  },
+  {
+    "id": 9,
+    "name": "Tỉnh Quảng Trị",
+    "wards": ["Phường 1", "Phường 2", "Phường 3", "Phường 5", "Phường Đông Lương"]
+  },
+  {
+    "id": 10,
+    "name": "Thành phố Đà Nẵng",
+    "wards": ["Quận Hải Châu", "Quận Thanh Khê", "Quận Sơn Trà", "Quận Ngũ Hành Sơn", "Quận Liên Chiểu"]
+  },
+  {
+    "id": 11,
+    "name": "Tỉnh Quảng Ngãi",
+    "wards": ["Phường Lê Hồng Phong", "Phường Trần Hưng Đạo", "Phường Quảng Phú", "Phường Chánh Lộ", "Phường Nghĩa Lộ"]
+  },
+  {
+    "id": 12,
+    "name": "Tỉnh Gia Lai",
+    "wards": ["Phường Tây Sơn", "Phường Diên Hồng", "Phường Yên Đỗ", "Phường Hoa Lư", "Phường Phù Đổng"]
+  },
+  {
+    "id": 13,
+    "name": "Tỉnh Khánh Hoà",
+    "wards": ["Phường Lộc Thọ", "Phường Vĩnh Nguyên", "Phường Phước Hòa", "Phường Vạn Thạnh", "Phường Phương Sài"]
+  },
+  {
+    "id": 14,
+    "name": "Tỉnh Lâm Đồng",
+    "wards": ["Phường 1", "Phường 2", "Phường 9", "Phường 10", "Phường 12"]
+  },
+  {
+    "id": 15,
+    "name": "Tỉnh Đắk Lắk",
+    "wards": ["Phường Tân Lập", "Phường Tân Lợi", "Phường Tân Hòa", "Phường Tân Tiến", "Phường Thắng Lợi"]
+  },
+  {
+    "id": 16,
+    "name": "Thành phố Hồ Chí Minh",
+    "wards": ["Quận 1", "Quận 3", "Quận 5", "Quận 7", "Quận Bình Thạnh"]
+  },
+  {
+    "id": 17,
+    "name": "Tỉnh Đồng Nai",
+    "wards": ["Phường Quyết Thắng", "Phường Thanh Bình", "Phường Hòa Bình", "Phường Tân Mai", "Phường Thống Nhất"]
+  },
+  {
+    "id": 18,
+    "name": "Tỉnh Tây Ninh",
+    "wards": ["Phường 1", "Phường 2", "Phường 3", "Phường 4", "Phường Hiệp Ninh"]
+  },
+  {
+    "id": 19,
+    "name": "Thành phố Cần Thơ",
+    "wards": ["Quận Ninh Kiều", "Quận Bình Thủy", "Quận Cái Răng", "Quận Thốt Nốt", "Quận Ô Môn"]
+  },
+  {
+    "id": 20,
+    "name": "Tỉnh Vĩnh Long",
+    "wards": ["Phường 1", "Phường 2", "Phường 8", "Phường 9", "Phường Tân Ngãi"]
+  },
+  {
+    "id": 21,
+    "name": "Tỉnh Đồng Tháp",
+    "wards": ["Phường 1", "Phường 2", "Phường 4", "Phường Hòa Thuận", "Phường Mỹ Phú"]
+  },
+  {
+    "id": 22,
+    "name": "Tỉnh Cà Mau",
+    "wards": ["Phường 1", "Phường 2", "Phường 5", "Phường Tân Xuyên", "Phường Tân Thành"]
+  },
+  {
+    "id": 23,
+    "name": "Tỉnh An Giang",
+    "wards": ["Phường Mỹ Long", "Phường Mỹ Bình", "Phường Mỹ Xuyên", "Phường Mỹ Phước", "Phường Đông Xuyên"]
+  },
+  {
+    "id": 24,
+    "name": "Thành phố Hà Nội",
+    "wards": ["Quận Hoàn Kiếm", "Quận Ba Đình", "Quận Tây Hồ", "Quận Hai Bà Trưng", "Quận Đống Đa"]
+  },
+  {
+    "id": 25,
+    "name": "Thành phố Huế",
+    "wards": ["Phường Phú Hội", "Phường Xuân Phú", "Phường Vĩnh Ninh", "Phường Thuận Lộc", "Phường Tây Lộc"]
+  },
+  {
+    "id": 26,
+    "name": "Tỉnh Lai Châu",
+    "wards": ["Phường Quyết Thắng", "Phường Quyết Tiến", "Phường Đoàn Kết", "Phường Tân Phong", "Phường Đông Phong"]
+  },
+  {
+    "id": 27,
+    "name": "Tỉnh Điện Biên",
+    "wards": ["Phường Mường Thanh", "Phường Tân Thanh", "Phường Him Lam", "Phường Thanh Bình", "Phường Nam Thanh"]
+  },
+  {
+    "id": 28,
+    "name": "Tỉnh Sơn La",
+    "wards": ["Phường Chiềng Lề", "Phường Tô Hiệu", "Phường Quyết Thắng", "Phường Quyết Tâm", "Phường Chiềng Cơi"]
+  },
+  {
+    "id": 29,
+    "name": "Tỉnh Lạng Sơn",
+    "wards": ["Phường Chi Lăng", "Phường Tam Thanh", "Phường Vĩnh Trại", "Phường Đông Kinh", "Phường Hoàng Văn Thụ"]
+  },
+  {
+    "id": 30,
+    "name": "Tỉnh Quảng Ninh",
+    "wards": ["Phường Hồng Gai", "Phường Bạch Đằng", "Phường Bãi Cháy", "Phường Cái Dăm", "Phường Giếng Đáy"]
+  },
+  {
+    "id": 31,
+    "name": "Tỉnh Thanh Hoá",
+    "wards": ["Phường Ba Đình", "Phường Lam Sơn", "Phường Đông Thọ", "Phường Ngọc Trạo", "Phường Đông Vệ"]
+  },
+  {
+    "id": 32,
+    "name": "Tỉnh Nghệ An",
+    "wards": ["Phường Lê Mao", "Phường Quang Trung", "Phường Hồng Sơn", "Phường Cửa Nam", "Phường Trường Thi"]
+  },
+  {
+    "id": 33,
+    "name": "Tỉnh Hà Tĩnh",
+    "wards": ["Phường Bắc Hà", "Phường Nam Hà", "Phường Nguyễn Du", "Phường Trần Phú", "Phường Tân Giang"]
+  },
+  {
+    "id": 34,
+    "name": "Tỉnh Cao Bằng",
+    "wards": ["Phường Hợp Giang", "Phường Sông Hiến", "Phường Tân Giang", "Phường Sông Bằng", "Phường Hòa Chung"]
+  }
+]

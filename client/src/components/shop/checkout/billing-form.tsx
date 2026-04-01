@@ -1,4 +1,13 @@
 import React, { useState } from 'react';
+import PROVINCES_DATA_RAW from '../../data/provinces.json';
+
+interface ProvinceData {
+  id: number;
+  name: string;
+  wards: string[];
+}
+
+const PROVINCES_DATA = PROVINCES_DATA_RAW as ProvinceData[];
 
 interface BillingFormData {
   fullName: string;
@@ -15,29 +24,19 @@ interface BillingFormProps {
   onFormChange: (data: BillingFormData) => void;
 }
 
-// Mock data for dropdowns
-const PROVINCES = [
-  'Hà Nội',
-  'TP. Hồ Chí Minh',
-  'Đà Nẵng',
-  'Hải Phòng',
-  'Cần Thơ',
-];
+const PROVINCES = PROVINCES_DATA.map((p: ProvinceData) => p.name);
 
-const WARDS_BY_PROVINCE: Record<string, string[]> = {
-  'Hà Nội': ['Ba Đình', 'Hoàn Kiếm', 'Tây Hồ', 'Cầu Giấy', 'Đống Đa'],
-  'TP. Hồ Chí Minh': ['Quận 1', 'Quận 2', 'Quận 3', 'Quận 4', 'Quận 5'],
-  'Đà Nẵng': ['Hải Châu', 'Thanh Khê', 'Sơn Trà', 'Ngũ Hành Sơn'],
-  'Hải Phòng': ['Hồng Bàng', 'Ngô Quyền', 'Lê Chân', 'Kiến An'],
-  'Cần Thơ': ['Ninh Kiều', 'Bình Thủy', 'Cờ Đỏ', 'Phong Điền'],
-};
+const WARDS_BY_PROVINCE: Record<string, string[]> = PROVINCES_DATA.reduce((acc: Record<string, string[]>, curr: ProvinceData) => {
+  acc[curr.name] = curr.wards;
+  return acc;
+}, {} as Record<string, string[]>);
 
 const CAMPUSES = [
-  'ĐH Công Nghệ',
-  'ĐH Kinh Tế',
-  'ĐH Ngoại Ngữ',
-  'ĐH Khoa Học Tự Nhiên',
-  'ĐH Sư Phạm',
+  'Trường ĐH Bách khoa TPHCM',
+  'Trường ĐH Công nghệ thông tin',
+  'Trường ĐH Khoa học Tự nhiên',
+  'Trường ĐH Kinh tế - Luật',
+  'Trường ĐH Quốc tế',
 ];
 
 export function BillingForm({ onFormChange }: BillingFormProps) {
@@ -148,7 +147,7 @@ export function BillingForm({ onFormChange }: BillingFormProps) {
               className="w-full appearance-none px-4 py-3 border border-gray-200 rounded-none text-[#191C1F] focus:outline-none focus:border-[#1E40AF] transition-all bg-white cursor-pointer"
             >
               <option value="">Thành phố Hồ Chí Minh</option>
-              {PROVINCES.map((prov) => (
+              {PROVINCES.map((prov: string) => (
                 <option key={prov} value={prov}>
                   {prov}
                 </option>
@@ -173,7 +172,7 @@ export function BillingForm({ onFormChange }: BillingFormProps) {
               className="w-full appearance-none px-4 py-3 border border-gray-200 rounded-none text-[#191C1F] focus:outline-none focus:border-[#1E40AF] transition-all bg-white cursor-pointer"
             >
               <option value="">Phường Diên Hồng</option>
-              {availableWards.map((ward) => (
+              {availableWards.map((ward: string) => (
                 <option key={ward} value={ward}>
                   {ward}
                 </option>
@@ -222,7 +221,7 @@ export function BillingForm({ onFormChange }: BillingFormProps) {
               className="w-full appearance-none px-4 py-3 border border-gray-200 rounded-none text-[#191C1F] focus:outline-none focus:border-[#1E40AF] transition-all bg-white cursor-pointer"
             >
               <option value="">Trường Đại học Bách khoa TPHCM</option>
-              {CAMPUSES.map((campus) => (
+              {CAMPUSES.map((campus: string) => (
                 <option key={campus} value={campus}>
                   {campus}
                 </option>
