@@ -1,7 +1,8 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import Breadcrumbs from '../../components/shop/Breadcrumbs';
 import { ProductGallery } from '../../components/shop/product-detail/product-gallery';
-import { ProductInfo } from '../../components/shop/product-detail/product-info';
+import { ProductTitle } from '../../components/shop/product-detail/product-title';
+import { ProductPricing } from '../../components/shop/product-detail/product-pricing';
 import { ProductMeta } from '../../components/shop/product-detail/product-meta';
 import { SellerCard } from '../../components/shop/product-detail/seller-card';
 import { ProductDescription } from '../../components/shop/product-detail/product-description';
@@ -33,13 +34,10 @@ const ProductDetail: React.FC = () => {
 
   if (!product) {
     return (
-      <div className="flex flex-col min-h-screen bg-gray-50 items-center justify-center font-outfit">
-        <h1 className="text-2xl font-bold mb-4">Không tìm thấy sản phẩm!</h1>
-        <button 
-           onClick={() => navigate('/')}
-           className="bg-[#1E40AF] text-white px-6 py-2 font-bold"
-        >
-          QUAY VỀ TRANG CHỦ
+      <div className="flex flex-col min-h-screen bg-white items-center justify-center p-4">
+        <h2 className="text-2xl font-bold mb-4">Sản phẩm không tồn tại</h2>
+        <button onClick={() => navigate('/')} className="bg-[#1E40AF] text-white px-6 py-2">
+          Quay về trang chủ
         </button>
       </div>
     );
@@ -65,14 +63,9 @@ const ProductDetail: React.FC = () => {
           <ProductGallery images={product.images} alt={product.name} />
 
           {/* Right: Product Details Stack */}
-          <div className="flex flex-col h-full justify-between">
-            <div className="space-y-6">
-              <ProductInfo
-                title={product.name}
-                price={product.price}
-                onAddToCart={handleAddToCart}
-                onBuyNow={handleBuyNow}
-              />
+          <div className="flex flex-col h-full">
+            <div className="space-y-4">
+              <ProductTitle title={product.name} />
 
               <ProductMeta
                 productId={product.product_id}
@@ -81,6 +74,12 @@ const ProductDetail: React.FC = () => {
                 condition={product.condition}
                 location={product.campus}
                 proximity={product.proximity || '<1km'}
+              />
+
+              <ProductPricing
+                price={product.price}
+                onAddToCart={handleAddToCart}
+                onBuyNow={handleBuyNow}
               />
             </div>
 
