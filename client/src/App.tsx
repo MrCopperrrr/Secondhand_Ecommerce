@@ -18,6 +18,8 @@ import CheckoutSuccess from './pages/shop/CheckoutSuccess';
 // Other Modules
 import CreateProduct from './pages/seller/CreateProduct';
 import Chat from './pages/communication/Chat';
+import UserProfile from './pages/profile/UserProfile';
+import AddressPayment from './pages/profile/AddressPayment';
 
 const AppContent: React.FC = () => {
   const location = useLocation();
@@ -25,7 +27,7 @@ const AppContent: React.FC = () => {
   const isAuthPage = authPaths.includes(location.pathname);
 
   return (
-    <div className="app-container flex flex-col min-h-screen bg-gray-50">
+    <div className="app-container flex flex-col min-h-screen bg-white font-roboto">
       {!isAuthPage && <Navbar />}
       
       <main className="flex-grow">
@@ -40,6 +42,9 @@ const AppContent: React.FC = () => {
           <Route path="/checkout/success" element={<CheckoutSuccess />} />
           <Route path="/sell" element={<CreateProduct />} />
           <Route path="/chat" element={<Chat />} />
+          <Route path="/profile" element={<UserProfile />} />
+          <Route path="/profile/address" element={<AddressPayment />} />
+          <Route path="/profile/password" element={<UserProfile />} />
         </Routes>
       </main>
 

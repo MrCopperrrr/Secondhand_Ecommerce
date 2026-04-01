@@ -64,7 +64,7 @@ const Cart: React.FC = () => {
 
   if (cartItems.length === 0) {
     return (
-      <div className="flex flex-col min-h-screen bg-gray-50">
+      <div className="flex flex-col min-h-screen bg-white">
         <Breadcrumbs
           items={[
             { label: 'Trang chủ', href: '/' },
@@ -79,7 +79,7 @@ const Cart: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 font-roboto">
+    <div className="flex flex-col min-h-screen bg-white font-roboto">
       <Breadcrumbs
         items={[
           { label: 'Trang chủ', href: '/' },
@@ -135,8 +135,8 @@ const Cart: React.FC = () => {
               {/* Footer Action */}
               <div className="p-6 bg-gray-50/50">
                 <Link to="/">
-                  <button className="px-8 py-3 border-2 border-[#1E40AF] text-[#1E40AF] font-bold rounded-none hover:bg-blue-50 transition-all uppercase tracking-widest text-sm">
-                    TÌM THÊM SẢN PHẨM
+                  <button className="px-8 py-3 border-2 border-[#1E40AF] text-[#1E40AF] font-bold rounded-none hover:bg-blue-50 transition-all text-sm">
+                    Tìm thêm sản phẩm
                   </button>
                 </Link>
               </div>

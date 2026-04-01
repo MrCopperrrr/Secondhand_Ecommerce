@@ -15,7 +15,7 @@ export function SuccessCard({ orderId = '1001' }: SuccessCardProps) {
 
       {/* Confirmation Message */}
       <div className="mb-10">
-        <h1 className="text-3xl md:text-4xl font-bold text-[#191C1F] mb-4 uppercase tracking-tighter">
+        <h1 className="text-3xl md:text-4xl font-bold text-[#191C1F] mb-4 tracking-tighter">
           Thanh toán thành công
         </h1>
         <div className="w-20 h-1 bg-[#2DB224] mx-auto mb-6" />
@@ -32,7 +32,7 @@ export function SuccessCard({ orderId = '1001' }: SuccessCardProps) {
           className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 border-2 border-[#1E40AF] rounded-none hover:bg-blue-50 transition-all duration-300 whitespace-nowrap bg-white shadow-sm"
         >
           <ChevronLeft size={22} className="text-[#1E40AF]" />
-          <span className="font-bold text-[#1E40AF] uppercase tracking-wider">Trang chủ</span>
+          <span className="font-bold text-[#1E40AF]">Trang chủ</span>
         </Link>
 
         {/* Primary Button - View Order */}
@@ -40,7 +40,7 @@ export function SuccessCard({ orderId = '1001' }: SuccessCardProps) {
           to={`/order/${orderId}`}
           className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 bg-[#1E40AF] text-white rounded-none hover:bg-blue-800 transition-all duration-300 whitespace-nowrap shadow-md"
         >
-          <span className="font-bold uppercase tracking-wider text-base">Xem đơn hàng</span>
+          <span className="font-bold text-base">Xem đơn hàng</span>
           <ChevronRight size={22} />
         </Link>
       </div>

@@ -19,7 +19,6 @@ import {
 
 const Navbar: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('Tất cả');
-  const [isLoggedIn] = useState(false); // Giả lập trạng thái đăng nhập
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
   const { itemCount } = useCart();
@@ -155,26 +154,16 @@ const Navbar: React.FC = () => {
                   <User size={20} className="text-[#FFFFFF]" />
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48 bg-white border-gray-200 shadow-lg mt-2 p-0">
-                {!isLoggedIn ? (
-                  <>
-                    <DropdownMenuItem asChild className="cursor-pointer py-3 px-4 focus:bg-gray-100 outline-none">
-                      <Link to="/login">Đăng nhập</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild className="cursor-pointer py-3 px-4 focus:bg-gray-100 outline-none border-t border-gray-100">
-                      <Link to="/register">Đăng ký</Link>
-                    </DropdownMenuItem>
-                  </>
-                ) : (
-                  <>
-                    <DropdownMenuItem asChild className="cursor-pointer py-3 px-4 focus:bg-gray-100 outline-none">
-                      <Link to="/profile">Hồ sơ của tôi</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem className="cursor-pointer py-3 px-4 focus:bg-gray-100 outline-none border-t border-gray-100 text-red-600">
-                      Đăng xuất
-                    </DropdownMenuItem>
-                  </>
-                )}
+              <DropdownMenuContent align="end" className="w-48 bg-white border-gray-200 shadow-lg mt-2 p-0 rounded-none">
+                <DropdownMenuItem asChild className="cursor-pointer py-3 px-4 focus:bg-gray-100 outline-none rounded-none">
+                  <Link to="/login" className="text-sm font-medium text-[#191C1F]">Đăng nhập</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild className="cursor-pointer py-3 px-4 focus:bg-gray-100 outline-none border-t border-gray-100 rounded-none">
+                  <Link to="/register" className="text-sm font-medium text-[#191C1F]">Đăng ký</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild className="cursor-pointer py-3 px-4 focus:bg-gray-100 outline-none border-t border-gray-100 rounded-none">
+                  <Link to="/profile" className="text-sm font-medium text-[#191C1F]">Tài khoản</Link>
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

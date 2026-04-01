@@ -1,4 +1,3 @@
-import React from 'react';
 
 const formatPrice = (price: number): string => {
   return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
@@ -88,13 +87,13 @@ export function CheckoutSummary({ items, shippingFee, onCheckout, isFormValid }:
       <button
         onClick={onCheckout}
         disabled={!isFormValid}
-        className={`w-full font-bold py-3.5 rounded-none transition-all duration-300 uppercase tracking-widest text-sm ${
+        className={`w-full font-bold py-3.5 rounded-none transition-all duration-300 text-sm ${
           isFormValid 
             ? 'bg-[#1E40AF] hover:bg-blue-800 text-white cursor-pointer' 
             : 'bg-gray-300 text-gray-500 cursor-not-allowed opacity-70'
         }`}
       >
-        {isFormValid ? 'THANH TOÁN' : 'Vui lòng hoàn tất thông tin'}
+        {isFormValid ? 'Thanh toán' : 'Vui lòng hoàn tất thông tin'}
       </button>
       
       {!isFormValid && (
