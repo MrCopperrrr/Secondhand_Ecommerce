@@ -51,8 +51,10 @@ const Checkout: React.FC = () => {
     navigate('/checkout/success');
   };
 
+  const shippingFee = formData.deliveryMethod === 'shipping' ? 20000 : 0;
+
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 font-roboto">
+    <div className="flex flex-col min-h-screen bg-white font-roboto">
       <Breadcrumbs
         items={[
           { label: 'Trang chủ', href: '/' },
@@ -62,9 +64,7 @@ const Checkout: React.FC = () => {
       />
 
       {/* Main Content */}
-      <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-12">
-        <h1 className="text-4xl font-bold text-[#191C1F] mb-12 uppercase tracking-tighter decoration-[#1E40AF] underline underline-offset-8">THANH TOÁN</h1>
-
+      <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-12 bg-white">
         {/* Two Column Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Left Column - Form (65%) */}
@@ -81,7 +81,11 @@ const Checkout: React.FC = () => {
 
           {/* Right Column - Summary (35%) */}
           <div className="lg:col-span-1">
-            <CheckoutSummary items={itemsToCheckout} onCheckout={handleCheckout} />
+            <CheckoutSummary 
+              items={itemsToCheckout} 
+              shippingFee={shippingFee}
+              onCheckout={handleCheckout} 
+            />
           </div>
         </div>
       </main>

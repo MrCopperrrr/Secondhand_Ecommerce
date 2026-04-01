@@ -36,46 +36,47 @@ export function PaymentMethodSelector({
   onMethodChange,
 }: PaymentMethodSelectorProps) {
   return (
-    <div className="bg-white rounded-none border border-[#C9CFD2] p-8 mt-8 font-roboto shadow-sm">
-      <h2 className="text-xl font-bold text-[#191C1F] mb-8 pb-4 border-b-2 border-[#1E40AF] inline-block uppercase">
+    <div className="bg-white border border-[#C9CFD2] p-8 mt-12 font-roboto shadow-sm">
+      <h2 className="text-2xl font-bold text-[#191C1F] mb-10">
         Phương thức thanh toán
       </h2>
 
-      <div className="grid grid-cols-2 gap-6 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         {PAYMENT_METHODS.map((method) => {
           const Icon = method.icon;
           const isSelected = selectedMethod === method.id;
 
           return (
-            <button
+            <div
               key={method.id}
+              className="flex flex-col items-center justify-between h-full group cursor-pointer"
               onClick={() => onMethodChange(method.id)}
-              className={`flex flex-col items-center justify-center p-6 rounded-none border-2 transition-all duration-300 ${
-                isSelected
-                  ? 'border-[#1E40AF] bg-blue-50 shadow-md'
-                  : 'border-gray-100 bg-gray-50 hover:border-gray-300 hover:bg-gray-100'
-              }`}
             >
-              <div className={`p-4 rounded-full mb-4 bg-white shadow-sm border border-gray-100 ${
-                  isSelected ? 'text-[#1E40AF]' : 'text-[#686868]'
-                }`}>
-                <Icon
-                  size={32}
-                />
+              <div className="flex flex-col items-center">
+                <div className="mb-4">
+                  {/* Custom color icons if needed, using lucide for now */}
+                  <div className={`p-0 ${
+                    method.id === 'cod' ? 'text-green-500' : 
+                    method.id === 'bank' ? 'text-orange-500' :
+                    method.id === 'ewallet' ? 'text-pink-500' :
+                    'text-blue-500'
+                  }`}>
+                    <Icon size={40} strokeWidth={1.5} />
+                  </div>
+                </div>
+                <span className="text-xs text-center font-normal text-[#191C1F] max-w-[100px] leading-tight">
+                  {method.label}
+                </span>
               </div>
-              <span
-                className={`text-xs text-center font-bold uppercase tracking-wider ${
-                  isSelected ? 'text-[#1E40AF]' : 'text-[#191C1F]'
-                }`}
-              >
-                {method.label}
-              </span>
-              <div className="mt-4 w-6 h-6 rounded-full border-2 border-[#C9CFD2] flex items-center justify-center bg-white">
-                {isSelected && (
-                  <div className="w-3 h-3 rounded-full bg-[#1E40AF]" />
-                )}
+              
+              <div className="mt-4 pb-2">
+                <div className="w-5 h-5 rounded-full border-2 border-[#C9CFD2] flex items-center justify-center bg-white transition-colors group-hover:border-[#1E40AF]">
+                  {isSelected && (
+                    <div className="w-2.5 h-2.5 rounded-full bg-[#1E40AF]" />
+                  )}
+                </div>
               </div>
-            </button>
+            </div>
           );
         })}
       </div>
