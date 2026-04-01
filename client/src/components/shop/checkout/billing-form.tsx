@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import PROVINCES_DATA_RAW from '../../../data/provinces.json';
+import UNIVERSITIES_DATA_RAW from '../../../data/universities.json';
 import { Search, ChevronDown, Check } from 'lucide-react';
 import * as Popover from '@radix-ui/react-popover';
 
@@ -10,6 +11,7 @@ interface ProvinceData {
 }
 
 const PROVINCES_DATA = PROVINCES_DATA_RAW as ProvinceData[];
+const UNIVERSITIES_DATA = UNIVERSITIES_DATA_RAW as Record<string, string[]>;
 
 interface BillingFormData {
   fullName: string;
@@ -25,14 +27,6 @@ interface BillingFormData {
 interface BillingFormProps {
   onFormChange: (data: BillingFormData) => void;
 }
-
-const CAMPUSES = [
-  'Trường ĐH Bách khoa TPHCM',
-  'Trường ĐH Công nghệ thông tin',
-  'Trường ĐH Khoa học Tự nhiên',
-  'Trường ĐH Kinh tế - Luật',
-  'Trường ĐH Quốc tế',
-];
 
 const normalizeStr = (str: string) => {
   return str.toLowerCase()
@@ -99,7 +93,7 @@ function SearchableSelect({ label, value, options, onChange, placeholder, disabl
               />
             </div>
             
-            <div className="max-h-60 overflow-y-auto py-1">
+            <div className="max-h-60 overflow-y-auto py-1 no-scrollbar">
               {filteredOptions.length > 0 ? (
                 filteredOptions.map((opt) => (
                   <button
@@ -147,11 +141,19 @@ export function BillingForm({ onFormChange }: BillingFormProps) {
     return province ? province.wards : [];
   }, [formData.province]);
 
+  const campusOptions = useMemo(() => {
+    if (!formData.province) return [];
+    return UNIVERSITIES_DATA[formData.province] || [];
+  }, [formData.province]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>, field: keyof BillingFormData) => {
     const newData = { ...formData, [field]: e.target.value };
+    
     if (field === 'province') {
       newData.ward = '';
+      newData.campus = '';
     }
+    
     setFormData(newData);
     onFormChange(newData);
   };
@@ -160,6 +162,7 @@ export function BillingForm({ onFormChange }: BillingFormProps) {
     const newData = { ...formData, [field]: value };
     if (field === 'province') {
       newData.ward = '';
+      newData.campus = '';
     }
     setFormData(newData);
     onFormChange(newData);
@@ -171,6 +174,7 @@ export function BillingForm({ onFormChange }: BillingFormProps) {
         Thông tin thanh toán
       </h2>
 
+      {/* Row 1: Full Name */}
       <div className="grid grid-cols-1 gap-6">
         <div>
           <label className="block text-sm font-normal text-[#191C1F] mb-2">Họ và tên</label>
@@ -184,6 +188,7 @@ export function BillingForm({ onFormChange }: BillingFormProps) {
         </div>
       </div>
 
+      {/* Row 2: Phone & Email */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label className="block text-sm font-normal text-[#191C1F] mb-2">Số điện thoại</label>
@@ -207,6 +212,7 @@ export function BillingForm({ onFormChange }: BillingFormProps) {
         </div>
       </div>
 
+      {/* Row 3: Address */}
       <div className="grid grid-cols-1 gap-6">
         <div>
           <label className="block text-sm font-normal text-[#191C1F] mb-2">Địa chỉ</label>
@@ -220,6 +226,7 @@ export function BillingForm({ onFormChange }: BillingFormProps) {
         </div>
       </div>
 
+      {/* Row 4: Province & Ward */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <SearchableSelect
           label="Tỉnh/Thành phố"
@@ -238,6 +245,7 @@ export function BillingForm({ onFormChange }: BillingFormProps) {
         />
       </div>
 
+      {/* Row 5: Delivery Method & Campus */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label className="block text-sm font-normal text-[#191C1F] mb-2">Lựa chọn giao hàng</label>
@@ -256,26 +264,14 @@ export function BillingForm({ onFormChange }: BillingFormProps) {
           </div>
         </div>
 
-        <div>
-          <label className="block text-sm font-normal text-[#191C1F] mb-2">Trường Đại học/Campus</label>
-          <div className="relative">
-            <select
-              value={formData.campus}
-              onChange={(e) => handleChange(e, 'campus')}
-              className="w-full appearance-none px-4 py-3 border border-gray-200 rounded-none text-[#191C1F] focus:outline-none focus:border-[#1E40AF] transition-all bg-white cursor-pointer text-gray-400"
-            >
-              <option value="" disabled>Lựa chọn Campus</option>
-              {CAMPUSES.map((campus: string) => (
-                <option key={campus} value={campus} className="text-[#191C1F]">
-                  {campus}
-                </option>
-              ))}
-            </select>
-            <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
-              <ChevronDown className="w-4 h-4 text-gray-500" />
-            </div>
-          </div>
-        </div>
+        <SearchableSelect
+          label="Trường Đại học/Campus"
+          value={formData.campus}
+          options={campusOptions}
+          onChange={(val) => handleSelectChange('campus', val)}
+          placeholder={formData.province ? "Chọn trường..." : "Vui lòng chọn tỉnh thành trước"}
+          disabled={!formData.province}
+        />
       </div>
     </div>
   );
