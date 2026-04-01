@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   ShoppingCart,
   Bell,
@@ -19,6 +19,8 @@ import {
 const Navbar: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('Tất cả');
   const [isLoggedIn] = useState(false); // Giả lập trạng thái đăng nhập
+  const [searchQuery, setSearchQuery] = useState('');
+  const navigate = useNavigate();
 
   const categories = [
     'Tất cả',
@@ -31,6 +33,31 @@ const Navbar: React.FC = () => {
     'Phương tiện di chuyển',
     'Dụng cụ thể thao',
   ];
+
+  const handleSearch = () => {
+    const params = new URLSearchParams();
+    
+    if (searchQuery.trim()) {
+      params.append('q', searchQuery.trim());
+    }
+    
+    if (selectedCategory !== 'Tất cả') {
+      params.append('category', selectedCategory);
+    }
+
+    const queryString = params.toString();
+    if (queryString) {
+      navigate(`/${queryString ? '?' + queryString : ''}`);
+    } else {
+      navigate('/');
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
 
   return (
     <nav className="w-full bg-[#57B7F5]">
@@ -89,10 +116,16 @@ const Navbar: React.FC = () => {
               <input
                 type="text"
                 placeholder="Tìm kiếm..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={handleKeyDown}
                 className="flex-1 px-4 py-2 text-[#191C1F] placeholder-[#77878F] focus:outline-none text-sm bg-white rounded-none"
               />
 
-              <button className="px-4 hover:bg-gray-50 transition-colors bg-white rounded-none">
+              <button 
+                onClick={handleSearch}
+                className="px-4 hover:bg-gray-50 transition-colors bg-white rounded-none"
+              >
                 <Search size={18} className="text-[#77878F]" />
               </button>
             </div>
