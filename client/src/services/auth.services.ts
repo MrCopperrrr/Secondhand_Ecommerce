@@ -11,5 +11,9 @@ export const authService = {
 
   logout: (refreshToken: string) => {
     return api.post('/users/logout', { refresh_token: refreshToken });
+  },
+
+  getMe: () => {
+    return api.get('/users/me');
   }
 };

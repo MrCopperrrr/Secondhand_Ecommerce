@@ -1,18 +1,46 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { CheckCircle, Eye, EyeOff, Folder, ChevronDown, X } from 'lucide-react';
 import Breadcrumbs from '../../components/shop/Breadcrumbs';
 import { ProfileSidebar } from '../../components/profile/profile-sidebar';
+import { authService } from '../../services/auth.services';
 
 const UserProfile: React.FC = () => {
   const [formData, setFormData] = useState({
-    fullName: 'Nguyễn Văn A',
-    phone: '0123456789',
-    email: 'example@example.edu.vn',
-    address: '258 Lý Thường Kiệt, Phường Diên Hồng, Thành phố Hồ Chí Minh (Trường Đại học Bách khoa TPHCM)',
+    fullName: '',
+    phone: '',
+    email: '',
+    address: 'Chưa cập nhật',
     currentPassword: '',
     newPassword: '',
     confirmPassword: '',
   });
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const res = await authService.getMe();
+        const user = res.data.result;
+        setFormData(prev => ({
+          ...prev,
+          fullName: user.username || 'Người dùng mới',
+          phone: user.phone_number || '',
+          email: user.email || '',
+          // Sẽ cập nhật address sau nếu có trong DB schema
+        }));
+        if (user.avatar) {
+          setAvatarUrl(user.avatar);
+        }
+      } catch (error) {
+        console.error('Lỗi khi tải thông tin cá nhân:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, []);
 
   const [visibility, setVisibility] = useState({
     currentPassword: false,
@@ -75,13 +103,22 @@ const UserProfile: React.FC = () => {
     setStudentCardPreview(null);
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="w-12 h-12 border-4 border-[#1E40AF] border-t-transparent rounded-full animate-spin"></div>
+        <p className="ml-4 text-[#191C1F] font-medium italic">Đang tải hồ sơ...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col min-h-screen bg-white font-roboto">
       <Breadcrumbs
         items={[
           { label: 'Trang chủ', href: '/' },
           { label: 'Tài khoản' },
-          { label: 'hồ sơ cá nhân' },
+          { label: 'Hồ sơ cá nhân' },
         ]}
       />
 

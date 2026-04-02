@@ -34,7 +34,7 @@ const AddressPayment: React.FC = () => {
         items={[
           { label: 'Trang chủ', href: '/' },
           { label: 'Tài khoản' },
-          { label: 'địa chỉ & thanh toán' },
+          { label: 'Địa chỉ & Thanh toán' },
         ]}
       />
 

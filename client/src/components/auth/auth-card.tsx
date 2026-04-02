@@ -18,41 +18,80 @@ export function AuthCard({ initialTab = 'login' }: { initialTab?: 'login' | 'reg
     confirmPassword: '',
     phone_number: '',
   });
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
+    // Real-time clear error when typing
+    if (errors[field]) {
+      setErrors(prev => {
+        const next = { ...prev };
+        delete next[field];
+        return next;
+      });
+    }
+
+    // Real-time format validation (optional UX improvement)
+    if (activeTab === 'register') {
+      if (field === 'email' && value && !value.endsWith('.edu.vn')) {
+        setErrors(prev => ({ ...prev, email: 'Email phải có đuôi .edu.vn mới được tạo tài khoản' }));
+      } else if (field === 'name' && value.length > 100) {
+        setErrors(prev => ({ ...prev, name: 'Tên người dùng không quá 100 kí tự' }));
+      }
+    }
+    // Specific case for confirmPassword
+    if (field === 'confirmPassword' && errors.confirm_password) {
+      setErrors(prev => {
+        const next = { ...prev };
+        delete next.confirm_password;
+        return next;
+      });
+    }
   };
 
- const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  try {
-    if (activeTab === 'login') {
-      // Gọi API Login
-      const res = await authService.login({
-        email: formData.email,
-        password: formData.password
-      });
-      handleAuthSuccess(res.data.result);
-    } else {
-      // Gọi API Register
-      const res = await authService.register({
-        name: formData.name,
-        email: formData.email,
-        password: formData.password,
-        confirm_password: formData.confirmPassword, 
-        phone_number: formData.phone_number        
-      });
-      handleAuthSuccess(res.data.result);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrors({}); // Clear previous errors
+
+    try {
+      if (activeTab === 'login') {
+        // Gọi API Login
+        const res = await authService.login({
+          email: formData.email,
+          password: formData.password
+        });
+        handleAuthSuccess(res.data.result);
+      } else {
+        // Gọi API Register
+        const res = await authService.register({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+          confirm_password: formData.confirmPassword, 
+          phone_number: formData.phone_number        
+        });
+        handleAuthSuccess(res.data.result);
+      }
+    } catch (error: any) {
+      const errorData = error.response?.data;
+      
+      if (errorData?.errors) {
+        // Backend returns errors object for validation (422)
+        setErrors(errorData.errors);
+      } else {
+        // Handle general errors (500 or network)
+        let errorMessage = 'Có lỗi xảy ra';
+        if (errorData?.message) errorMessage = errorData.message;
+        else if (errorData?.error) errorMessage = typeof errorData.error === 'string' ? errorData.error : JSON.stringify(errorData.error);
+        else if (error.message) errorMessage = error.message;
+        
+        alert(errorMessage);
+      }
     }
-  } catch (error: any) {
-    const serverErrors = error.response?.data?.errors;
-    const firstError = serverErrors ? Object.values(serverErrors)[0] : 'Có lỗi xảy ra';
-    alert(firstError);
-  }
-};
+  };
 
   const handleAuthSuccess = (result: any) => {
     localStorage.setItem('userInfo', JSON.stringify({
@@ -91,6 +130,7 @@ export function AuthCard({ initialTab = 'login' }: { initialTab?: 'login' | 'reg
                 placeholder="Nhập email sinh viên"
                 value={formData.email}
                 onChange={(value) => handleInputChange('email', value)}
+                error={errors.email}
               />
               <AuthInput
                 label="Mật khẩu"
@@ -104,6 +144,7 @@ export function AuthCard({ initialTab = 'login' }: { initialTab?: 'login' | 'reg
                 value={formData.password}
                 onChange={(value) => handleInputChange('password', value)}
                 showPasswordToggle
+                error={errors.password}
               />
             </>
           ) : (
@@ -115,6 +156,7 @@ export function AuthCard({ initialTab = 'login' }: { initialTab?: 'login' | 'reg
                 placeholder="Nhập tên người dùng"
                 value={formData.name}
                 onChange={(value) => handleInputChange('name', value)}
+                error={errors.name}
               />
               <AuthInput
                 label="Email sinh viên"
@@ -122,6 +164,7 @@ export function AuthCard({ initialTab = 'login' }: { initialTab?: 'login' | 'reg
                 placeholder="Nhập email sinh viên"
                 value={formData.email}
                 onChange={(value) => handleInputChange('email', value)}
+                error={errors.email}
               />
               <AuthInput
                 label="Mật khẩu"
@@ -130,6 +173,7 @@ export function AuthCard({ initialTab = 'login' }: { initialTab?: 'login' | 'reg
                 value={formData.password}
                 onChange={(value) => handleInputChange('password', value)}
                 showPasswordToggle
+                error={errors.password}
               />
               <AuthInput
                 label="Xác nhận mật khẩu"
@@ -138,6 +182,7 @@ export function AuthCard({ initialTab = 'login' }: { initialTab?: 'login' | 'reg
                 value={formData.confirmPassword}
                 onChange={(value) => handleInputChange('confirmPassword', value)}
                 showPasswordToggle
+                error={errors.confirm_password}
               />
               <AuthInput
               label="Số điện thoại"
@@ -145,6 +190,7 @@ export function AuthCard({ initialTab = 'login' }: { initialTab?: 'login' | 'reg
               placeholder="Nhập số điện thoại (10 số)"
               value={formData.phone_number}
               onChange={(value) => handleInputChange('phone_number', value)} 
+              error={errors.phone_number}
             />
             </>
           )}

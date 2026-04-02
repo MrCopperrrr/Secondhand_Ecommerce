@@ -1,13 +1,17 @@
+import 'dotenv/config';
 import cors from 'cors';
 import { userRouter } from './src/routes/users.routes';
 import express from 'express'
-import databaseService from './src/services/database.services.js'
+import databaseService from './src/services/database.services'
 const app = express()
-const port= process.env.PORT
+const port = process.env.PORT || 3001
 app.use(cors())
 app.use(express.json())
 app.use('/users', userRouter)
-databaseService.connect()
-app.listen(port, ()=>{
-    console.log(`Server is running on Port ${port}`)
+databaseService.connect().then(() => {
+    app.listen(port, () => {
+        console.log(`Server is running accurately at: http://localhost:${port}`)
+    })
+}).catch(err => {
+    console.error("Critical error starting server:", err)
 })

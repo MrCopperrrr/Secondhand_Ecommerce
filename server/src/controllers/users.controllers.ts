@@ -30,3 +30,13 @@ export const logoutController= async (req: Request, res: Response) => {
             message: 'Logout success'
         })
 }
+
+export const getMeController = async (req: Request, res: Response) => {
+    const { decoded_authorization } = req as any
+    const user_id = decoded_authorization.user_id
+    const user = await userService.getMe(user_id)
+    return res.json({
+        message: 'Get profile success',
+        result: user
+    })
+}
