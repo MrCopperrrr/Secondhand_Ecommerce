@@ -16,6 +16,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
+import { authService } from '../../services/auth.services';
 
 const Navbar: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('Tất cả');
@@ -150,20 +151,44 @@ const Navbar: React.FC = () => {
             
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="hover:opacity-80 transition-opacity outline-none">
-                  <User size={20} className="text-[#FFFFFF]" />
+                <button className="hover:opacity-80 transition-opacity outline-none p-1">
+                  <User size={22} className="text-[#FFFFFF]" />
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48 bg-white border-gray-200 shadow-lg mt-2 p-0 rounded-none">
-                <DropdownMenuItem asChild className="cursor-pointer py-3 px-4 focus:bg-gray-100 outline-none rounded-none">
-                  <Link to="/login" className="text-sm font-medium text-[#191C1F]">Đăng nhập</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild className="cursor-pointer py-3 px-4 focus:bg-gray-100 outline-none border-t border-gray-100 rounded-none">
-                  <Link to="/register" className="text-sm font-medium text-[#191C1F]">Đăng ký</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild className="cursor-pointer py-3 px-4 focus:bg-gray-100 outline-none border-t border-gray-100 rounded-none">
-                  <Link to="/profile" className="text-sm font-medium text-[#191C1F]">Tài khoản</Link>
-                </DropdownMenuItem>
+              <DropdownMenuContent align="end" className="w-52 bg-white border-gray-200 shadow-xl mt-3 p-0 rounded-none z-[60]">
+                {localStorage.getItem('userInfo') ? (
+                  <>
+                    <DropdownMenuItem asChild className="cursor-pointer py-3 px-5 focus:bg-gray-100 outline-none rounded-none">
+                      <Link to="/profile" className="flex items-center gap-3 text-sm font-medium text-[#191C1F]">
+                        <User size={18} />
+                        Tài khoản của tôi
+                      </Link>
+                    </DropdownMenuItem>
+                    <div className="border-t border-gray-100"></div>
+                    <DropdownMenuItem 
+                      onClick={() => {
+                        const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
+                        authService.logout(userInfo.refresh_token).finally(() => {
+                          localStorage.removeItem('userInfo');
+                          window.location.href = '/login';
+                        });
+                      }}
+                      className="cursor-pointer py-3 px-5 focus:bg-red-50 text-red-600 outline-none rounded-none flex items-center gap-3 text-sm font-bold"
+                    >
+                      Đăng xuất
+                    </DropdownMenuItem>
+                  </>
+                ) : (
+                  <>
+                    <DropdownMenuItem asChild className="cursor-pointer py-3 px-5 focus:bg-gray-100 outline-none rounded-none">
+                      <Link to="/login" className="text-sm font-medium text-[#191C1F]">Đăng nhập</Link>
+                    </DropdownMenuItem>
+                    <div className="border-t border-gray-100"></div>
+                    <DropdownMenuItem asChild className="cursor-pointer py-3 px-5 focus:bg-gray-100 outline-none rounded-none">
+                      <Link to="/register" className="text-sm font-medium text-[#191C1F]">Đăng ký</Link>
+                    </DropdownMenuItem>
+                  </>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

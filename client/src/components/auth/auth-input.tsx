@@ -11,6 +11,7 @@ interface AuthInputProps {
   value?: string;
   onChange?: (value: string) => void;
   showPasswordToggle?: boolean;
+  error?: string;
 }
 
 export function AuthInput({
@@ -21,6 +22,7 @@ export function AuthInput({
   value,
   onChange,
   showPasswordToggle = false,
+  error,
 }: AuthInputProps) {
   const [showPassword, setShowPassword] = useState(false);
   const isPassword = type === 'password';
@@ -40,7 +42,11 @@ export function AuthInput({
           placeholder={placeholder}
           value={value}
           onChange={(e) => onChange?.(e.target.value)}
-          className="w-full px-4 py-3 border border-[#C9CFD2] rounded-none text-[#191C1F] placeholder-[#686868] bg-white focus:outline-none focus:border-[#1E40AF] focus:ring-1 focus:ring-[#1E40AF] transition"
+          className={`w-full px-4 py-3 border rounded-none text-[#191C1F] placeholder-[#686868] bg-white focus:outline-none transition ${
+            error 
+              ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500' 
+              : 'border-[#C9CFD2] focus:border-[#1E40AF] focus:ring-1 focus:ring-[#1E40AF]'
+          }`}
         />
         {isPassword && showPasswordToggle && (
           <button
@@ -53,6 +59,7 @@ export function AuthInput({
           </button>
         )}
       </div>
+      {error && <p className="mt-1.5 text-xs text-red-500 font-medium">{error}</p>}
     </div>
   );
 }

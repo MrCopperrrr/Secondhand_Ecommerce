@@ -86,7 +86,7 @@ export const registerValidator= checkSchema({
         isLength:{
             options:{
                 min: 1,
-                max: 25
+                max: 100
             }
         },
         trim: true,
@@ -98,6 +98,9 @@ export const registerValidator= checkSchema({
         trim: true,
         custom: {
             options: async (value) =>{
+            if (!value.endsWith('.edu.vn')) {
+                throw new Error('Email must end with .edu.vn')
+            }
             const isExistEmail= await userService.checkEmailExist(value)
             if(isExistEmail){
                 throw new Error('Email already exists')
