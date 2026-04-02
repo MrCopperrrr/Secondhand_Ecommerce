@@ -1,25 +1,19 @@
 import axios, { InternalAxiosRequestConfig } from 'axios';
 
 const api = axios.create({
-
-    baseURL: (import.meta.env.VITE_API_BASE_URL as string) || 'http://localhost:3001/',
+    baseURL: (import.meta.env.VITE_API_BASE_URL as string) || 'http://localhost:4000/api',
 });
 
+// Add a request interceptor to include auth tokens
 api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-    const userInfoString = localStorage.getItem('userInfo')
+    const userInfoString = localStorage.getItem('userInfo');
     if (userInfoString) {
-        try {
-            const userInfo = JSON.parse(userInfoString)
-            const token = userInfo?.access_token
-            
-            if (token) {
-                config.headers.set('Authorization', `Bearer ${token}`)
-            }
-        } catch (error) {
-            console.error("Lỗi parse userInfo:", error)
+        const { token } = JSON.parse(userInfoString);
+        if (token && config.headers) {
+            config.headers.Authorization = `Bearer ${token}`;
         }
     }
-    return config
+    return config;
 });
 
-export default api
+export default api;
