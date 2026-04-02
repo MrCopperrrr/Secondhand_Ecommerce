@@ -2,7 +2,7 @@ import axios, { InternalAxiosRequestConfig } from 'axios';
 
 const api = axios.create({
 
-    baseURL: (import.meta.env.VITE_API_BASE_URL as string) || 'http://localhost:3001/',
+    baseURL: (import.meta.env.VITE_API_BASE_URL as string) || 'http://localhost:4001/',
 });
 
 api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
