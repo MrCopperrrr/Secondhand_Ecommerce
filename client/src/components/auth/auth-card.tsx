@@ -4,15 +4,19 @@ import { useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { AuthTabs } from './auth-tabs';
 import { AuthInput } from './auth-input';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { authService } from '../../services/auth.services';
+
 
 export function AuthCard({ initialTab = 'login' }: { initialTab?: 'login' | 'register' }) {
+  const navigate= useNavigate()
   const [activeTab, setActiveTab] = useState<'login' | 'register'>(initialTab);
   const [formData, setFormData] = useState({
-    username: '',
+    name: '',
     email: '',
     password: '',
     confirmPassword: '',
+    phone_number: '',
   });
 
   const handleInputChange = (field: string, value: string) => {
@@ -22,9 +26,41 @@ export function AuthCard({ initialTab = 'login' }: { initialTab?: 'login' | 'reg
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Form submitted:', { activeTab, formData });
+ const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  try {
+    if (activeTab === 'login') {
+      // Gọi API Login
+      const res = await authService.login({
+        email: formData.email,
+        password: formData.password
+      });
+      handleAuthSuccess(res.data.result);
+    } else {
+      // Gọi API Register
+      const res = await authService.register({
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        confirm_password: formData.confirmPassword, 
+        phone_number: formData.phone_number        
+      });
+      handleAuthSuccess(res.data.result);
+    }
+  } catch (error: any) {
+    const serverErrors = error.response?.data?.errors;
+    const firstError = serverErrors ? Object.values(serverErrors)[0] : 'Có lỗi xảy ra';
+    alert(firstError);
+  }
+};
+
+  const handleAuthSuccess = (result: any) => {
+    localStorage.setItem('userInfo', JSON.stringify({
+      access_token: result.access_token,
+      refresh_token: result.refresh_token
+    }));
+    alert(activeTab === 'login' ? 'Chào mừng bạn trở lại!' : 'Đăng ký thành công!');
+    navigate('/'); // Chuyển về trang chủ
   };
 
   return (
@@ -51,10 +87,10 @@ export function AuthCard({ initialTab = 'login' }: { initialTab?: 'login' | 'reg
             <>
               <AuthInput
                 label="Email sinh viên"
-                type="text"
+                type="email"
                 placeholder="Nhập email sinh viên"
-                value={formData.username}
-                onChange={(value) => handleInputChange('username', value)}
+                value={formData.email}
+                onChange={(value) => handleInputChange('email', value)}
               />
               <AuthInput
                 label="Mật khẩu"
@@ -77,8 +113,8 @@ export function AuthCard({ initialTab = 'login' }: { initialTab?: 'login' | 'reg
                 label="Tên người dùng"
                 type="text"
                 placeholder="Nhập tên người dùng"
-                value={formData.username}
-                onChange={(value) => handleInputChange('username', value)}
+                value={formData.name}
+                onChange={(value) => handleInputChange('name', value)}
               />
               <AuthInput
                 label="Email sinh viên"
@@ -103,6 +139,13 @@ export function AuthCard({ initialTab = 'login' }: { initialTab?: 'login' | 'reg
                 onChange={(value) => handleInputChange('confirmPassword', value)}
                 showPasswordToggle
               />
+              <AuthInput
+              label="Số điện thoại"
+              type="text"
+              placeholder="Nhập số điện thoại (10 số)"
+              value={formData.phone_number}
+              onChange={(value) => handleInputChange('phone_number', value)} 
+            />
             </>
           )}
 

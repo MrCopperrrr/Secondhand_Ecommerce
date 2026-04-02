@@ -1,10 +1,47 @@
 import { checkSchema } from 'express-validator'
-import userService from "../services/users.services.js";
-import databaseService from '../services/database.services.js';
+import userService from "../services/users.services.js"
+import databaseService from '../services/database.services.js'
+import { validate } from '../utils/validation.js'
+import { verifyToken } from '../utils/jwt.js'
+import { hashPassword } from '../utils/crypto.js'
 
+
+export const refreshTokenValidator = validate(
+  checkSchema({
+    refresh_token: {
+      trim: true,
+      custom: {
+        options: async (value, { req }) => {
+          if (!value) {
+            throw new Error('Refresh token is required')
+          }
+          try {
+            // verify token 
+            const decoded_refresh_token = await verifyToken(value, process.env.JWT_SECRET_REFRESH_TOKEN)
+            
+            // Check token if exist in DB
+            const refresh_token_in_db = await databaseService.refreshTokens.findOne({ token: value })
+            
+            if (refresh_token_in_db === null) {
+              throw new Error('Refresh token does not exist or has been used')
+            }
+
+            //save decoded to req
+            ;(req as any).decoded_refresh_token = decoded_refresh_token
+          } catch (error) {
+            throw new Error((error as any).message)
+          }
+          return true
+        }
+      }
+    }
+  }, ['body'])
+)
 export const loginValidator= checkSchema({
     email:{
-        notEmpty: true,
+        notEmpty:{
+            errorMessage: 'Email is required'
+        },
         isEmail: {
             errorMessage: 'Email is invalid'
         },
@@ -21,28 +58,25 @@ export const loginValidator= checkSchema({
         }
     },
     password: {
+        trim:true,
         notEmpty: {
             errorMessage: 'password is required'
         },
-        isLength: {
-            options:{
-                min: 6,
-                max: 50
+        custom: {
+            options: async (value, {req}) => {
+                const user= await databaseService.users.findOne({email: req.body.email})
+                console.log(user)
+                if (!user) {
+                throw new Error('Email or password is incorrect')
             }
-        },
-        isString: {
-            errorMessage: 'password must be a string'
-        },
-        isStrongPassword:{
-            options:{
-                minLength: 6,
-                minLowercase: 1,
-                minUppercase: 1,
-                minNumbers: 1,
-                minSymbols: 1
+                const isMatch= hashPassword(value) === user.password
+                if(!isMatch){
+                    throw new Error ('Password is incorrect')
+                }
+                req.user = user
+                return true
             }
-        },
-        errorMessage: 'password must be at least 6 characters and contain at least 1 lowercase, 1 uppercase, 1 number, 1 symbol'
+        }
     }
 })
 
@@ -74,6 +108,7 @@ export const registerValidator= checkSchema({
     },
     password: {
         notEmpty: true,
+        trim: true,
         isLength: {
             options:{
                 min: 6,
@@ -93,6 +128,7 @@ export const registerValidator= checkSchema({
         errorMessage: 'password must be at least 6 characters and contain at least 1 lowercase, 1 uppercase, 1 number, 1 symbol'
     },
     confirm_password: {
+        trim: true,
         notEmpty: true,
         isLength: {
             options:{
@@ -117,6 +153,16 @@ export const registerValidator= checkSchema({
                 }
                 return true
             }
+        }
+    },
+    phone_number: {
+        notEmpty: true,
+        isLength:{
+            options:{
+                min: 10,
+                max: 10
+            }
+            
         }
     }
 })
