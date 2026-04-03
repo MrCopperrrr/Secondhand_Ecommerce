@@ -15,5 +15,13 @@ export const authService = {
 
   getMe: () => {
     return api.get('/users/me');
+  },
+
+  updateMe: (data: any) => {
+    return api.patch('/users/me', data);
+  },
+
+  getAddresses: () => {
+    return api.get('/users/me/addresses');
   }
 };
