@@ -39,6 +39,12 @@ class DatabaseService {
   get refreshTokens(): Collection<RefreshToken> {
   return this.db.collection('refresh_tokens')
 }
+  get addresses(): Collection<any> {
+    return this.db.collection('addresses')
+  }
+  get address(): Collection<any> {
+    return this.db.collection('address')
+  }
 }
 
 const databaseService = new DatabaseService()

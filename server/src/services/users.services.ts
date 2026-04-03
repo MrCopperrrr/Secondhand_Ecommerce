@@ -100,6 +100,45 @@ class UserService{
         )
         return user
     }
+    async updateMe(user_id: string, payload: any) {
+        const result = await databaseService.users.findOneAndUpdate(
+            { _id: new ObjectId(user_id) },
+            {
+                $set: {
+                    ...payload,
+                    updated_at: new Date()
+                }
+            },
+            {
+                returnDocument: 'after',
+                projection: {
+                   password: 0,
+                    email_verify_token: 0,
+                    forgot_password_token: 0
+                }
+            }
+        )
+        return result
+    }
+
+    async getAddresses(user_id: string) {
+        console.log("Querying addresses for user_id:", user_id)
+        const filter = {
+            $or: [
+                { user_id: user_id },
+                { user_id: new ObjectId(user_id) }
+            ]
+        }
+        
+        let addresses = await databaseService.addresses.find(filter).toArray()
+        if (addresses.length === 0) {
+            console.log("Plural 'addresses' is empty, trying singular 'address'")
+            addresses = await databaseService.address.find(filter).toArray()
+        }
+        
+        console.log("Found addresses count:", addresses.length)
+        return addresses
+    }
 }
 const userService = new UserService()
 export default userService
