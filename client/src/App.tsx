@@ -21,6 +21,10 @@ import Chat from './pages/communication/Chat';
 import UserProfile from './pages/profile/UserProfile';
 import AddressPayment from './pages/profile/AddressPayment';
 
+// Error Pages
+import NotFound from './pages/error/NotFound';
+import ServerError from './pages/error/ServerError';
+
 const AppContent: React.FC = () => {
   const location = useLocation();
   const authPaths = ['/login', '/register', '/forgot-password'];
@@ -45,6 +49,10 @@ const AppContent: React.FC = () => {
           <Route path="/profile" element={<UserProfile />} />
           <Route path="/profile/address" element={<AddressPayment />} />
           <Route path="/profile/password" element={<UserProfile />} />
+          
+          {/* Error Routes */}
+          <Route path="/500" element={<ServerError />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
 
