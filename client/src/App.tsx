@@ -20,6 +20,8 @@ import CreateProduct from './pages/seller/CreateProduct';
 import Chat from './pages/communication/Chat';
 import UserProfile from './pages/profile/UserProfile';
 import AddressPayment from './pages/profile/AddressPayment';
+import Logout from './pages/profile/Logout';
+import ProductManagement from './pages/profile/ProductManagement';
 
 // Error Pages
 import NotFound from './pages/error/NotFound';
@@ -49,6 +51,8 @@ const AppContent: React.FC = () => {
           <Route path="/profile" element={<UserProfile />} />
           <Route path="/profile/address" element={<AddressPayment />} />
           <Route path="/profile/password" element={<UserProfile />} />
+          <Route path="/profile/products" element={<ProductManagement />} />
+          <Route path="/logout" element={<Logout />} />
           
           {/* Error Routes */}
           <Route path="/500" element={<ServerError />} />

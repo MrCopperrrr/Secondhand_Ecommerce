@@ -47,6 +47,11 @@ export const ProfileSidebar: React.FC<ProfileSidebarProps> = ({ activeTab = 'pro
       label: 'Lịch sử giao dịch',
       href: '/profile/history',
     },
+    {
+      id: 'logout',
+      label: 'Đăng xuất',
+      href: '/logout',
+    },
   ];
 
   return (
@@ -70,12 +75,6 @@ export const ProfileSidebar: React.FC<ProfileSidebarProps> = ({ activeTab = 'pro
               </Link>
             );
           })}
-
-          <button 
-            className="w-full px-6 py-4 text-[16px] text-[#686868] hover:bg-gray-50 transition-all text-left bg-[#FFFFFF] border border-[#FFFFFF]"
-          >
-            Đăng xuất
-          </button>
         </nav>
       </div>
     </div>
