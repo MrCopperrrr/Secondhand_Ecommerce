@@ -1,6 +1,7 @@
 import { MongoClient, Db, Collection } from 'mongodb'
 import 'dotenv/config'
 import  User from '../models/users.schemas.js'
+import Product from '../models/products.schemas.js'
 import { RefreshToken } from '../models/users.schemas.js'
 const username = process.env.DB_USERNAME?.trim()
 const password = process.env.DB_PASSWORD?.trim()
@@ -30,6 +31,9 @@ class DatabaseService {
   }
   get users(): Collection<User>{
     return this.db.collection('users')
+  }
+  get products(): Collection<Product>{
+    return this.db.collection('products')
   }
 
   // Getter để lấy instance của database khi cần dùng 

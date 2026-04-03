@@ -8,3 +8,7 @@ export enum TokenType{
     ForgotPasswordToken,
     EmailVerifyToken
 }
+export enum StatusType {
+    SoldOut,
+    Available
+}

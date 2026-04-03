@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import cors from 'cors';
-import { userRouter } from './src/routes/users.routes';
+import { userRouter } from './src/routes/users.routes'
+import { productRouter } from './src/routes/products.routes'
 import express from 'express'
 import databaseService from './src/services/database.services'
 const app = express()
@@ -9,6 +10,7 @@ app.use(cors())
 app.use(express.json({ limit: '10mb' }))
 app.use(express.urlencoded({ limit: '10mb', extended: true }))
 app.use('/users', userRouter)
+app.use('/products', productRouter)
 databaseService.connect().then(() => {
     app.listen(port, () => {
         console.log(`Server is running accurately at: http://localhost:${port}`)
