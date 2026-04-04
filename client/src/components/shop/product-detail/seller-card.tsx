@@ -50,7 +50,7 @@ export function SellerCard({
 
             {/* Other Products Text */}
             <p className="text-sm font-medium text-[#191C1F] pt-2 italic">
-              Đang bán {otherProductsCount} sản phẩm khác
+              Đang bán {otherProductsCount} sản phẩm
             </p>
           </div>
         </div>

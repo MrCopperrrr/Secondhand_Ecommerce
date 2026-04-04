@@ -4,6 +4,7 @@ import Breadcrumbs from '../../components/shop/Breadcrumbs';
 import FilterSidebar from '../../components/shop/FilterSidebar';
 import ProductSection from '../../components/shop/ProductSection';
 import { productService } from '../../services/product.services';
+import { categoryServices } from '../../services/category.services';
 import { Loader2 } from 'lucide-react';
 
 // Define product type matching new schema
@@ -37,6 +38,26 @@ const Homepage: React.FC = () => {
   const [sortBy, setSortBy] = useState('newest');
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [namesMap, setNamesMap] = useState<Record<string, string>>({});
+
+  // Fetch Category Names for Breadcrumbs
+  useEffect(() => {
+    const loadNames = async () => {
+      try {
+        const [cats, subs] = await Promise.all([
+          categoryServices.getCategories(),
+          categoryServices.getSubCategories()
+        ]);
+        const map: Record<string, string> = { 'all': 'Tất cả' };
+        cats.forEach((c: any) => map[c._id] = c.name);
+        subs.forEach((s: any) => map[s._id] = s.name);
+        setNamesMap(map);
+      } catch (e) {
+        console.error("Error loading category names:", e);
+      }
+    };
+    loadNames();
+  }, []);
 
   // Fetch real products from API
   useEffect(() => {
@@ -91,18 +112,6 @@ const Homepage: React.FC = () => {
   useEffect(() => {
     setCurrentPage(1);
   }, [searchQuery, searchCategory]);
-
-  const categoriesMap: Record<string, string> = {
-    'all': 'Tất cả',
-    'Đồ điện tử': 'Đồ điện tử',
-    'Sách giáo trình': 'Sách giáo trình',
-    'Đồ gia dụng': 'Đồ gia dụng',
-    'Dụng cụ học tập': 'Dụng cụ học tập',
-    'Quần áo': 'Quần áo',
-    'Đồ nội thất': 'Đồ nội thất',
-    'Phương tiện di chuyển': 'Phương tiện di chuyển',
-    'Dụng cụ thể thao': 'Dụng cụ thể thao'
-  };
 
   const searchSubCategory = searchParams.get('subcategory') || '';
 
@@ -183,9 +192,25 @@ const Homepage: React.FC = () => {
   if (searchQuery) {
     breadcrumbItems.push({ label: `Kết quả tìm kiếm cho "${searchQuery}"` });
   } else if (selectedCategory !== 'all') {
-    breadcrumbItems.push({
-      label: categoriesMap[selectedCategory] || selectedCategory
-    });
+    // If it's a subcategory from URL
+    const subCatId = searchParams.get('subcategory');
+    if (subCatId && namesMap[subCatId]) {
+      // Find parent category name
+      // This is a bit complex since we don't have sub-cat structure here, 
+      // but we can just show: Home > Parent Name > Sub Name
+      // Since selectedCategory is usually the parent ID in our URL structure
+      if (selectedCategory && namesMap[selectedCategory]) {
+         breadcrumbItems.push({ 
+           label: namesMap[selectedCategory],
+           href: `/?category=${selectedCategory}` 
+         });
+      }
+      breadcrumbItems.push({ label: namesMap[subCatId] });
+    } else {
+      breadcrumbItems.push({
+        label: namesMap[selectedCategory] || selectedCategory
+      });
+    }
   }
 
   return (

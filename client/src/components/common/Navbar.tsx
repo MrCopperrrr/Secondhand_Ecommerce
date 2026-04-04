@@ -19,6 +19,8 @@ import {
   Armchair,
   Bike,
   Trophy,
+  Sparkles,
+  MoreHorizontal,
 } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import {
@@ -50,6 +52,8 @@ const Navbar: React.FC = () => {
     'Đồ nội thất': Armchair,
     'Phương tiện di chuyển': Bike,
     'Dụng cụ thể thao': Trophy,
+    'Mỹ phẩm & Chăm sóc': Sparkles,
+    'khác': MoreHorizontal,
   };
 
   React.useEffect(() => {
@@ -79,11 +83,14 @@ const Navbar: React.FC = () => {
     loadCategories();
   }, []);
 
+  const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
+
   const handleCategoryClick = (catId: string, subId?: string) => {
     const params = new URLSearchParams();
     if (catId) params.append('category', catId);
     if (subId) params.append('subcategory', subId);
     navigate(`/?${params.toString()}`);
+    setIsMegaMenuOpen(false); // Force close on click
   };
 
   const handleSearch = () => {
@@ -290,12 +297,16 @@ const Navbar: React.FC = () => {
 
       {/* Category Navigation Bar */}
       <div className="bg-white border-b border-gray-200 shadow-sm hidden md:block">
-        <div className="max-w-7xl mx-auto px-4 flex items-center gap-8 relative">
+        <div className="max-w-7xl mx-auto px-4 flex items-center justify-between relative">
           {/* Custom Mega Menu for "Danh mục sản phẩm" */}
-          <div className="group/category">
+          <div 
+            className="group/category"
+            onMouseEnter={() => setIsMegaMenuOpen(true)}
+            onMouseLeave={() => setIsMegaMenuOpen(false)}
+          >
             <button className="py-3 text-[13px] font-bold text-[#191C1F] hover:text-[#1E40AF] transition-colors whitespace-nowrap flex items-center gap-2 group">
-              <X size={18} className="hidden group-hover/category:block" />
-              <div className="flex flex-col gap-0.5 group-hover/category:hidden text-[#1E40AF]">
+              <X size={18} className={`${isMegaMenuOpen ? 'block' : 'hidden'}`} />
+              <div className={`flex flex-col gap-0.5 text-[#1E40AF] ${isMegaMenuOpen ? 'hidden' : 'flex'}`}>
                 <div className="w-4 h-0.5 bg-current"></div>
                 <div className="w-4 h-0.5 bg-current"></div>
                 <div className="w-4 h-0.5 bg-current"></div>
@@ -303,9 +314,9 @@ const Navbar: React.FC = () => {
               DANH MỤC SẢN PHẨM
             </button>
 
-            {/* Mega Menu Panel - Spans the full width of the relative container */}
-            {megaMenuData.length > 0 && (
-              <div className="absolute top-full left-0 w-full bg-white shadow-2xl border border-gray-100 hidden group-hover/category:flex z-[100] min-h-[500px]">
+            {/* Mega Menu Panel */}
+            {megaMenuData.length > 0 && isMegaMenuOpen && (
+              <div className="absolute top-full left-0 w-full bg-white shadow-2xl border border-gray-100 flex z-[100] min-h-[500px]">
                 {/* Sidebar Categories */}
                 <div className="w-[280px] border-r border-gray-100 bg-gray-50/50 py-2 shrink-0">
                   {megaMenuData.map((cat, idx) => (
@@ -326,10 +337,10 @@ const Navbar: React.FC = () => {
                   ))}
                 </div>
 
-                {/* Dynamic Content Panel (Fills the rest of the space) */}
+                {/* Dynamic Content Panel */}
                 {megaMenuData[activeCat] && (
                   <div className="flex-1 p-8 bg-white overflow-y-auto">
-                    <div className="grid grid-cols-3 gap-12">
+                    <div className="grid grid-cols-2 gap-16">
                         <div>
                             <h4 
                                 onClick={() => handleCategoryClick(megaMenuData[activeCat].id)}
@@ -337,7 +348,7 @@ const Navbar: React.FC = () => {
                             >
                                {megaMenuData[activeCat].name} nổi bật
                             </h4>
-                            <ul className="space-y-4">
+                            <ul className="grid grid-cols-2 gap-x-8 gap-y-4">
                                 {megaMenuData[activeCat].subs.map((sub: any) => (
                                     <li 
                                         key={sub.id} 
@@ -357,24 +368,11 @@ const Navbar: React.FC = () => {
                         </div>
                         <div>
                             <h4 className="font-bold text-[#191C1F] mb-6 text-[16px] border-b pb-2 uppercase">Theo Campus</h4>
-                            <ul className="space-y-4 font-medium">
+                            <ul className="grid grid-cols-1 gap-y-4 font-medium">
                                 {['Cơ sở Lý Thường Kiệt', 'Ký túc xá Bách Khoa', 'Cơ sở Dĩ An'].map(campus => (
                                     <li key={campus} className="text-[14px] text-[#475156] hover:text-[#1E40AF] cursor-pointer">{campus}</li>
                                 ))}
                             </ul>
-                        </div>
-                        <div>
-                            <h4 className="font-bold text-[#191C1F] mb-6 text-[16px] border-b pb-2 uppercase">Ưu đãi hôm nay</h4>
-                            <div className="space-y-5">
-                                <div className="p-4 bg-blue-50 border border-blue-100 rounded-sm">
-                                    <p className="text-[13px] text-blue-800 font-bold mb-1 uppercase tracking-wider">Flash Sale Sinh Viên</p>
-                                    <p className="text-[13px] text-blue-600">Giảm đến 50% cho nhóm hàng {megaMenuData[activeCat].name}</p>
-                                </div>
-                                <div className="p-4 bg-orange-50 border border-orange-100 rounded-sm">
-                                    <p className="text-[13px] text-orange-800 font-bold mb-1 uppercase tracking-wider">Xác thực Campus</p>
-                                    <p className="text-[13px] text-orange-600">FreeShip toàn diện cho đơn từ 200k</p>
-                                </div>
-                            </div>
                         </div>
                     </div>
                   </div>

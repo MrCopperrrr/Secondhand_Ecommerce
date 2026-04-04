@@ -16,7 +16,7 @@ export function ProductMeta({
   proximity,
 }: ProductMetaProps) {
   return (
-    <div className="space-y-4 font-roboto">
+    <div className="space-y-4 font-roboto pb-4 border-b border-gray-100">
       {/* First Grid Row: ID and Category */}
       <div className="grid grid-cols-2 gap-x-8 gap-y-3">
         <div className="flex gap-2 text-sm">
@@ -30,7 +30,7 @@ export function ProductMeta({
 
         {/* Second Row: Status and Condition */}
         <div className="flex gap-2 text-sm">
-          <span className="font-bold text-[#2DB224]">{status}</span>
+          <span className={`${status === 'Còn hàng' ? 'text-[#2DB224]' : 'text-red-500'} font-bold`}>{status}</span>
         </div>
         <div className="flex gap-2 text-sm">
           <span className="font-bold text-[#686868]">Tình trạng:</span>
@@ -38,7 +38,7 @@ export function ProductMeta({
         </div>
       </div>
 
-      {/* Location Row (based on image) */}
+      {/* Location and Distance Row */}
       <div className="flex justify-between items-center text-sm pt-2">
         <div className="flex gap-2">
           <span className="font-bold text-[#686868]">Trường/Campus:</span>
