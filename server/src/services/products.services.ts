@@ -99,6 +99,15 @@ class ProductService{
         return result[0] || null;
     }
 
+    async updateProductsStatus(ids: string[], status: number) {
+        const objectIds = ids.map(id => new ObjectId(id));
+        const result = await databaseService.products.updateMany(
+            { _id: { $in: objectIds } },
+            { $set: { status: status, updated_at: new Date() } }
+        );
+        return result;
+    }
+
 }
 const productService= new ProductService()
 export default productService

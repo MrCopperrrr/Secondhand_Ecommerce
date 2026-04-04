@@ -5,6 +5,7 @@ import { BillingForm } from '../../components/shop/checkout/billing-form';
 import { PaymentMethodSelector } from '../../components/shop/checkout/payment-method-selector';
 import { CheckoutSummary } from '../../components/shop/checkout/checkout-summary';
 import { useCart } from '../../context/CartContext';
+import { productService } from '../../services/product.services';
 
 interface BillingFormData {
   fullName: string;
@@ -46,15 +47,26 @@ const Checkout: React.FC = () => {
     setIsFormValid(isValid);
   };
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     if (!isFormValid) {
       alert('Vui lòng điền đầy đủ và chính xác thông tin thanh toán.');
       return;
     }
-    console.log('Checkout processed:', { formData, paymentMethod, items: itemsToCheckout });
-    // After success, navigate to success page
-    clearCart();
-    navigate('/checkout/success');
+    
+    try {
+      // Mark products as Sold Out (status 0) after successful payment
+      const itemIds = itemsToCheckout.map(item => item.id);
+      await productService.updateProductStatus(itemIds, 0);
+      
+      console.log('Checkout processed and products marked as Sold Out:', { formData, paymentMethod, items: itemsToCheckout });
+      
+      // After success, clear cart and navigate to success page
+      clearCart();
+      navigate('/checkout/success');
+    } catch (error) {
+      console.error('Lỗi khi xử lý thanh toán:', error);
+      alert('Có lỗi xảy ra khi thanh toán. Vui lòng thử lại sau.');
+    }
   };
 
   const shippingFee = formData.deliveryMethod === 'shipping' ? 20000 : 0;

@@ -48,3 +48,13 @@ export const getProductByIdController = async (req: Request,  res: Response) =>{
     result
   })
 }
+
+export const updateProductsStatusController = async (req: Request, res: Response) => {
+  const { ids, status } = req.body
+  const result = await productService.updateProductsStatus(ids, status)
+
+  return res.json({
+    message: 'Cập nhật trạng thái sản phẩm thành công',
+    result
+  })
+}

@@ -12,5 +12,8 @@ export const productService = {
     },
     getProductById: (id: string) => {
       return api.get(`/products/${id}`);
+    },
+    updateProductStatus: (ids: string[], status: number) => {
+      return api.patch('/products/status', { ids, status });
     }
   };
