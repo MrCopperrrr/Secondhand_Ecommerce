@@ -50,7 +50,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
           image: product.images[0],
           description: product.description,
           quantity: 1,
-          inStock: product.status === 'Active',
+          inStock: product.status === 'Active' || product.status === 1,
         },
       ];
     });

@@ -3,7 +3,8 @@ import { useSearchParams } from 'react-router-dom';
 import Breadcrumbs from '../../components/shop/Breadcrumbs';
 import FilterSidebar from '../../components/shop/FilterSidebar';
 import ProductSection from '../../components/shop/ProductSection';
-import DUMMY_PRODUCTS_RAW from '../../data/products.json';
+import { productService } from '../../services/product.services';
+import { Loader2 } from 'lucide-react';
 
 // Define product type matching new schema
 interface Product {
@@ -31,8 +32,46 @@ const Homepage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState(searchCategory);
   const [selectedStatus, setSelectedStatus] = useState('all'); 
   const [selectedLocation, setSelectedLocation] = useState('all');
-  const [priceRange, setPriceRange] = useState({ min: 0, max: 20000000 });
+  const [priceRange, setPriceRange] = useState({ min: 0, max: 1000000000 });
   const [sortBy, setSortBy] = useState('newest');
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch real products from API
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        const response = await productService.getAllProducts();
+        const data = response.data.result;
+        
+        // Map backend schema to frontend Product interface
+        const mappedProducts: Product[] = data.map((p: any) => ({
+          product_id: p._id,
+          seller_id: p.seller_id,
+          name: p.name,
+          category: p.category,
+          condition: p.condition === 1 ? 'Mới 100%' : 'Đã qua sử dụng',
+          price: p.price,
+          description: p.description,
+          campus: p.campus || 'Chưa cập nhật',
+          images: p.images || [],
+          status: p.status === 1 ? 'Active' : 'SoldOut',
+          is_featured: p.is_featured || false,
+          views: p.views || 0,
+          created_at: p.created_at
+        }));
+        
+        setProducts(mappedProducts);
+      } catch (error) {
+        console.error("Lỗi khi tải sản phẩm:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   // Cập nhật selectedCategory khi URL param thay đổi
   useEffect(() => {
@@ -65,7 +104,7 @@ const Homepage: React.FC = () => {
 
   // FILTER + SORT
   const filteredProducts = useMemo(() => {
-    let result = [...DUMMY_PRODUCTS_RAW] as Product[];
+    let result = [...products];
 
     // 1. Search Query Filter (Nên để đầu tiên cho hiệu năng)
     if (searchQuery.trim()) {
@@ -111,13 +150,14 @@ const Homepage: React.FC = () => {
     selectedStatus,
     selectedLocation,
     priceRange,
-    sortBy
+    sortBy,
+    products
   ]);
 
   // Unique campuses
   const uniqueCampuses = useMemo(() => {
     const locations = new Set<string>();
-    DUMMY_PRODUCTS_RAW.forEach(p => {
+    products.forEach(p => {
       if (p.campus) locations.add(p.campus);
     });
     return Array.from(locations).map(label => ({ id: label, label }));
@@ -148,7 +188,14 @@ const Homepage: React.FC = () => {
 
       <div className="flex flex-col md:flex-row max-w-7xl mx-auto w-full bg-white">
         
-        {/* SIDEBAR */}
+        {loading ? (
+           <div className="flex-1 flex flex-col items-center justify-center py-40 gap-4">
+              <Loader2 className="w-12 h-12 text-[#1E40AF] animate-spin" />
+              <p className="text-[#686868] italic font-medium">Đang tải danh sách sản phẩm...</p>
+           </div>
+        ) : (
+          <>
+            {/* SIDEBAR */}
         <FilterSidebar 
           locations={uniqueCampuses}
           onCategoryChange={(cat) => {
@@ -177,6 +224,8 @@ const Homepage: React.FC = () => {
           onPageChange={(page) => setCurrentPage(page)}
           onSortChange={(sort) => setSortBy(sort)}
         />
+          </>
+        )}
       </div>
     </div>
   );

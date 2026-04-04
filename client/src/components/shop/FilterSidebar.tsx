@@ -32,17 +32,16 @@ const STATUS_OPTIONS = [
 ];
 
 const PRICE_PRESETS = [
-  { id: 'all', label: 'Tất cả giá', min: 0, max: 100000000 },
-  { id: 'over5m', label: 'Trên 5 triệu', min: 5000000, max: 100000000 },
-  { id: '3m-5m', label: 'Từ 3 đến 5 triệu', min: 3000000, max: 5000000 },
-  { id: '1m-3m', label: 'Từ 1 đến 3 triệu', min: 1000000, max: 3000000 },
-  { id: '500k-1m', label: 'Từ 500 ngàn đến 1 triệu', min: 500000, max: 1000000 },
-  { id: '100k-500k', label: 'Từ 100 ngàn đến 500 ngàn', min: 100000, max: 500000 },
-  { id: 'under100k', label: 'Dưới 100 ngàn', min: 0, max: 100000 },
+  { id: 'all', label: 'Tất cả giá', min: 0, max: 1000000000 },
+  { id: 'over50m', label: 'Trên 50 triệu', min: 50000000, max: 1000000000 },
+  { id: '20m-50m', label: 'Từ 20 đến 50 triệu', min: 20000000, max: 50000000 },
+  { id: '5m-20m', label: 'Từ 5 đến 20 triệu', min: 5000000, max: 20000000 },
+  { id: '1m-5m', label: 'Từ 1 đến 5 triệu', min: 1000000, max: 5000000 },
+  { id: 'under1m', label: 'Dưới 1 triệu', min: 0, max: 1000000 },
 ];
 
-const MAX_LIMIT = 20000000; // 20 triệu VND
-const FIXED_STEP = 100000;  // 100k VND
+const MAX_LIMIT = 1000000000; // 1 tỷ VND
+const FIXED_STEP = 1000000;  // 1 triệu VND step cho tầm cao
 
 const FilterSidebar: React.FC<FilterSidebarProps> = ({
   locations = [],
