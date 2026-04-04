@@ -74,7 +74,7 @@ const Homepage: React.FC = () => {
           name: p.name,
           category_id: p.category_id,
           sub_category_id: p.sub_category_id,
-          condition: p.condition === 1 ? 'Mới 100%' : 'Đã qua sử dụng',
+          condition: p.condition < 100 ? 'Đã qua sử dụng' : 'Mới 100%',
           price: p.price,
           description: p.description,
           campus: p.campus || 'Chưa cập nhật',

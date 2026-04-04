@@ -16,7 +16,7 @@ interface FilterSidebarProps {
 const STATUS_OPTIONS = [
   { id: 'all', label: 'Tất cả' },
   { id: 'Active', label: 'Còn hàng' },
-  { id: 'Sold', label: 'Hết hàng' },
+  { id: 'SoldOut', label: 'Hết hàng' },
 ];
 
 const PRICE_PRESETS = [
