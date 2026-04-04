@@ -53,11 +53,11 @@ const AppContent: React.FC = () => {
           <Route path="/profile/address" element={<AddressPayment />} />
           <Route path="/profile/password" element={<UserProfile />} />
           <Route path="/profile/products" element={<ProductManagement />} />
-          <Route path="/profile/track-order" element={<Homepage />} />
-          <Route path="/profile/favorites" element={<Homepage />} />
-          <Route path="/profile/history" element={<Homepage />} />
+          <Route path="/profile/track-order" element={<NotFound />} />
+          <Route path="/profile/favorites" element={<NotFound />} />
+          <Route path="/profile/history" element={<NotFound />} />
           <Route path="/seller/dashboard" element={<SellerDashboard />} />
-          <Route path="/seller/orders" element={<Homepage />} />
+          <Route path="/seller/orders" element={<NotFound />} />
           <Route path="/logout" element={<Logout />} />
           
           {/* Error Routes */}

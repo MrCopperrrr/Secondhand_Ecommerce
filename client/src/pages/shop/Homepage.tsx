@@ -11,7 +11,8 @@ interface Product {
   product_id: string;
   seller_id: string;
   name: string;
-  category: string;
+  category_id: string;
+  sub_category_id?: string;
   condition: string;
   price: number;
   description: string;
@@ -50,7 +51,8 @@ const Homepage: React.FC = () => {
           product_id: p._id,
           seller_id: p.seller_id,
           name: p.name,
-          category: p.category,
+          category_id: p.category_id,
+          sub_category_id: p.sub_category_id,
           condition: p.condition === 1 ? 'Mới 100%' : 'Đã qua sử dụng',
           price: p.price,
           description: p.description,
@@ -102,11 +104,12 @@ const Homepage: React.FC = () => {
     'Dụng cụ thể thao': 'Dụng cụ thể thao'
   };
 
-  // FILTER + SORT
+  const searchSubCategory = searchParams.get('subcategory') || '';
+
+  // 1. Search Query Filter (Nên để đầu tiên cho hiệu năng)
   const filteredProducts = useMemo(() => {
     let result = [...products];
 
-    // 1. Search Query Filter (Nên để đầu tiên cho hiệu năng)
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase().trim();
       result = result.filter(p => 
@@ -115,9 +118,11 @@ const Homepage: React.FC = () => {
       );
     }
 
-    // 2. Category
-    if (selectedCategory !== 'all' && selectedCategory !== 'Tất cả') {
-      result = result.filter(p => p.category === selectedCategory);
+    // 2. Category & Subcategory Logic
+    if (searchSubCategory) {
+      result = result.filter(p => p.sub_category_id === searchSubCategory);
+    } else if (selectedCategory !== 'all' && selectedCategory !== 'Tất cả') {
+      result = result.filter(p => p.category_id === selectedCategory);
     }
 
     // 3. Status
@@ -147,6 +152,7 @@ const Homepage: React.FC = () => {
   }, [
     searchQuery,
     selectedCategory,
+    searchSubCategory,
     selectedStatus,
     selectedLocation,
     priceRange,
