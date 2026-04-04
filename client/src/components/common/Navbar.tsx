@@ -8,6 +8,7 @@ import {
   Search,
   ChevronDown,
   Share2,
+  TrendingUp,
 } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import {
@@ -133,7 +134,14 @@ const Navbar: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex items-center gap-4 flex-shrink-0">
+          <div className="flex items-center gap-6 flex-shrink-0">
+            <Link 
+              to="/seller/dashboard" 
+              className="px-4 py-2 bg-white text-[#1E40AF] font-bold text-xs rounded-full hover:bg-blue-50 transition-all flex items-center gap-2 border-2 border-white shadow-sm"
+            >
+              <TrendingUp size={16} /> KÊNH NGƯỜI BÁN
+            </Link>
+
             <Link to="/cart" className="hover:opacity-80 transition-opacity relative">
               <ShoppingCart size={20} className="text-[#FFFFFF]" />
               {itemCount > 0 && (
