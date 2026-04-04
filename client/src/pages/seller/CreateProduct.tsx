@@ -3,6 +3,7 @@ import { ChevronDown, Folder, X, ChevronRight } from 'lucide-react';
 import Breadcrumbs from '../../components/shop/Breadcrumbs';
 import { ProfileSidebar } from '../../components/profile/profile-sidebar';
 import { authService } from '../../services/auth.services';
+import { productService } from '../../services/product.services';
 
 interface Address {
   _id: string;
@@ -40,6 +41,44 @@ const CreateProduct: React.FC = () => {
     };
     fetchCampuses();
   }, []);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+  
+    // 1. Kiểm tra ảnh
+    if (images.length === 0) {
+      alert("Phải có hình ảnh sản phẩm");
+      return;
+    }
+  
+    // 2. Chuyển đổi dữ liệu cho khớp với Backend
+    const payload = {
+      name: formData.title,
+      description: formData.description,
+      // Xóa dấu chấm và chuyển về số
+      price: Number(formData.price.replace(/\./g, '')), 
+      category: formData.category,
+      // Map tình trạng sang số: Mới 100% -> 1, Mới 99% -> 2, Cũ -> 3
+      condition: formData.condition === 'Mới 100%' ? 1 : formData.condition === 'Mới 99%' ? 2 : 3,
+      images: images, // Gửi mảng Base64
+      campus: formData.campus || 'Trường Đại học Bách Khoa TPHCM'
+    };
+  
+    try {
+      const res = await productService.createProduct(payload);
+      // Nếu dùng axios qua interceptor, kết quả nằm trong res.data
+      alert("Đăng bán thành công!");
+      handleReset(); // Reset form cho sạch sẽ
+    } catch (error: any) {
+      console.error("Lỗi rồi ", error);
+      const msg = error.response?.data?.message || "Có lỗi";
+      
+      if (error.response?.data?.error === "jwt expired") {
+        alert("Phiên đăng nhập hết hạn");
+      } else {
+        alert(msg);
+      }
+    }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -268,7 +307,7 @@ const CreateProduct: React.FC = () => {
               >
                 XÓA
               </button>
-              <button className="px-6 py-3 bg-[#1E40AF] border-2 border-[#1E40AF] text-white font-bold text-sm hover:bg-blue-800 transition-all rounded-none flex items-center gap-2 uppercase tracking-wide">
+              <button onClick={handleSubmit} className="px-6 py-3 bg-[#1E40AF] border-2 border-[#1E40AF] text-white font-bold text-sm hover:bg-blue-800 transition-all rounded-none flex items-center gap-2 uppercase tracking-wide">
                 ĐĂNG BÁN SẢN PHẨM <ChevronRight size={18} />
               </button>
             </div>
