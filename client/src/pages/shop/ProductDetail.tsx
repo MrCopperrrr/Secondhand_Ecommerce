@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Breadcrumbs from '../../components/shop/Breadcrumbs';
 import { ProductGallery } from '../../components/shop/product-detail/product-gallery';
@@ -9,17 +9,44 @@ import { SellerCard } from '../../components/shop/product-detail/seller-card';
 import { ProductDescription } from '../../components/shop/product-detail/product-description';
 import { AddToCartModal } from '../../components/shop/product-detail/add-to-cart-modal';
 
-import products from '../../data/products.json';
 import { useCart } from '../../context/CartContext';
+import { productService } from '../../services/product.services';
+import { Loader2 } from 'lucide-react';
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [product, setProduct] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
-  // Find the product by product_id
-  const product = products.find((p: any) => p.product_id === id);
+  useEffect(() => {
+    const fetchProduct = async () => {
+      if (!id) return;
+      try {
+        setLoading(true);
+        const response = await productService.getProductById(id);
+        const p = response.data.result;
+        
+        // Map the product structure if needed, or use as is
+        setProduct({
+            ...p,
+            product_id: p._id, // match the UI expectations
+            condition: p.condition === 1 ? 'Mới 100%' : 'Đã qua sử dụng',
+            status: p.status === 1 ? 'Active' : 'SoldOut',
+            statusLabel: p.status === 1 ? 'Còn hàng' : 'Hết hàng',
+            campus: p.campus || 'Chưa cập nhật'
+        });
+      } catch (error) {
+        console.error("Lỗi khi tải chi tiết sản phẩm:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProduct();
+  }, [id]);
 
   const handleAddToCart = () => {
     if (product) {
@@ -35,6 +62,15 @@ const ProductDetail: React.FC = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="flex flex-col min-h-screen bg-white items-center justify-center">
+        <Loader2 className="w-12 h-12 text-[#1E40AF] animate-spin" />
+        <p className="mt-4 text-[#686868] italic">Đang tải thông tin sản phẩm...</p>
+      </div>
+    );
+  }
+
   if (!product) {
     return (
       <div className="flex flex-col min-h-screen bg-white items-center justify-center p-4">
@@ -46,7 +82,7 @@ const ProductDetail: React.FC = () => {
     );
   }
 
-  const statusLabel = product.status === 'Active' ? 'Còn hàng' : 'Hết hàng';
+  const statusLabel = product.statusLabel;
 
   return (
     <div className="flex flex-col min-h-screen bg-white font-roboto">
@@ -88,7 +124,7 @@ const ProductDetail: React.FC = () => {
 
             <div className="mt-8 pt-8 border-t border-gray-100">
               <SellerCard
-                sellerName={product.seller?.name || 'Người bán'}
+                sellerName={product.seller?.username || 'ldq@hcmut.edu.vn'}
                 sellerAvatar={product.seller?.avatar || 'https://via.placeholder.com/100'}
                 rating={product.seller?.rating || 5}
                 isOnline={product.seller?.isOnline || true}
