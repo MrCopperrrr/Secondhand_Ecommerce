@@ -139,6 +139,21 @@ class UserService{
         console.log("Found addresses count:", addresses.length)
         return addresses
     }
+    async saveAddress(user_id: string, payload: any) {
+        const filter = { user_id: new ObjectId(user_id) }
+        const update = {
+            $set: {
+                ...payload,
+                user_id: new ObjectId(user_id),
+                updated_at: new Date()
+            },
+            $setOnInsert: {
+                created_at: new Date()
+            }
+        }
+        const result = await databaseService.address.updateOne(filter, update, { upsert: true })
+        return result
+    }
 }
 const userService = new UserService()
 export default userService

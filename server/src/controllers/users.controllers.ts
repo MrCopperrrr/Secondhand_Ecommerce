@@ -61,3 +61,14 @@ export const getAddressesController = async (req: Request, res: Response) => {
         result: addresses
     })
 }
+
+export const saveAddressController = async (req: Request, res: Response) => {
+    const { decoded_authorization } = req as any
+    const user_id = decoded_authorization.user_id
+    const body = req.body
+    const result = await userService.saveAddress(user_id, body)
+    return res.json({
+        message: 'Save address success',
+        result
+    })
+}
