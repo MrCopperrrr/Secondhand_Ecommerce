@@ -2,15 +2,87 @@ import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown, Folder, X, ChevronRight } from 'lucide-react';
 import Breadcrumbs from '../../components/shop/Breadcrumbs';
 import { ProfileSidebar } from '../../components/profile/profile-sidebar';
-import { authService } from '../../services/auth.services';
 import { productService } from '../../services/product.services';
 import { categoryServices } from '../../services/category.services';
 import PROVINCES_DATA from '../../data/provinces.json';
 
-interface Address {
-  _id: string;
-  campus: string;
+interface SearchableDropdownProps {
+  label: string;
+  name: string;
+  value: string;
+  options: string[];
+  onChange: (name: string, value: string) => void;
+  placeholder?: string;
+  disabled?: boolean;
 }
+
+const SearchableDropdown: React.FC<SearchableDropdownProps> = ({ 
+  label, name, value, options, onChange, placeholder, disabled 
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const filteredOptions = options.filter(opt => 
+    opt.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  return (
+    <div className="relative" ref={dropdownRef}>
+      <label className="block text-sm font-medium text-[#191C1F] mb-2">{label}</label>
+      <div className="relative">
+        <input
+          type="text"
+          placeholder={placeholder || "Tìm kiếm..."}
+          value={isOpen ? searchTerm : value}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            if (!isOpen) setIsOpen(true);
+          }}
+          onFocus={() => {
+            setIsOpen(true);
+            setSearchTerm('');
+          }}
+          disabled={disabled}
+          className={`w-full px-4 py-3 border border-[#C9CFD2] text-[#191C1F] focus:outline-none focus:border-[#1E40AF] bg-white pr-10 cursor-pointer ${disabled ? 'bg-gray-50 opacity-60' : ''}`}
+        />
+        <ChevronDown size={20} className="absolute right-4 top-1/2 -translate-y-1/2 text-[#686868] pointer-events-none" />
+      </div>
+
+      {isOpen && !disabled && (
+        <div className="absolute z-50 w-full mt-1 bg-white border border-[#C9CFD2] shadow-lg max-h-60 overflow-y-auto">
+          {filteredOptions.length > 0 ? (
+            filteredOptions.map((opt, i) => (
+              <div
+                key={i}
+                className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm text-[#191C1F]"
+                onClick={() => {
+                  onChange(name, opt);
+                  setIsOpen(false);
+                  setSearchTerm('');
+                }}
+              >
+                {opt}
+              </div>
+            ))
+          ) : (
+            <div className="px-4 py-2 text-sm text-gray-400">Không tìm thấy kết quả</div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
 
 const CreateProduct: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -18,16 +90,16 @@ const CreateProduct: React.FC = () => {
     price: '',
     category: '',
     sub_category: '',
-    condition: 'Mới 100%',
-    province: '', // Newly added
+    condition: '100',
+    province: '',
     campus: '',
     description: '',
   });
 
   const [images, setImages] = useState<string[]>([]);
   const [dragActive, setDragActive] = useState(false);
-  const [provinces] = useState<any[]>(PROVINCES_DATA); // Added
-  const [filteredCampuses, setFilteredCampuses] = useState<string[]>([]); // Added
+  const [provinces] = useState<any[]>(PROVINCES_DATA);
+  const [filteredCampuses, setFilteredCampuses] = useState<string[]>([]);
   const [categories, setCategories] = useState<any[]>([]); 
   const [subCategories, setSubCategories] = useState<any[]>([]); 
   const [filteredSubCategories, setFilteredSubCategories] = useState<any[]>([]); 
@@ -36,7 +108,6 @@ const CreateProduct: React.FC = () => {
   useEffect(() => {
     const initForm = async () => {
       try {
-        // Initialize province and campus
         if (PROVINCES_DATA.length > 0) {
           const firstProvince = PROVINCES_DATA[0];
           setFormData(prev => ({ 
@@ -60,14 +131,12 @@ const CreateProduct: React.FC = () => {
     initForm();
   }, []);
 
-  // Filter campuses when province changes
   useEffect(() => {
     if (formData.province) {
       const provinceData = provinces.find(p => p.name === formData.province);
       const campuses = provinceData?.campus || [];
       setFilteredCampuses(campuses);
       if (campuses.length > 0) {
-        // Only reset if current campus not in newly filtered list
         if (!campuses.includes(formData.campus)) {
           setFormData(prev => ({ ...prev, campus: campuses[0] }));
         }
@@ -77,7 +146,6 @@ const CreateProduct: React.FC = () => {
     }
   }, [formData.province, provinces]);
 
-  // Filter sub-categories when parent category changes
   useEffect(() => {
     if (formData.category) {
       const filtered = subCategories.filter(s => s.parent_id === formData.category);
@@ -89,33 +157,31 @@ const CreateProduct: React.FC = () => {
       }
     }
   }, [formData.category, subCategories]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
   
-    // 1. Kiểm tra ảnh
     if (images.length === 0) {
       alert("Phải có hình ảnh sản phẩm");
       return;
     }
   
-    // 2. Chuyển đổi dữ liệu cho khớp với Backend
     const payload = {
       name: formData.title,
       description: formData.description,
       price: Number(formData.price.replace(/\./g, '')), 
       category_id: formData.category,
       sub_category_id: formData.sub_category,
-      condition: formData.condition === 'Mới 100%' ? 1 : formData.condition === 'Mới 99%' ? 2 : 3,
+      condition: Number(formData.condition),
       images: images, 
       province: formData.province,
       campus: formData.campus
     };
   
     try {
-      const res = await productService.createProduct(payload);
-      // Nếu dùng axios qua interceptor, kết quả nằm trong res.data
+      await productService.createProduct(payload);
       alert("Đăng bán thành công!");
-      handleReset(); // Reset form cho sạch sẽ
+      handleReset();
     } catch (error: any) {
       console.error("Lỗi rồi ", error);
       const msg = error.response?.data?.message || "Có lỗi";
@@ -128,8 +194,45 @@ const CreateProduct: React.FC = () => {
     }
   };
 
+  const formatPrice = (value: string) => {
+    const number = value.replace(/\D/g, '');
+    if (number === '') return '';
+    const num = parseInt(number);
+    // Limit to Int32 Max: 2147483647
+    if (num > 2147483647) return '2.147.483.647';
+    if (num <= 0) return '';
+    return new Intl.NumberFormat('vi-VN').format(num);
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
+    
+    if (name === 'price') {
+      const formatted = formatPrice(value);
+      setFormData(prev => ({ ...prev, [name]: formatted }));
+      return;
+    }
+
+    if (name === 'condition') {
+      const val = parseInt(value);
+      if (value === '') {
+        setFormData(prev => ({ ...prev, [name]: '' }));
+        return;
+      }
+      if (val < 1) {
+        setFormData(prev => ({ ...prev, [name]: '1' }));
+        return;
+      }
+      if (val > 100) {
+        setFormData(prev => ({ ...prev, [name]: '100' }));
+        return;
+      }
+    }
+    
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleDropdownChange = (name: string, value: string) => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
@@ -158,7 +261,6 @@ const CreateProduct: React.FC = () => {
       return;
     }
 
-    const newImages: string[] = [];
     Array.from(files).forEach(file => {
       if (file.size > 5 * 1024 * 1024) {
         alert(`File ${file.name} quá lớn (tối đa 5MB)`);
@@ -182,7 +284,7 @@ const CreateProduct: React.FC = () => {
       price: '',
       category: categories[0]?._id || '',
       sub_category: '', 
-      condition: 'Mới 100%',
+      condition: '100',
       province: provinces[0]?.name || '',
       campus: provinces[0]?.campus?.[0] || '',
       description: '',
@@ -207,12 +309,15 @@ const CreateProduct: React.FC = () => {
           <div className="max-w-5xl">
             <h1 className="text-2xl font-bold text-[#191C1F] mb-10">Đăng bán sản phẩm</h1>
 
-            {/* Row 1: Tên sản phẩm */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-[#191C1F] mb-2">Tên sản phẩm</label>
+              <div className="flex justify-between items-center mb-2">
+                <label className="block text-sm font-medium text-[#191C1F]">Tên sản phẩm</label>
+                <span className="text-xs text-[#686868] opacity-60">{formData.title.length}/100</span>
+              </div>
               <input
                 type="text"
                 name="title"
+                maxLength={100}
                 value={formData.title}
                 onChange={handleChange}
                 placeholder="Apple iPhone 17 Pro Max 2TB"
@@ -220,7 +325,6 @@ const CreateProduct: React.FC = () => {
               />
             </div>
 
-            {/* Row 2: Giá bán, Tình trạng */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div className="md:col-span-1">
                 <label className="block text-sm font-medium text-[#191C1F] mb-2">Giá bán</label>
@@ -237,24 +341,23 @@ const CreateProduct: React.FC = () => {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-[#191C1F] mb-2">Tình trạng sản phẩm</label>
+                <label className="block text-sm font-medium text-[#191C1F] mb-2">Độ mới sản phẩm (%)</label>
                 <div className="relative">
-                  <select
+                  <input
+                    type="number"
                     name="condition"
                     value={formData.condition}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-[#C9CFD2] text-[#191C1F] focus:outline-none focus:border-[#1E40AF] appearance-none bg-white font-medium"
-                  >
-                    <option value="Mới 100%">Mới 100%</option>
-                    <option value="Mới 99%">Mới 99%</option>
-                    <option value="Cũ (Vẫn dùng tốt)">Cũ (Vẫn dùng tốt)</option>
-                  </select>
-                  <ChevronDown size={20} className="absolute right-4 top-1/2 -translate-y-1/2 text-[#686868] pointer-events-none" />
+                    min="1"
+                    max="100"
+                    placeholder="100"
+                    className="w-full px-4 py-3 border border-[#C9CFD2] text-[#191C1F] focus:outline-none focus:border-[#1E40AF] bg-white pr-12"
+                  />
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[#191C1F] text-sm">%</span>
                 </div>
               </div>
             </div>
 
-            {/* Row 3: Danh mục, Danh mục con */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div>
                 <label className="block text-sm font-medium text-[#191C1F] mb-2">Danh mục</label>
@@ -263,7 +366,7 @@ const CreateProduct: React.FC = () => {
                     name="category"
                     value={formData.category}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-[#C9CFD2] text-[#191C1F] focus:outline-none focus:border-[#1E40AF] appearance-none bg-white font-medium"
+                    className="w-full px-4 py-3 border border-[#C9CFD2] text-[#191C1F] focus:outline-none focus:border-[#1E40AF] appearance-none bg-white"
                   >
                     {categories.map(c => (
                       <option key={c._id} value={c._id}>{c.name}</option>
@@ -279,7 +382,7 @@ const CreateProduct: React.FC = () => {
                     name="sub_category"
                     value={formData.sub_category}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-[#C9CFD2] text-[#191C1F] focus:outline-none focus:border-[#1E40AF] appearance-none bg-white font-medium"
+                    className="w-full px-4 py-3 border border-[#C9CFD2] text-[#191C1F] focus:outline-none focus:border-[#1E40AF] appearance-none bg-white"
                     disabled={filteredSubCategories.length === 0}
                   >
                     {filteredSubCategories.map(s => (
@@ -294,48 +397,33 @@ const CreateProduct: React.FC = () => {
               </div>
             </div>
 
-            {/* Row 4: Tỉnh/Thành phố, Campus */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <div>
-                <label className="block text-sm font-medium text-[#191C1F] mb-2">Tỉnh/Thành phố</label>
-                <div className="relative">
-                  <select
-                    name="province"
-                    value={formData.province}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-[#C9CFD2] text-[#191C1F] focus:outline-none focus:border-[#1E40AF] appearance-none bg-white font-medium"
-                  >
-                    {provinces.map(p => (
-                      <option key={p.id} value={p.name}>{p.name}</option>
-                    ))}
-                  </select>
-                  <ChevronDown size={20} className="absolute right-4 top-1/2 -translate-y-1/2 text-[#686868] pointer-events-none" />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[#191C1F] mb-2">Trường đại học/Campus</label>
-                <div className="relative">
-                  <select
-                    name="campus"
-                    value={formData.campus}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-[#C9CFD2] text-[#191C1F] focus:outline-none focus:border-[#1E40AF] appearance-none bg-white font-medium"
-                    disabled={filteredCampuses.length === 0}
-                  >
-                    {filteredCampuses.map(c => <option key={c} value={c}>{c}</option>)}
-                    {filteredCampuses.length === 0 && (
-                      <option value="">Không có trường đại học nào</option>
-                    )}
-                  </select>
-                  <ChevronDown size={20} className="absolute right-4 top-1/2 -translate-y-1/2 text-[#686868] pointer-events-none" />
-                </div>
-              </div>
+              <SearchableDropdown
+                label="Tỉnh/Thành phố"
+                name="province"
+                value={formData.province}
+                options={provinces.map(p => p.name)}
+                onChange={handleDropdownChange}
+              />
+              <SearchableDropdown
+                label="Trường đại học/Campus"
+                name="campus"
+                value={formData.campus}
+                options={filteredCampuses}
+                onChange={handleDropdownChange}
+                disabled={filteredCampuses.length === 0}
+                placeholder={filteredCampuses.length === 0 ? "Không có trường đại học nào" : "Tìm kiếm trường..."}
+              />
             </div>
 
             <div className="mb-6">
-              <label className="block text-sm font-medium text-[#191C1F] mb-2">Mô tả chi tiết</label>
+              <div className="flex justify-between items-center mb-2">
+                <label className="block text-sm font-medium text-[#191C1F]">Mô tả chi tiết</label>
+                <span className="text-xs text-[#686868] opacity-60">{formData.description.length}/3000</span>
+              </div>
               <textarea
                 name="description"
+                maxLength={3000}
                 value={formData.description}
                 onChange={handleChange}
                 placeholder="Sản phẩm mới 100%, còn hộp"
