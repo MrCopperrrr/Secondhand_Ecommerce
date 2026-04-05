@@ -4,6 +4,8 @@ import Breadcrumbs from '../../components/shop/Breadcrumbs';
 import { ProfileSidebar } from '../../components/profile/profile-sidebar';
 import { authService } from '../../services/auth.services';
 import { productService } from '../../services/product.services';
+import { categoryServices } from '../../services/category.services';
+import PROVINCES_DATA from '../../data/provinces.json';
 
 interface Address {
   _id: string;
@@ -14,33 +16,79 @@ const CreateProduct: React.FC = () => {
   const [formData, setFormData] = useState({
     title: '',
     price: '',
-    category: 'Đồ điện tử',
+    category: '',
+    sub_category: '',
     condition: 'Mới 100%',
+    province: '', // Newly added
     campus: '',
     description: '',
   });
 
   const [images, setImages] = useState<string[]>([]);
   const [dragActive, setDragActive] = useState(false);
-  const [campuses, setCampuses] = useState<string[]>([]);
+  const [provinces] = useState<any[]>(PROVINCES_DATA); // Added
+  const [filteredCampuses, setFilteredCampuses] = useState<string[]>([]); // Added
+  const [categories, setCategories] = useState<any[]>([]); 
+  const [subCategories, setSubCategories] = useState<any[]>([]); 
+  const [filteredSubCategories, setFilteredSubCategories] = useState<any[]>([]); 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    const fetchCampuses = async () => {
+    const initForm = async () => {
       try {
-        const res = await authService.getAddresses();
-        const addresses = res.data.result;
-        const uniqueCampuses = Array.from(new Set(addresses.map((addr: Address) => addr.campus))) as string[];
-        setCampuses(uniqueCampuses);
-        if (uniqueCampuses.length > 0) {
-          setFormData(prev => ({ ...prev, campus: uniqueCampuses[0] }));
+        // Initialize province and campus
+        if (PROVINCES_DATA.length > 0) {
+          const firstProvince = PROVINCES_DATA[0];
+          setFormData(prev => ({ 
+            ...prev, 
+            province: firstProvince.name,
+            campus: firstProvince.campus && firstProvince.campus.length > 0 ? firstProvince.campus[0] : ''
+          }));
         }
-      } catch (error) {
-        console.error('Lỗi khi tải danh sách campus:', error);
+
+        const cats = await categoryServices.getCategories();
+        const subs = await categoryServices.getSubCategories();
+        setCategories(cats || []);
+        setSubCategories(subs || []);
+        if (cats && cats.length > 0) {
+          setFormData(prev => ({ ...prev, category: cats[0]._id }));
+        }
+      } catch (e) {
+        console.error('Lỗi khi khởi tạo form:', e);
       }
     };
-    fetchCampuses();
+    initForm();
   }, []);
+
+  // Filter campuses when province changes
+  useEffect(() => {
+    if (formData.province) {
+      const provinceData = provinces.find(p => p.name === formData.province);
+      const campuses = provinceData?.campus || [];
+      setFilteredCampuses(campuses);
+      if (campuses.length > 0) {
+        // Only reset if current campus not in newly filtered list
+        if (!campuses.includes(formData.campus)) {
+          setFormData(prev => ({ ...prev, campus: campuses[0] }));
+        }
+      } else {
+        setFormData(prev => ({ ...prev, campus: '' }));
+      }
+    }
+  }, [formData.province, provinces]);
+
+  // Filter sub-categories when parent category changes
+  useEffect(() => {
+    if (formData.category) {
+      const filtered = subCategories.filter(s => s.parent_id === formData.category);
+      setFilteredSubCategories(filtered);
+      if (filtered.length > 0) {
+        setFormData(prev => ({ ...prev, sub_category: filtered[0]._id }));
+      } else {
+        setFormData(prev => ({ ...prev, sub_category: '' }));
+      }
+    }
+  }, [formData.category, subCategories]);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
   
@@ -54,13 +102,13 @@ const CreateProduct: React.FC = () => {
     const payload = {
       name: formData.title,
       description: formData.description,
-      // Xóa dấu chấm và chuyển về số
       price: Number(formData.price.replace(/\./g, '')), 
-      category: formData.category,
-      // Map tình trạng sang số: Mới 100% -> 1, Mới 99% -> 2, Cũ -> 3
+      category_id: formData.category,
+      sub_category_id: formData.sub_category,
       condition: formData.condition === 'Mới 100%' ? 1 : formData.condition === 'Mới 99%' ? 2 : 3,
-      images: images, // Gửi mảng Base64
-      campus: formData.campus || 'Trường Đại học Bách Khoa TPHCM'
+      images: images, 
+      province: formData.province,
+      campus: formData.campus
     };
   
     try {
@@ -132,9 +180,11 @@ const CreateProduct: React.FC = () => {
     setFormData({
       title: '',
       price: '',
-      category: 'Đồ điện tử',
+      category: categories[0]?._id || '',
+      sub_category: '', 
       condition: 'Mới 100%',
-      campus: campuses[0] || '',
+      province: provinces[0]?.name || '',
+      campus: provinces[0]?.campus?.[0] || '',
       description: '',
     });
     setImages([]);
@@ -157,18 +207,21 @@ const CreateProduct: React.FC = () => {
           <div className="max-w-5xl">
             <h1 className="text-2xl font-bold text-[#191C1F] mb-10">Đăng bán sản phẩm</h1>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-[#191C1F] mb-2">Tên sản phẩm</label>
-                <input
-                  type="text"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleChange}
-                  placeholder="Apple iPhone 17 Pro Max 2TB"
-                  className="w-full px-4 py-3 border border-[#C9CFD2] text-[#191C1F] focus:outline-none focus:border-[#1E40AF]"
-                />
-              </div>
+            {/* Row 1: Tên sản phẩm */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-[#191C1F] mb-2">Tên sản phẩm</label>
+              <input
+                type="text"
+                name="title"
+                value={formData.title}
+                onChange={handleChange}
+                placeholder="Apple iPhone 17 Pro Max 2TB"
+                className="w-full px-4 py-3 border border-[#C9CFD2] text-[#191C1F] focus:outline-none focus:border-[#1E40AF]"
+              />
+            </div>
+
+            {/* Row 2: Giá bán, Tình trạng */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div className="md:col-span-1">
                 <label className="block text-sm font-medium text-[#191C1F] mb-2">Giá bán</label>
                 <div className="relative">
@@ -183,26 +236,6 @@ const CreateProduct: React.FC = () => {
                   <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[#191C1F] text-sm">VND</span>
                 </div>
               </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-              <div>
-                <label className="block text-sm font-medium text-[#191C1F] mb-2">Danh mục</label>
-                <div className="relative">
-                  <select
-                    name="category"
-                    value={formData.category}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-[#C9CFD2] text-[#191C1F] focus:outline-none focus:border-[#1E40AF] appearance-none"
-                  >
-                    <option value="Đồ điện tử">Đồ điện tử</option>
-                    <option value="Thời trang">Thời trang</option>
-                    <option value="Học tập">Học tập</option>
-                    <option value="Gia dụng">Gia dụng</option>
-                  </select>
-                  <ChevronDown size={20} className="absolute right-4 top-1/2 -translate-y-1/2 text-[#686868] pointer-events-none" />
-                </div>
-              </div>
               <div>
                 <label className="block text-sm font-medium text-[#191C1F] mb-2">Tình trạng sản phẩm</label>
                 <div className="relative">
@@ -210,11 +243,71 @@ const CreateProduct: React.FC = () => {
                     name="condition"
                     value={formData.condition}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-[#C9CFD2] text-[#191C1F] focus:outline-none focus:border-[#1E40AF] appearance-none"
+                    className="w-full px-4 py-3 border border-[#C9CFD2] text-[#191C1F] focus:outline-none focus:border-[#1E40AF] appearance-none bg-white font-medium"
                   >
                     <option value="Mới 100%">Mới 100%</option>
                     <option value="Mới 99%">Mới 99%</option>
                     <option value="Cũ (Vẫn dùng tốt)">Cũ (Vẫn dùng tốt)</option>
+                  </select>
+                  <ChevronDown size={20} className="absolute right-4 top-1/2 -translate-y-1/2 text-[#686868] pointer-events-none" />
+                </div>
+              </div>
+            </div>
+
+            {/* Row 3: Danh mục, Danh mục con */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div>
+                <label className="block text-sm font-medium text-[#191C1F] mb-2">Danh mục</label>
+                <div className="relative">
+                  <select
+                    name="category"
+                    value={formData.category}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 border border-[#C9CFD2] text-[#191C1F] focus:outline-none focus:border-[#1E40AF] appearance-none bg-white font-medium"
+                  >
+                    {categories.map(c => (
+                      <option key={c._id} value={c._id}>{c.name}</option>
+                    ))}
+                  </select>
+                  <ChevronDown size={20} className="absolute right-4 top-1/2 -translate-y-1/2 text-[#686868] pointer-events-none" />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[#191C1F] mb-2">Danh mục con</label>
+                <div className="relative">
+                  <select
+                    name="sub_category"
+                    value={formData.sub_category}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 border border-[#C9CFD2] text-[#191C1F] focus:outline-none focus:border-[#1E40AF] appearance-none bg-white font-medium"
+                    disabled={filteredSubCategories.length === 0}
+                  >
+                    {filteredSubCategories.map(s => (
+                      <option key={s._id} value={s._id}>{s.name}</option>
+                    ))}
+                    {filteredSubCategories.length === 0 && (
+                      <option value="">Không có danh mục con</option>
+                    )}
+                  </select>
+                  <ChevronDown size={20} className="absolute right-4 top-1/2 -translate-y-1/2 text-[#686868] pointer-events-none" />
+                </div>
+              </div>
+            </div>
+
+            {/* Row 4: Tỉnh/Thành phố, Campus */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div>
+                <label className="block text-sm font-medium text-[#191C1F] mb-2">Tỉnh/Thành phố</label>
+                <div className="relative">
+                  <select
+                    name="province"
+                    value={formData.province}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 border border-[#C9CFD2] text-[#191C1F] focus:outline-none focus:border-[#1E40AF] appearance-none bg-white font-medium"
+                  >
+                    {provinces.map(p => (
+                      <option key={p.id} value={p.name}>{p.name}</option>
+                    ))}
                   </select>
                   <ChevronDown size={20} className="absolute right-4 top-1/2 -translate-y-1/2 text-[#686868] pointer-events-none" />
                 </div>
@@ -226,10 +319,13 @@ const CreateProduct: React.FC = () => {
                     name="campus"
                     value={formData.campus}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-[#C9CFD2] text-[#191C1F] focus:outline-none focus:border-[#1E40AF] appearance-none"
+                    className="w-full px-4 py-3 border border-[#C9CFD2] text-[#191C1F] focus:outline-none focus:border-[#1E40AF] appearance-none bg-white font-medium"
+                    disabled={filteredCampuses.length === 0}
                   >
-                    {campuses.map(c => <option key={c} value={c}>{c}</option>)}
-                    <option value="Trường Đại học Bách Khoa TPHCM">Trường Đại học Bách Khoa TPHCM</option>
+                    {filteredCampuses.map(c => <option key={c} value={c}>{c}</option>)}
+                    {filteredCampuses.length === 0 && (
+                      <option value="">Không có trường đại học nào</option>
+                    )}
                   </select>
                   <ChevronDown size={20} className="absolute right-4 top-1/2 -translate-y-1/2 text-[#686868] pointer-events-none" />
                 </div>
