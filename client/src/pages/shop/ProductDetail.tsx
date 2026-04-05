@@ -20,6 +20,7 @@ const ProductDetail: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [product, setProduct] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [otherProductsCount, setOtherProductsCount] = useState(0);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -29,15 +30,28 @@ const ProductDetail: React.FC = () => {
         const response = await productService.getProductById(id);
         const p = response.data.result;
         
-        // Map the product structure if needed, or use as is
+        // Campus from address of seller
+        const sellerCampus = p.seller?.address?.campus || p.campus || 'Chưa cập nhật';
+        
         setProduct({
             ...p,
-            product_id: p._id, // match the UI expectations
-            condition: p.condition === 1 ? 'Mới 100%' : 'Đã qua sử dụng',
-            status: p.status === 1 ? 'Active' : 'SoldOut',
+            product_id: p._id,
+            category: p.category?.name && p.subCategory?.name 
+                ? `${p.category.name} / ${p.subCategory.name}` 
+                : (p.category?.name || 'Sách giáo trình / Sách Đại cương'),
+            condition: p.condition < 100 ? 'Đã qua sử dụng' : 'Mới 100%',
             statusLabel: p.status === 1 ? 'Còn hàng' : 'Hết hàng',
-            campus: p.campus || 'Chưa cập nhật'
+            campus: sellerCampus,
+            proximity: '<1km'
         });
+
+        // Fetch other products to count for this seller
+        if (p.seller_id) {
+          const allResponse = await productService.getAllProducts();
+          const allProducts = allResponse.data.result;
+          const count = allProducts.filter((item: any) => item.seller_id === p.seller_id).length;
+          setOtherProductsCount(count);
+        }
       } catch (error) {
         console.error("Lỗi khi tải chi tiết sản phẩm:", error);
       } finally {
@@ -82,8 +96,6 @@ const ProductDetail: React.FC = () => {
     );
   }
 
-  const statusLabel = product.statusLabel;
-
   return (
     <div className="flex flex-col min-h-screen bg-white font-roboto">
       <Breadcrumbs
@@ -109,10 +121,10 @@ const ProductDetail: React.FC = () => {
               <ProductMeta
                 productId={product.product_id}
                 category={product.category}
-                status={statusLabel as any}
+                status={product.statusLabel as any}
                 condition={product.condition}
                 location={product.campus}
-                proximity={product.proximity || '<1km'}
+                proximity={product.proximity}
               />
 
               <ProductPricing
@@ -124,11 +136,11 @@ const ProductDetail: React.FC = () => {
 
             <div className="mt-8 pt-8 border-t border-gray-100">
               <SellerCard
-                sellerName={product.seller?.username || 'ldq@hcmut.edu.vn'}
-                sellerAvatar={product.seller?.avatar || 'https://via.placeholder.com/100'}
+                sellerName={product.seller?.username || 'Lê Diệu Quỳnh'}
+                sellerAvatar={product.seller?.avatar || ''}
                 rating={product.seller?.rating || 5}
                 isOnline={product.seller?.isOnline || true}
-                otherProductsCount={5}
+                otherProductsCount={otherProductsCount}
               />
             </div>
           </div>

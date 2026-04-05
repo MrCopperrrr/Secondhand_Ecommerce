@@ -48,3 +48,33 @@ export const getProductByIdController = async (req: Request,  res: Response) =>{
     result
   })
 }
+
+export const updateProductsStatusController = async (req: Request, res: Response) => {
+  const { ids, status } = req.body
+  const result = await productService.updateProductsStatus(ids, status)
+
+  return res.json({
+    message: 'Cập nhật trạng thái sản phẩm thành công',
+    result
+  })
+}
+
+export const updateProductController = async (req: Request, res: Response) => {
+  const { id } = req.params as { id: string }
+  const result = await productService.updateProduct(id, req.body)
+
+  return res.json({
+    message: 'Cập nhật thông tin sản phẩm thành công',
+    result
+  })
+}
+
+export const deleteProductController = async (req: Request, res: Response) => {
+  const { id } = req.params as { id: string }
+  const result = await productService.deleteProduct(id)
+
+  return res.json({
+    message: 'Xóa sản phẩm thành công',
+    result
+  })
+}

@@ -13,22 +13,10 @@ interface FilterSidebarProps {
   onStatusChange?: (status: string) => void;
 }
 
-const CATEGORIES = [
-  { id: 'all', label: 'Tất cả' },
-  { id: 'Đồ điện tử', label: 'Đồ điện tử' },
-  { id: 'Sách giáo trình', label: 'Sách giáo trình' },
-  { id: 'Đồ gia dụng', label: 'Đồ gia dụng' },
-  { id: 'Dụng cụ học tập', label: 'Dụng cụ học tập' },
-  { id: 'Quần áo', label: 'Quần áo' },
-  { id: 'Đồ nội thất', label: 'Đồ nội thất' },
-  { id: 'Phương tiện di chuyển', label: 'Phương tiện di chuyển' },
-  { id: 'Dụng cụ thể thao', label: 'Dụng cụ thể thao' },
-];
-
 const STATUS_OPTIONS = [
   { id: 'all', label: 'Tất cả' },
   { id: 'Active', label: 'Còn hàng' },
-  { id: 'Sold', label: 'Hết hàng' },
+  { id: 'SoldOut', label: 'Hết hàng' },
 ];
 
 const PRICE_PRESETS = [
@@ -50,7 +38,6 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
   onPriceChange,
   onStatusChange,
 }) => {
-  const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedStatus, setSelectedStatus] = useState('all');
   const [selectedPricePreset, setSelectedPricePreset] = useState('all');
   const [minPrice, setMinPrice] = useState(0);
@@ -94,30 +81,6 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
 
   return (
     <aside className="w-full md:w-64 bg-white p-6 border-r border-gray-100 hidden md:block rounded-none select-none">
-      {/* DANH MỤC */}
-      <div className="mb-6">
-        <h3 className="text-sm font-bold text-[#191C1F] mb-4 tracking-tight">Danh mục</h3>
-        <div className="space-y-4">
-          {CATEGORIES.map((cat) => (
-            <div key={cat.id} className="flex items-center gap-3 group cursor-pointer" 
-              onClick={() => {
-                setSelectedCategory(cat.id);
-                onCategoryChange?.(cat.id);
-              }}>
-              <div className={`w-4 h-4 rounded-full border flex items-center justify-center transition-all ${
-                selectedCategory === cat.id ? 'border-[#1E40AF] bg-[#1E40AF]' : 'border-gray-300 bg-white'
-              }`}>
-                {selectedCategory === cat.id && <div className="w-1.5 h-1.5 rounded-full bg-white"></div>}
-              </div>
-              <span className={`text-sm ${selectedCategory === cat.id ? 'font-bold text-[#1E40AF]' : 'text-[#686868]'}`}>
-                {cat.label}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="border-t border-gray-200 my-6"></div>
       
       {/* STATUS FILTER */}
       <div className="mb-6">

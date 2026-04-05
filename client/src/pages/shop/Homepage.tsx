@@ -4,6 +4,7 @@ import Breadcrumbs from '../../components/shop/Breadcrumbs';
 import FilterSidebar from '../../components/shop/FilterSidebar';
 import ProductSection from '../../components/shop/ProductSection';
 import { productService } from '../../services/product.services';
+import { categoryServices } from '../../services/category.services';
 import { Loader2 } from 'lucide-react';
 
 // Define product type matching new schema
@@ -11,7 +12,8 @@ interface Product {
   product_id: string;
   seller_id: string;
   name: string;
-  category: string;
+  category_id: string;
+  sub_category_id?: string;
   condition: string;
   price: number;
   description: string;
@@ -36,6 +38,26 @@ const Homepage: React.FC = () => {
   const [sortBy, setSortBy] = useState('newest');
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [namesMap, setNamesMap] = useState<Record<string, string>>({});
+
+  // Fetch Category Names for Breadcrumbs
+  useEffect(() => {
+    const loadNames = async () => {
+      try {
+        const [cats, subs] = await Promise.all([
+          categoryServices.getCategories(),
+          categoryServices.getSubCategories()
+        ]);
+        const map: Record<string, string> = { 'all': 'Tất cả' };
+        cats.forEach((c: any) => map[c._id] = c.name);
+        subs.forEach((s: any) => map[s._id] = s.name);
+        setNamesMap(map);
+      } catch (e) {
+        console.error("Error loading category names:", e);
+      }
+    };
+    loadNames();
+  }, []);
 
   // Fetch real products from API
   useEffect(() => {
@@ -50,8 +72,9 @@ const Homepage: React.FC = () => {
           product_id: p._id,
           seller_id: p.seller_id,
           name: p.name,
-          category: p.category,
-          condition: p.condition === 1 ? 'Mới 100%' : 'Đã qua sử dụng',
+          category_id: p.category_id,
+          sub_category_id: p.sub_category_id,
+          condition: p.condition < 100 ? 'Đã qua sử dụng' : 'Mới 100%',
           price: p.price,
           description: p.description,
           campus: p.campus || 'Chưa cập nhật',
@@ -90,23 +113,12 @@ const Homepage: React.FC = () => {
     setCurrentPage(1);
   }, [searchQuery, searchCategory]);
 
-  const categoriesMap: Record<string, string> = {
-    'all': 'Tất cả',
-    'Đồ điện tử': 'Đồ điện tử',
-    'Sách giáo trình': 'Sách giáo trình',
-    'Đồ gia dụng': 'Đồ gia dụng',
-    'Dụng cụ học tập': 'Dụng cụ học tập',
-    'Quần áo': 'Quần áo',
-    'Đồ nội thất': 'Đồ nội thất',
-    'Phương tiện di chuyển': 'Phương tiện di chuyển',
-    'Dụng cụ thể thao': 'Dụng cụ thể thao'
-  };
+  const searchSubCategory = searchParams.get('subcategory') || '';
 
-  // FILTER + SORT
+  // 1. Search Query Filter (Nên để đầu tiên cho hiệu năng)
   const filteredProducts = useMemo(() => {
     let result = [...products];
 
-    // 1. Search Query Filter (Nên để đầu tiên cho hiệu năng)
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase().trim();
       result = result.filter(p => 
@@ -115,9 +127,11 @@ const Homepage: React.FC = () => {
       );
     }
 
-    // 2. Category
-    if (selectedCategory !== 'all' && selectedCategory !== 'Tất cả') {
-      result = result.filter(p => p.category === selectedCategory);
+    // 2. Category & Subcategory Logic
+    if (searchSubCategory) {
+      result = result.filter(p => p.sub_category_id === searchSubCategory);
+    } else if (selectedCategory !== 'all' && selectedCategory !== 'Tất cả') {
+      result = result.filter(p => p.category_id === selectedCategory);
     }
 
     // 3. Status
@@ -147,6 +161,7 @@ const Homepage: React.FC = () => {
   }, [
     searchQuery,
     selectedCategory,
+    searchSubCategory,
     selectedStatus,
     selectedLocation,
     priceRange,
@@ -177,9 +192,25 @@ const Homepage: React.FC = () => {
   if (searchQuery) {
     breadcrumbItems.push({ label: `Kết quả tìm kiếm cho "${searchQuery}"` });
   } else if (selectedCategory !== 'all') {
-    breadcrumbItems.push({
-      label: categoriesMap[selectedCategory] || selectedCategory
-    });
+    // If it's a subcategory from URL
+    const subCatId = searchParams.get('subcategory');
+    if (subCatId && namesMap[subCatId]) {
+      // Find parent category name
+      // This is a bit complex since we don't have sub-cat structure here, 
+      // but we can just show: Home > Parent Name > Sub Name
+      // Since selectedCategory is usually the parent ID in our URL structure
+      if (selectedCategory && namesMap[selectedCategory]) {
+         breadcrumbItems.push({ 
+           label: namesMap[selectedCategory],
+           href: `/?category=${selectedCategory}` 
+         });
+      }
+      breadcrumbItems.push({ label: namesMap[subCatId] });
+    } else {
+      breadcrumbItems.push({
+        label: namesMap[selectedCategory] || selectedCategory
+      });
+    }
   }
 
   return (

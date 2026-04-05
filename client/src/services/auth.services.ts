@@ -23,5 +23,9 @@ export const authService = {
 
   getAddresses: () => {
     return api.get('/users/me/addresses');
+  },
+  
+  saveAddress: (data: any) => {
+    return api.post('/users/me/address', data);
   }
 };

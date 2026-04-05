@@ -49,6 +49,12 @@ class DatabaseService {
   get address(): Collection<any> {
     return this.db.collection('address')
   }
+  get categories(): Collection<any> {
+    return this.db.collection('categories')
+  }
+  get subCategories(): Collection<any> {
+    return this.db.collection('sub_categories')
+  }
 }
 
 const databaseService = new DatabaseService()

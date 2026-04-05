@@ -35,11 +35,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setCartItems((prevItems) => {
       const existingItem = prevItems.find((item) => item.id === product.product_id);
       if (existingItem) {
-        return prevItems.map((item) =>
-          item.id === product.product_id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
+        // Since each secondhand item is unique, we don't increment quantity.
+        // If it's already in the cart, we just keep the cart as is.
+        return prevItems;
       }
       return [
         ...prevItems,
