@@ -1,16 +1,69 @@
-import React from 'react';
-import { Package, MessageSquare, ListTodo, TrendingUp, PlusCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Package, TrendingUp, PlusCircle, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Breadcrumbs from '../../components/shop/Breadcrumbs';
 import { ProfileSidebar } from '../../components/profile/profile-sidebar';
+import { productService } from '../../services/product.services';
+import { authService } from '../../services/auth.services';
 
 const SellerDashboard: React.FC = () => {
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState({
+    totalRevenue: 0,
+    totalOrders: 0,
+    activeProducts: 0,
+    soldOutProducts: 0
+  });
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setLoading(true);
+        // 1. Get current user profile for ID
+        const profileRes = await authService.getMe();
+        const userId = profileRes.data.result._id;
+
+        // 2. Get all products and filter by seller_id
+        const productRes = await productService.getAllProducts();
+        const allProducts = productRes.data.result;
+        const myProducts = allProducts.filter((p: any) => p.seller_id === userId);
+
+        // 3. Calculate stats
+        // status: 0 is SoldOut/Sold, status: 1 is Active
+        const soldProducts = myProducts.filter((p: any) => p.status === 0);
+        const activeProductsCount = myProducts.filter((p: any) => p.status === 1).length;
+        const soldOutProductsCount = soldProducts.length;
+        const revenue = soldProducts.reduce((sum: number, p: any) => sum + (p.price || 0), 0);
+
+        setData({
+          totalRevenue: revenue,
+          totalOrders: soldOutProductsCount,
+          activeProducts: activeProductsCount,
+          soldOutProducts: soldOutProductsCount
+        });
+      } catch (error) {
+        console.error("Lỗi khi tải dữ liệu dashboard:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
+
   const stats = [
-    { label: 'Doanh thu hôm nay', value: '1.250.000đ', icon: TrendingUp, color: 'text-blue-600' },
-    { label: 'Đơn hàng mới', value: '3', icon: Package, color: 'text-orange-500' },
-    { label: 'Việc cần làm', value: '2', icon: ListTodo, color: 'text-purple-600' },
-    { label: 'Tin nhắn mới', value: '5', icon: MessageSquare, color: 'text-green-600' },
+    { label: 'Tổng doanh thu', value: new Intl.NumberFormat('vi-VN').format(data.totalRevenue) + 'đ', icon: TrendingUp, color: 'text-blue-600' },
+    { label: 'Tổng đơn hàng', value: data.totalOrders.toString(), icon: Package, color: 'text-orange-500' },
   ];
+
+  if (loading) {
+    return (
+      <div className="flex flex-col min-h-screen bg-white items-center justify-center">
+        <Loader2 className="w-12 h-12 text-[#1E40AF] animate-spin" />
+        <p className="mt-4 text-[#686868] italic">Đang tải dữ liệu tổng quan...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-white font-roboto">
@@ -38,7 +91,7 @@ const SellerDashboard: React.FC = () => {
             </div>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
               {stats.map((stat, idx) => (
                 <div key={idx} className="bg-white border border-[#C9CFD2] p-6 shadow-sm hover:border-[#1E40AF] transition-colors">
                   <div className="flex items-center gap-4">
@@ -57,24 +110,16 @@ const SellerDashboard: React.FC = () => {
             {/* Main Sections */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* Product Status Card */}
-              <div className="bg-white border border-[#C9CFD2] p-8 shadow-sm">
+              <div className="bg-white border border-[#C9CFD2] p-8 shadow-sm h-full">
                 <h3 className="text-lg font-bold text-[#191C1F] mb-6 border-b border-gray-100 pb-3">Phân tích Sản phẩm</h3>
                 <div className="space-y-6">
                   <div className="flex justify-between items-center">
                     <span className="text-[#475156]">Sản phẩm đang hiển thị</span>
-                    <span className="font-bold text-[#1E40AF]">12</span>
+                    <span className="font-bold text-[#1E40AF] text-lg">{data.activeProducts}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-[#475156]">Sản phẩm hết hàng</span>
-                    <span className="font-bold text-[#1E40AF]">2</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-[#475156]">Lượt xem sản phẩm (7 ngày)</span>
-                    <span className="font-bold text-[#2DB224]">248</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-[#475156]">Lượt thích sản phẩm (7 ngày)</span>
-                    <span className="font-bold text-orange-500">42</span>
+                    <span className="font-bold text-[#1E40AF] text-lg">{data.soldOutProducts}</span>
                   </div>
                 </div>
                 <Link to="/profile/products" className="block mt-8 text-center text-sm font-bold text-[#1E40AF] hover:underline uppercase">
@@ -83,16 +128,12 @@ const SellerDashboard: React.FC = () => {
               </div>
 
               {/* Notice Card */}
-              <div className="bg-white border border-[#C9CFD2] p-8 shadow-sm">
+              <div className="bg-white border border-[#C9CFD2] p-8 shadow-sm h-full">
                 <h3 className="text-lg font-bold text-[#191C1F] mb-6 border-b border-gray-100 pb-3">Thông báo quan trọng</h3>
                 <div className="space-y-4">
                     <div className="p-3 bg-blue-50 border-l-4 border-blue-500">
                         <p className="text-sm text-blue-900 font-medium">Bán hàng ngay hôm nay!</p>
                         <p className="text-xs text-blue-700 mt-1">Đừng quên cập nhật tình trạng sản phẩm thường xuyên.</p>
-                    </div>
-                    <div className="p-3 bg-orange-50 border-l-4 border-orange-500">
-                        <p className="text-sm text-orange-900 font-medium">2 tin nhắn mới từ khách hàng</p>
-                        <p className="text-xs text-orange-700 mt-1">Vui lòng phản hồi sớm để tăng độ tin cậy.</p>
                     </div>
                     <div className="p-3 bg-gray-50 border-l-4 border-gray-400 opacity-60">
                         <p className="text-sm text-gray-700 font-medium">Lịch sử cập nhật hệ thống</p>

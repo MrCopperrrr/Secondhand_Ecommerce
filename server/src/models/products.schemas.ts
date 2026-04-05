@@ -10,7 +10,9 @@ interface ProductType {
     condition: number        
     images: string[]      
     seller_id: ObjectId  
-    status: StatusType   
+    status: StatusType 
+    province?: string
+    campus?: string
     created_at?: Date
     updated_at?: Date
 }
@@ -25,6 +27,8 @@ export default class Product {
     images: string[]      
     seller_id: ObjectId  
     status: StatusType 
+    province?: string
+    campus?: string
     created_at?: Date
     updated_at?: Date
     constructor(product: ProductType){
@@ -38,6 +42,8 @@ export default class Product {
         this.images=product.images
         this.seller_id= product.seller_id
         this.status= product.status
+        this.province= product.province
+        this.campus= product.campus
         this.created_at= product.created_at || new Date()
         this.updated_at= product.updated_at || new Date()
     }

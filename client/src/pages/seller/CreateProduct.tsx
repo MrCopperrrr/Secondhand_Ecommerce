@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronDown, Folder, X, ChevronRight } from 'lucide-react';
+import { ChevronDown, Folder, X, ChevronRight, Loader2 } from 'lucide-react';
 import Breadcrumbs from '../../components/shop/Breadcrumbs';
 import { ProfileSidebar } from '../../components/profile/profile-sidebar';
 import { productService } from '../../services/product.services';
 import { categoryServices } from '../../services/category.services';
 import PROVINCES_DATA from '../../data/provinces.json';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 interface SearchableDropdownProps {
   label: string;
@@ -85,6 +86,10 @@ const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
 };
 
 const CreateProduct: React.FC = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const editProduct = location.state?.editProduct;
+
   const [formData, setFormData] = useState({
     title: '',
     price: '',
@@ -103,45 +108,61 @@ const CreateProduct: React.FC = () => {
   const [categories, setCategories] = useState<any[]>([]); 
   const [subCategories, setSubCategories] = useState<any[]>([]); 
   const [filteredSubCategories, setFilteredSubCategories] = useState<any[]>([]); 
+  const [loading, setLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const initForm = async () => {
       try {
-        if (PROVINCES_DATA.length > 0) {
-          const firstProvince = PROVINCES_DATA[0];
-          setFormData(prev => ({ 
-            ...prev, 
-            province: firstProvince.name,
-            campus: firstProvince.campus && firstProvince.campus.length > 0 ? firstProvince.campus[0] : ''
-          }));
-        }
-
+        setLoading(true);
         const cats = await categoryServices.getCategories();
         const subs = await categoryServices.getSubCategories();
         setCategories(cats || []);
         setSubCategories(subs || []);
-        if (cats && cats.length > 0) {
-          setFormData(prev => ({ ...prev, category: cats[0]._id }));
+
+        if (editProduct) {
+          // Fill for EDIT
+          setFormData({
+            title: editProduct.name,
+            price: new Intl.NumberFormat('vi-VN').format(editProduct.price),
+            category: editProduct.category_id,
+            sub_category: editProduct.sub_category_id,
+            condition: editProduct.condition.toString(),
+            province: editProduct.province || PROVINCES_DATA[0].name,
+            campus: editProduct.campus || '',
+            description: editProduct.description,
+          });
+          setImages(editProduct.images || []);
+        } else {
+          // Fill for NEW
+          if (PROVINCES_DATA.length > 0) {
+            const firstProvince = PROVINCES_DATA[0];
+            setFormData(prev => ({ 
+              ...prev, 
+              province: firstProvince.name,
+              campus: firstProvince.campus && firstProvince.campus.length > 0 ? firstProvince.campus[0] : ''
+            }));
+          }
+          if (cats && cats.length > 0) {
+            setFormData(prev => ({ ...prev, category: cats[0]._id }));
+          }
         }
       } catch (e) {
         console.error('Lỗi khi khởi tạo form:', e);
+      } finally {
+        setLoading(false);
       }
     };
     initForm();
-  }, []);
+  }, [editProduct]);
 
   useEffect(() => {
     if (formData.province) {
       const provinceData = provinces.find(p => p.name === formData.province);
       const campuses = provinceData?.campus || [];
       setFilteredCampuses(campuses);
-      if (campuses.length > 0) {
-        if (!campuses.includes(formData.campus)) {
-          setFormData(prev => ({ ...prev, campus: campuses[0] }));
-        }
-      } else {
-        setFormData(prev => ({ ...prev, campus: '' }));
+      if (!editProduct && campuses.length > 0 && !campuses.includes(formData.campus)) {
+        setFormData(prev => ({ ...prev, campus: campuses[0] }));
       }
     }
   }, [formData.province, provinces]);
@@ -150,10 +171,8 @@ const CreateProduct: React.FC = () => {
     if (formData.category) {
       const filtered = subCategories.filter(s => s.parent_id === formData.category);
       setFilteredSubCategories(filtered);
-      if (filtered.length > 0) {
+      if (!editProduct && filtered.length > 0 && !filtered.find(s => s._id === formData.sub_category)) {
         setFormData(prev => ({ ...prev, sub_category: filtered[0]._id }));
-      } else {
-        setFormData(prev => ({ ...prev, sub_category: '' }));
       }
     }
   }, [formData.category, subCategories]);
@@ -179,18 +198,19 @@ const CreateProduct: React.FC = () => {
     };
   
     try {
-      await productService.createProduct(payload);
-      alert("Đăng bán thành công!");
-      handleReset();
+      if (editProduct) {
+        await productService.updateProduct(editProduct._id, payload);
+        alert("Cập nhật thành công!");
+        navigate('/profile/products');
+      } else {
+        await productService.createProduct(payload);
+        alert("Đăng bán thành công!");
+        handleReset();
+      }
     } catch (error: any) {
       console.error("Lỗi rồi ", error);
       const msg = error.response?.data?.message || "Có lỗi";
-      
-      if (error.response?.data?.error === "jwt expired") {
-        alert("Phiên đăng nhập hết hạn");
-      } else {
-        alert(msg);
-      }
+      alert(msg);
     }
   };
 
@@ -198,7 +218,6 @@ const CreateProduct: React.FC = () => {
     const number = value.replace(/\D/g, '');
     if (number === '') return '';
     const num = parseInt(number);
-    // Limit to Int32 Max: 2147483647
     if (num > 2147483647) return '2.147.483.647';
     if (num <= 0) return '';
     return new Intl.NumberFormat('vi-VN').format(num);
@@ -279,6 +298,10 @@ const CreateProduct: React.FC = () => {
   };
 
   const handleReset = () => {
+    if (editProduct) {
+        navigate('/profile/products');
+        return;
+    }
     setFormData({
       title: '',
       price: '',
@@ -292,22 +315,33 @@ const CreateProduct: React.FC = () => {
     setImages([]);
   };
 
+  if (loading && !editProduct) {
+    return (
+      <div className="flex flex-col min-h-screen bg-white items-center justify-center">
+        <Loader2 className="w-12 h-12 text-[#1E40AF] animate-spin" />
+        <p className="mt-4 text-[#686868] italic">Đang tải dữ liệu...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col min-h-screen bg-white font-roboto">
       <Breadcrumbs
         items={[
           { label: 'Trang chủ', href: '/' },
           { label: 'Tài khoản' },
-          { label: 'Đăng bán sản phẩm' },
+          { label: editProduct ? 'Chỉnh sửa sản phẩm' : 'Đăng bán sản phẩm' },
         ]}
       />
 
       <div className="flex flex-1 w-full max-w-7xl mx-auto">
-        <ProfileSidebar activeTab="sell" />
+        < ProfileSidebar activeTab="sell" />
 
         <main className="flex-1 p-8">
           <div className="max-w-5xl">
-            <h1 className="text-2xl font-bold text-[#191C1F] mb-10">Đăng bán sản phẩm</h1>
+            <h1 className="text-2xl font-bold text-[#191C1F] mb-10">
+                {editProduct ? 'Chỉnh sửa sản phẩm' : 'Đăng bán sản phẩm'}
+            </h1>
 
             <div className="mb-6">
               <div className="flex justify-between items-center mb-2">
@@ -489,10 +523,10 @@ const CreateProduct: React.FC = () => {
                 onClick={handleReset}
                 className="px-8 py-3 border-2 border-[#1E40AF] text-[#1E40AF] font-bold text-sm bg-white hover:bg-gray-50 transition-all rounded-none uppercase"
               >
-                XÓA
+                {editProduct ? 'HỦY BỎ' : 'XÓA'}
               </button>
               <button onClick={handleSubmit} className="px-6 py-3 bg-[#1E40AF] border-2 border-[#1E40AF] text-white font-bold text-sm hover:bg-blue-800 transition-all rounded-none flex items-center gap-2 uppercase tracking-wide">
-                ĐĂNG BÁN SẢN PHẨM <ChevronRight size={18} />
+                {editProduct ? 'CẬP NHẬT SẢN PHẨM' : 'ĐĂNG BÁN SẢN PHẨM'} <ChevronRight size={18} />
               </button>
             </div>
           </div>

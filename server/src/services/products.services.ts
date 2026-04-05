@@ -108,6 +108,29 @@ class ProductService{
         return result;
     }
 
+    async updateProduct(id: string, payload: any) {
+        const { _id, seller_id, created_at, ...updateData } = payload;
+        const result = await databaseService.products.updateOne(
+            { _id: new ObjectId(id) },
+            { 
+                $set: { 
+                    ...updateData, 
+                    updated_at: new Date(),
+                    category_id: updateData.category_id ? new ObjectId(updateData.category_id) : undefined,
+                    sub_category_id: updateData.sub_category_id ? new ObjectId(updateData.sub_category_id) : undefined
+                } 
+            }
+        );
+        return result;
+    }
+
+    async deleteProduct(id: string) {
+        const result = await databaseService.products.deleteOne({
+            _id: new ObjectId(id)
+        });
+        return result;
+    }
+
 }
 const productService= new ProductService()
 export default productService
