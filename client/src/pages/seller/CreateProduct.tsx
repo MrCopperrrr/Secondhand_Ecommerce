@@ -4,7 +4,7 @@ import Breadcrumbs from '../../components/shop/Breadcrumbs';
 import { ProfileSidebar } from '../../components/profile/profile-sidebar';
 import { productService } from '../../services/product.services';
 import { categoryServices } from '../../services/category.services';
-import PROVINCES_DATA from '../../data/provinces.json';
+import { commonServices } from '../../services/common.services';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 interface SearchableDropdownProps {
@@ -103,7 +103,7 @@ const CreateProduct: React.FC = () => {
 
   const [images, setImages] = useState<string[]>([]);
   const [dragActive, setDragActive] = useState(false);
-  const [provinces] = useState<any[]>(PROVINCES_DATA);
+  const [provinces, setProvinces] = useState<any[]>([]);
   const [filteredCampuses, setFilteredCampuses] = useState<string[]>([]);
   const [categories, setCategories] = useState<any[]>([]); 
   const [subCategories, setSubCategories] = useState<any[]>([]); 
@@ -115,6 +115,10 @@ const CreateProduct: React.FC = () => {
     const initForm = async () => {
       try {
         setLoading(true);
+        const pResp = await commonServices.getProvinces();
+        const pList = pResp.data.result || [];
+        setProvinces(pList);
+
         const cats = await categoryServices.getCategories();
         const subs = await categoryServices.getSubCategories();
         setCategories(cats || []);
@@ -128,15 +132,15 @@ const CreateProduct: React.FC = () => {
             category: editProduct.category_id,
             sub_category: editProduct.sub_category_id,
             condition: editProduct.condition.toString(),
-            province: editProduct.province || PROVINCES_DATA[0].name,
+            province: editProduct.province || (pList.length > 0 ? pList[0].name : ''),
             campus: editProduct.campus || '',
             description: editProduct.description,
           });
           setImages(editProduct.images || []);
         } else {
           // Fill for NEW
-          if (PROVINCES_DATA.length > 0) {
-            const firstProvince = PROVINCES_DATA[0];
+          if (pList.length > 0) {
+            const firstProvince = pList[0];
             setFormData(prev => ({ 
               ...prev, 
               province: firstProvince.name,

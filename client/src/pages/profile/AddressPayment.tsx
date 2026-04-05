@@ -3,7 +3,7 @@ import { ChevronDown, Loader2 } from 'lucide-react';
 import Breadcrumbs from '../../components/shop/Breadcrumbs';
 import { ProfileSidebar } from '../../components/profile/profile-sidebar';
 import { authService } from '../../services/auth.services';
-import PROVINCES_DATA from '../../data/provinces.json';
+import { commonServices } from '../../services/common.services';
 
 interface SearchableDropdownProps {
   label: string;
@@ -86,11 +86,12 @@ const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
 const AddressPayment: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [provinces, setProvinces] = useState<any[]>([]);
   const [address, setAddress] = useState({
     tittle: 'Nhà riêng',
     address_line_1: '',
     address_line_2: '',
-    city: PROVINCES_DATA[0]?.name || 'Thành phố Hồ Chí Minh',
+    city: '',
     campus: ''
   });
 
@@ -98,9 +99,15 @@ const AddressPayment: React.FC = () => {
   const [filteredCampuses, setFilteredCampuses] = useState<string[]>([]);
 
   useEffect(() => {
-    const fetchAddress = async () => {
+    const initData = async () => {
       try {
         setLoading(true);
+        // Fetch provinces first
+        const pResp = await commonServices.getProvinces();
+        const pList = pResp.data.result || [];
+        setProvinces(pList);
+
+        // Fetch address
         const response = await authService.getAddresses();
         const data = response.data.result;
         if (data && data.length > 0) {
@@ -109,28 +116,30 @@ const AddressPayment: React.FC = () => {
             tittle: addr.tittle || 'Nhà riêng',
             address_line_1: addr.address_line_1 || '',
             address_line_2: addr.address_line_2 || '',
-            city: addr.city || PROVINCES_DATA[0]?.name || 'Thành phố Hồ Chí Minh',
+            city: addr.city || (pList.length > 0 ? pList[0].name : ''),
             campus: addr.campus || ''
           });
+        } else if (pList.length > 0) {
+            setAddress(prev => ({ ...prev, city: pList[0].name }));
         }
       } catch (error) {
-        console.error("Lỗi khi tải địa chỉ:", error);
+        console.error("Lỗi khi tải dữ liệu:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchAddress();
+    initData();
   }, []);
 
   // Update lists when city (Province) changes
   useEffect(() => {
-    if (address.city) {
-      const provinceData = PROVINCES_DATA.find(p => p.name === address.city);
+    if (address.city && provinces.length > 0) {
+      const provinceData = provinces.find(p => p.name === address.city);
       setFilteredWards(provinceData?.wards || []);
       setFilteredCampuses(provinceData?.campus || []);
     }
-  }, [address.city]);
+  }, [address.city, provinces]);
 
   const handleSave = async () => {
     try {
@@ -155,7 +164,7 @@ const AddressPayment: React.FC = () => {
         const next = { ...prev, [name]: value };
         // Reset ward and campus if province changes
         if (name === 'city') {
-            const provinceData = PROVINCES_DATA.find(p => p.name === value);
+            const provinceData = provinces.find(p => p.name === value);
             next.address_line_2 = provinceData?.wards?.[0] || '';
             next.campus = provinceData?.campus?.[0] || '';
         }
@@ -219,7 +228,7 @@ const AddressPayment: React.FC = () => {
                     label="Tỉnh/Thành phố"
                     name="city"
                     value={address.city}
-                    options={PROVINCES_DATA.map(p => p.name)}
+                    options={provinces.map(p => p.name)}
                     onChange={handleDropdownChange}
                   />
                   <SearchableDropdown

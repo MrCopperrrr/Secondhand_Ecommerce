@@ -55,6 +55,9 @@ class DatabaseService {
   get subCategories(): Collection<any> {
     return this.db.collection('sub_categories')
   }
+  get provinces(): Collection<any> {
+    return this.db.collection('provinces')
+  }
 }
 
 const databaseService = new DatabaseService()
