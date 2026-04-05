@@ -1,17 +1,14 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import PROVINCES_DATA_RAW from '../../../data/provinces.json';
-import UNIVERSITIES_DATA_RAW from '../../../data/universities.json';
 import { Search, ChevronDown, Check } from 'lucide-react';
 import * as Popover from '@radix-ui/react-popover';
+import { commonServices } from '../../../services/common.services';
 
 interface ProvinceData {
-  id: number;
+  _id: string;
   name: string;
   wards: string[];
+  campus: string[];
 }
-
-const PROVINCES_DATA = PROVINCES_DATA_RAW as ProvinceData[];
-const UNIVERSITIES_DATA = UNIVERSITIES_DATA_RAW as Record<string, string[]>;
 
 interface BillingFormData {
   fullName: string;
@@ -124,6 +121,7 @@ function SearchableSelect({ label, value, options, onChange, placeholder, disabl
 }
 
 export function BillingForm({ onFormChange }: BillingFormProps) {
+  const [provincesData, setProvincesData] = useState<ProvinceData[]>([]);
   const [formData, setFormData] = useState<BillingFormData>({
     fullName: '',
     phone: '',
@@ -138,18 +136,32 @@ export function BillingForm({ onFormChange }: BillingFormProps) {
   const [errors, setErrors] = useState<Partial<Record<keyof BillingFormData, string>>>({});
   const [touched, setTouched] = useState<Partial<Record<keyof BillingFormData, boolean>>>({});
 
-  const provinceOptions = useMemo(() => PROVINCES_DATA.map(p => p.name), []);
+  // Fetch provinces
+  useEffect(() => {
+    const fetchProvinces = async () => {
+        try {
+            const resp = await commonServices.getProvinces();
+            setProvincesData(resp.data.result || []);
+        } catch (e) {
+            console.error("Lỗi khi tải tỉnh thành:", e);
+        }
+    };
+    fetchProvinces();
+  }, []);
+
+  const provinceOptions = useMemo(() => provincesData.map(p => p.name), [provincesData]);
   
   const wardOptions = useMemo(() => {
     if (!formData.province) return [];
-    const province = PROVINCES_DATA.find(p => p.name === formData.province);
+    const province = provincesData.find(p => p.name === formData.province);
     return province ? province.wards : [];
-  }, [formData.province]);
+  }, [formData.province, provincesData]);
 
   const campusOptions = useMemo(() => {
     if (!formData.province) return [];
-    return UNIVERSITIES_DATA[formData.province] || [];
-  }, [formData.province]);
+    const province = provincesData.find(p => p.name === formData.province);
+    return province ? province.campus : [];
+  }, [formData.province, provincesData]);
 
   const validate = (data: BillingFormData, field?: keyof BillingFormData) => {
     const newErrors: Partial<Record<keyof BillingFormData, string>> = { ...errors };
