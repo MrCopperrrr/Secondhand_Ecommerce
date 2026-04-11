@@ -6,6 +6,7 @@ import { PaymentMethodSelector } from '../../components/shop/checkout/payment-me
 import { CheckoutSummary } from '../../components/shop/checkout/checkout-summary';
 import { useCart } from '../../context/CartContext';
 import { productService } from '../../services/product.services';
+import { paymentServices } from '../../services/payment.services';
 
 interface BillingFormData {
   fullName: string;
@@ -54,15 +55,25 @@ const Checkout: React.FC = () => {
     }
     
     try {
-      // Mark products as Sold Out (status 0) after successful payment
-      const itemIds = itemsToCheckout.map(item => item.id);
-      await productService.updateProductStatus(itemIds, 0);
-      
-      console.log('Checkout processed and products marked as Sold Out:', { formData, paymentMethod, items: itemsToCheckout });
-      
-      // After success, clear cart and navigate to success page
-      clearCart();
-      navigate('/checkout/success');
+      const subtotal = itemsToCheckout.reduce((sum, item) => sum + item.price, 0);
+      const serviceFee = Math.round(subtotal * 0.05); // 5% service fee
+      const totalAmount = subtotal + shippingFee + serviceFee;
+
+      if (paymentMethod === 'cod') {
+        const itemIds = itemsToCheckout.map(item => item.id);
+        await productService.updateProductStatus(itemIds, 0);
+        clearCart();
+        navigate('/checkout/success');
+      } else {
+        // Online Payment Flow (VNPAY)
+        const response: any = await paymentServices.createPaymentUrl({ 
+          amount: totalAmount 
+        });
+        
+        if (response.data?.result) {
+          window.location.href = response.data.result;
+        }
+      }
     } catch (error) {
       console.error('Lỗi khi xử lý thanh toán:', error);
       alert('Có lỗi xảy ra khi thanh toán. Vui lòng thử lại sau.');
