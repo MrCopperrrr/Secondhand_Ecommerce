@@ -25,7 +25,9 @@ const PRICE_PRESETS = [
   { id: '20m-50m', label: 'Từ 20 đến 50 triệu', min: 20000000, max: 50000000 },
   { id: '5m-20m', label: 'Từ 5 đến 20 triệu', min: 5000000, max: 20000000 },
   { id: '1m-5m', label: 'Từ 1 đến 5 triệu', min: 1000000, max: 5000000 },
-  { id: 'under1m', label: 'Dưới 1 triệu', min: 0, max: 1000000 },
+  { id: '1m-500k', label: 'Từ 500 nghìn đến 1 triệu', min: 500000, max: 1000000 },
+  { id: '500k-100k', label: 'Từ 100 nghìn đến 500 nghìn', min: 100000, max: 500000 },
+  { id: '100k', label: 'Dưới 100 nghìn', min: 0, max: 100000 },
 ];
 
 const MAX_LIMIT = 1000000000; // 1 tỷ VND
