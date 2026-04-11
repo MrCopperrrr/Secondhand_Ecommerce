@@ -28,18 +28,20 @@ export const ProfileSidebar: React.FC<ProfileSidebarProps> = ({ activeTab = 'pro
     {
       title: 'KÊNH NGƯỜI MUA',
       items: [
-        { id: 'track-order', label: 'Theo dõi đơn hàng', href: '/profile/track-order' },
-        { id: 'favorites', label: 'Sản phẩm yêu thích', href: '/profile/favorites' },
-        { id: 'history', label: 'Lịch sử giao dịch', href: '/profile/history' },
+        { id: 'orders', label: 'Đơn mua của tôi', href: '/profile/orders' },
+        { id: 'reviews', label: 'Đánh giá', href: '/404' },
+        { id: 'returns', label: 'Khiếu nại & Hoàn trả', href: '/404' },
+        { id: 'transactions', label: 'Lịch sử giao dịch', href: '/404' },
       ]
     },
     {
       title: 'KÊNH NGƯỜI BÁN',
       items: [
-        { id: 'seller-dashboard', label: 'Tổng quan (Dashboard)', href: '/seller/dashboard' },
+        { id: 'seller-dashboard', label: 'Tổng quan', href: '/seller/dashboard' },
         { id: 'sell', label: 'Đăng bán sản phẩm', href: '/sell' },
-        { id: 'products', label: 'Quản lý sản phẩm', href: '/profile/products' },
-        { id: 'orders-received', label: 'Đơn hàng đã nhận', href: '/seller/orders' },
+        { id: 'sales', label: 'Đơn hàng đã nhận', href: '/profile/sales' },
+        { id: 'products', label: 'Quản lý kho hàng', href: '/profile/products' },
+        
       ]
     },
     {

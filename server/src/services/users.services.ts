@@ -29,9 +29,11 @@ class UserService{
             created_at: new Date()
         })
     )
+        const user = await databaseService.users.findOne({ _id: new ObjectId(user_id) }, { projection: { password: 0 } })
         return {
             access_token,
-            refresh_token
+            refresh_token,
+            user
         }
     }
     async signRefreshToken (user_id: string){
@@ -84,9 +86,11 @@ class UserService{
         })
         
     )
+        const user = await databaseService.users.findOne({ _id: result.insertedId }, { projection: { password: 0 } })
         return {
         access_token,
-        refresh_token
+        refresh_token,
+        user
     }
     }
     async getMe(user_id: string) {

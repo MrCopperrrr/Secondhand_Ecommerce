@@ -49,6 +49,9 @@ class DatabaseService {
   get address(): Collection<any> {
     return this.db.collection('address')
   }
+  get orders(): Collection<any> {
+    return this.db.collection('orders')
+  }
   get categories(): Collection<any> {
     return this.db.collection('categories')
   }
