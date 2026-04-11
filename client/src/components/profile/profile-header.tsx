@@ -3,13 +3,15 @@ import { CheckCircle, Camera } from 'lucide-react';
 
 interface ProfileHeaderProps {
   name?: string;
+  avatar?: string;
   isVerified?: boolean;
   onAvatarChange?: () => void;
 }
 
 export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
-  name = 'Nguyễn Văn A',
-  isVerified = true,
+  name = 'Người dùng Uni2hand',
+  avatar,
+  isVerified = false,
   onAvatarChange,
 }) => {
   return (
@@ -17,12 +19,18 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
       <div className="flex items-start gap-6">
         {/* Avatar */}
         <div className="relative flex-shrink-0 group">
-          <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-200 border-4 border-[#1E40AF] flex items-center justify-center">
-            <img
-              src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=96&h=96&fit=crop"
-              alt={name}
-              className="w-full h-full object-cover"
-            />
+          <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-100 border-4 border-[#1E40AF] flex items-center justify-center">
+            {avatar ? (
+               <img
+               src={avatar}
+               alt={name}
+               className="w-full h-full object-cover"
+             />
+            ) : (
+               <div className="w-full h-full flex items-center justify-center bg-blue-50 text-[#1E40AF] font-bold text-2xl">
+                 {name.charAt(0)}
+               </div>
+            )}
           </div>
           <button
             onClick={onAvatarChange}
@@ -33,7 +41,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         </div>
 
         {/* User Info */}
-        <div className="flex-1">
+        <div className="flex-1 pt-2">
           <div className="flex items-center gap-2 mb-2">
             <h1 className="text-2xl font-bold text-[#191C1F]">{name}</h1>
             {isVerified && (
@@ -43,7 +51,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               </div>
             )}
           </div>
-          <p className="text-[#686868]">Thành viên Uni2hand</p>
+          <p className="text-[#686868] text-sm font-medium">Thành viên Uni2hand</p>
         </div>
       </div>
     </div>

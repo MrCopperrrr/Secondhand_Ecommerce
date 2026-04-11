@@ -1,70 +1,43 @@
 import React, { useState } from 'react';
 import { ChevronDown, Plus } from 'lucide-react';
 
-// Mock data for provinces, districts, and universities
-const PROVINCES = [
-  'TPHCM',
-  'Hà Nội',
-  'Đà Nẵng',
-  'Cần Thơ',
-  'Hải Phòng',
-];
+interface AddressItem {
+  _id: string;
+  city: string;
+  address_line_2: string; // ward
+  campus: string;
+  address_line_1: string; // street
+}
 
-const DISTRICTS_MAP: Record<string, string[]> = {
-  'TPHCM': [
-    'Phường Diên Hồng',
-    'Phường Bến Nghé',
-    'Phường Đa Kao',
-    'Phường Tân Định',
-  ],
-  'Hà Nội': [
-    'Phường Hoàn Kiếm',
-    'Phường Bát Tràng',
-    'Phường Láng Hạ',
-    'Phường Đống Đa',
-  ],
-  'Đà Nẵng': [
-    'Phường Hòa Cường',
-    'Phường Tây Thạnh',
-    'Phường Mỹ Khê',
-    'Phường Hải Châu',
-  ],
-  'Cần Thơ': [
-    'Phường Cái Khế',
-    'Phường Tân An',
-    'Phường Xuân Khánh',
-    'Phường Hưng Lợi',
-  ],
-  'Hải Phòng': [
-    'Phường Minh Khai',
-    'Phường Quán Toan',
-    'Phường Hòn Gai',
-    'Phường Đông Hải',
-  ],
-};
+interface AddressManagementProps {
+  provinces?: any[]; // Full province master list with campus_data
+  initialAddresses?: AddressItem[];
+  onAddAddress?: (newAddress: any) => void;
+  onDeleteAddress?: (id: string) => void;
+}
 
-const UNIVERSITIES = [
-  'Trường Đại học Bách khoa TPHCM',
-  'Trường Đại học Kinh tế TPHCM',
-  'Trường Đại học Ngoại ngữ TPHCM',
-  'Trường Đại học Sư phạm TPHCM',
-  'Trường Đại học Quốc gia Hà Nội',
-  'Trường Đại học Xây dựng Hà Nội',
-];
-
-export const AddressManagement: React.FC = () => {
-  const [defaultAddress, setDefaultAddress] = useState('258 Lý Thường Kiệt');
-  const [province, setProvince] = useState('TPHCM');
-  const [district, setDistrict] = useState('Phường Diên Hồng');
-  const [university, setUniversity] = useState('Trường Đại học Bách khoa TPHCM');
+export const AddressManagement: React.FC<AddressManagementProps> = ({ 
+  provinces = [], 
+  initialAddresses = [],
+  onAddAddress,
+  onDeleteAddress
+}) => {
+  const [defaultAddress, setDefaultAddress] = useState('');
+  const [province, setProvince] = useState('');
+  const [district, setDistrict] = useState('');
+  const [university, setUniversity] = useState('');
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
-  const availableDistricts = DISTRICTS_MAP[province] || [];
-
+  // Derive available campuses for selected province
+  const selectedProvData = provinces.find(p => p.name === province);
+  const availableCampuses = selectedProvData?.campus || [];
+  
+  // Wards are still a bit tricky without a full mapping, 
+  // so we'll allow free input or use currently known wards for this province from initialAddresses
   const handleProvinceChange = (newProvince: string) => {
     setProvince(newProvince);
-    // Reset district when province changes
-    setDistrict(DISTRICTS_MAP[newProvince]?.[0] || '');
+    setUniversity('');
+    setDistrict('');
   };
 
   return (
@@ -111,9 +84,10 @@ export const AddressManagement: React.FC = () => {
                   : 'border-[#C9CFD2] bg-white'
               } text-[#191C1F] focus:outline-none pr-10`}
             >
-              {PROVINCES.map((prov) => (
-                <option key={prov} value={prov}>
-                  {prov}
+              <option value="">Chọn Tỉnh/Thành phố</option>
+              {provinces.map((prov) => (
+                <option key={prov._id} value={prov.name}>
+                  {prov.name}
                 </option>
               ))}
             </select>
@@ -130,26 +104,18 @@ export const AddressManagement: React.FC = () => {
             Phường/Xã
           </label>
           <div className="relative">
-            <select
+            <input
+              type="text"
               value={district}
               onChange={(e) => setDistrict(e.target.value)}
               onFocus={() => setFocusedField('district')}
               onBlur={() => setFocusedField(null)}
-              className={`w-full px-4 py-3 border rounded-lg appearance-none transition-colors ${
+              placeholder="Nhập phường/xã"
+              className={`w-full px-4 py-3 border rounded-lg transition-colors ${
                 focusedField === 'district'
                   ? 'border-[#1E40AF] bg-white ring-1 ring-[#1E40AF]'
                   : 'border-[#C9CFD2] bg-white'
-              } text-[#191C1F] focus:outline-none pr-10`}
-            >
-              {availableDistricts.map((dist) => (
-                <option key={dist} value={dist}>
-                  {dist}
-                </option>
-              ))}
-            </select>
-            <ChevronDown
-              size={20}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#686868] pointer-events-none"
+              } text-[#191C1F] focus:outline-none`}
             />
           </div>
         </div>
@@ -171,7 +137,8 @@ export const AddressManagement: React.FC = () => {
                   : 'border-[#C9CFD2] bg-white'
               } text-[#191C1F] focus:outline-none pr-10`}
             >
-              {UNIVERSITIES.map((uni) => (
+              <option value="">Chọn Campus</option>
+              {availableCampuses.map((uni: string) => (
                 <option key={uni} value={uni}>
                   {uni}
                 </option>
@@ -186,10 +153,35 @@ export const AddressManagement: React.FC = () => {
       </div>
 
       {/* Add Address Button */}
-      <button className="w-full py-3 border-2 border-[#1E40AF] rounded-lg text-[#1E40AF] font-bold tracking-wide hover:bg-blue-50 transition-colors shadow-sm text-sm">
+      <button 
+        onClick={() => onAddAddress?.({ province, district, university, defaultAddress })}
+        className="w-full py-3 border-2 border-[#1E40AF] rounded-lg text-[#1E40AF] font-bold tracking-wide hover:bg-blue-50 transition-colors shadow-sm text-sm mb-8"
+      >
         <Plus size={20} className="inline mr-2" />
-        Thêm địa chỉ
+        Thêm địa chỉ mới
       </button>
+
+      {/* List Existing Addresses */}
+      {initialAddresses.length > 0 && (
+        <div className="space-y-4">
+          <h3 className="text-sm font-bold text-[#191C1F] uppercase tracking-wider">Địa chỉ đã lưu</h3>
+          {initialAddresses.map((addr) => (
+            <div key={addr._id} className="p-4 border border-gray-100 rounded-lg bg-gray-50 flex justify-between items-center group">
+              <div>
+                <p className="font-semibold text-[#191C1F]">{addr.address_line_1}</p>
+                <p className="text-xs text-[#686868]">{addr.address_line_2}, {addr.city}</p>
+                <p className="text-xs text-[#1E40AF] font-medium mt-1">{addr.campus}</p>
+              </div>
+              <button 
+                onClick={() => onDeleteAddress?.(addr._id)}
+                className="text-red-500 text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                Xóa
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
     </section>
   );
 };
