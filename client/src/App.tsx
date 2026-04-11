@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-route
 import Navbar from './components/common/Navbar';
 import Footer from './components/common/Footer';
 import { CartProvider } from './context/CartContext';
+import { LocationProvider } from './context/LocationContext';
 
 // Auth Pages
 import Login from './pages/auth/Login';
@@ -74,9 +75,11 @@ const AppContent: React.FC = () => {
 const App: React.FC = () => {
   return (
     <Router>
-      <CartProvider>
-        <AppContent />
-      </CartProvider>
+      <LocationProvider>
+        <CartProvider>
+          <AppContent />
+        </CartProvider>
+      </LocationProvider>
     </Router>
   );
 }

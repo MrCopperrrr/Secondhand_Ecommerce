@@ -1,3 +1,5 @@
+import { MapPin } from 'lucide-react';
+
 interface ProductMetaProps {
   productId: string;
   category: string;
@@ -21,7 +23,7 @@ export function ProductMeta({
       <div className="grid grid-cols-2 gap-x-8 gap-y-3">
         <div className="flex gap-2 text-sm">
           <span className="font-bold text-[#686868]">ID:</span>
-          <span className="font-bold text-[#000000]">{productId}</span>
+          <span className="font-bold text-[#000000] truncate max-w-[120px]" title={productId}>{productId}</span>
         </div>
         <div className="flex gap-2 text-sm">
           <span className="font-bold text-[#686868]">Danh mục:</span>
@@ -44,9 +46,12 @@ export function ProductMeta({
           <span className="font-bold text-[#686868]">Trường/Campus:</span>
           <span className="font-bold text-[#000000]">{location}</span>
         </div>
-        <div className="font-bold text-[#2DB224]">
-          {proximity}
-        </div>
+        {proximity !== 'Không rõ' && (
+          <div className="flex items-center gap-1.5 font-bold text-[#1E40AF] bg-blue-50 px-3 py-1 rounded-full">
+            <MapPin size={14} className="fill-[#1E40AF] text-white" />
+            <span>Cách bạn {proximity}</span>
+          </div>
+        )}
       </div>
     </div>
   );

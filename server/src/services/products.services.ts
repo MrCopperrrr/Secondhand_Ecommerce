@@ -22,8 +22,28 @@ class ProductService{
     }
 
     async getProducts(){
-        const result= await databaseService.products.find({}).toArray()
-        return result
+        const pipeline = [
+            {
+                $lookup: {
+                    from: 'address',
+                    localField: 'seller_id',
+                    foreignField: 'user_id',
+                    as: 'addresses'
+                }
+            },
+            {
+                $addFields: {
+                    address: { $arrayElemAt: ['$addresses', 0] }
+                }
+            },
+            {
+                $project: {
+                    addresses: 0
+                }
+            }
+        ];
+        const result = await databaseService.products.aggregate(pipeline).toArray();
+        return result;
     }
 
     async getProductById(id: string) {

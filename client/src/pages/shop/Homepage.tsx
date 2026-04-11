@@ -18,6 +18,7 @@ interface Product {
   price: number;
   description: string;
   campus: string;
+  province: string;
   images: string[];
   status: string;
   is_featured: boolean;
@@ -77,7 +78,8 @@ const Homepage: React.FC = () => {
           condition: p.condition < 100 ? 'Đã qua sử dụng' : 'Mới 100%',
           price: p.price,
           description: p.description,
-          campus: p.campus || 'Chưa cập nhật',
+          campus: p.address?.campus || p.campus || 'Chưa cập nhật',
+          province: p.address?.city || p.province || '',
           images: p.images || [],
           status: p.status === 1 ? 'Active' : 'SoldOut',
           is_featured: p.is_featured || false,

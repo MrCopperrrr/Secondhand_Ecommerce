@@ -9,6 +9,7 @@ interface Product {
   images: string[];
   status: string;
   campus: string;
+  province?: string;
   views?: number;
   created_at?: string;
 }
