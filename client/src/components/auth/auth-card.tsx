@@ -98,7 +98,6 @@ export function AuthCard({ initialTab = 'login' }: { initialTab?: 'login' | 'reg
       access_token: result.access_token,
       refresh_token: result.refresh_token
     }));
-    alert(activeTab === 'login' ? 'Chào mừng bạn trở lại!' : 'Đăng ký thành công!');
     navigate('/'); // Chuyển về trang chủ
   };
 

@@ -141,11 +141,14 @@ const AddressPayment: React.FC = () => {
     }
   }, [address.city, provinces]);
 
+  const [showSuccess, setShowSuccess] = useState(false);
+
   const handleSave = async () => {
     try {
       setSaving(true);
       await authService.saveAddress(address);
-      alert("Đã lưu địa chỉ thành công!");
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 3000);
     } catch (error) {
       console.error("Lỗi khi lưu địa chỉ:", error);
       alert("Không thể lưu địa chỉ. Vui lòng thử lại.");
@@ -251,14 +254,21 @@ const AddressPayment: React.FC = () => {
                   />
                 </div>
 
-                <button 
-                  onClick={handleSave}
-                  disabled={saving}
-                  className="w-full mt-4 py-3.5 bg-[#1E40AF] text-white font-bold text-sm hover:bg-blue-800 transition-all uppercase tracking-widest flex items-center justify-center gap-2"
-                >
-                  {saving ? <Loader2 className="animate-spin" size={20} /> : null}
-                  LƯU ĐỊA CHỈ
-                </button>
+                <div className="relative">
+                  <button 
+                    onClick={handleSave}
+                    disabled={saving}
+                    className="w-full mt-4 py-3.5 bg-[#1E40AF] text-white font-bold text-sm hover:bg-blue-800 transition-all uppercase tracking-widest flex items-center justify-center gap-2"
+                  >
+                    {saving ? <Loader2 className="animate-spin" size={20} /> : null}
+                    LƯU ĐỊA CHỈ
+                  </button>
+                  {showSuccess && (
+                      <div className="absolute top-full left-0 right-0 text-center mt-2 text-green-600 font-bold text-xs animate-in fade-in slide-in-from-top-1 duration-200">
+                          Lưu thành công!
+                      </div>
+                  )}
+                </div>
               </div>
             </section>
 

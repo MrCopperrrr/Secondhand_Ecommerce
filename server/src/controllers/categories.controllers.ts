@@ -18,3 +18,12 @@ export const getSubCategoriesController = async (req: Request, res: Response) =>
     res.status(400).json({ message: 'Lỗi khi lấy sub-categories' })
   }
 }
+
+export const getCategoryTreeController = async (req: Request, res: Response) => {
+  try {
+    const tree = await categoryService.getCategoryTree()
+    res.status(200).json({ categories: tree })
+  } catch (error) {
+    res.status(400).json({ message: 'Lỗi khi lấy cây danh mục' })
+  }
+}
