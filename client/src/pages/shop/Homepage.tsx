@@ -5,6 +5,7 @@ import FilterSidebar from '../../components/shop/FilterSidebar';
 import ProductSection from '../../components/shop/ProductSection';
 import { productService } from '../../services/product.services';
 import { categoryServices } from '../../services/category.services';
+import { commonServices } from '../../services/common.services';
 import { Loader2 } from 'lucide-react';
 
 // Define product type matching new schema
@@ -18,6 +19,8 @@ interface Product {
   price: number;
   description: string;
   campus: string;
+  province: string;
+  ward: string;
   images: string[];
   status: string;
   is_featured: boolean;
@@ -33,30 +36,43 @@ const Homepage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState(searchCategory);
   const [selectedStatus, setSelectedStatus] = useState('all'); 
-  const [selectedLocation, setSelectedLocation] = useState('all');
+  const [selectedProvince, setSelectedProvince] = useState('all');
+  const [selectedWard, setSelectedWard] = useState('all');
+  const [selectedCampus, setSelectedCampus] = useState('all');
   const [priceRange, setPriceRange] = useState({ min: 0, max: 1000000000 });
   const [sortBy, setSortBy] = useState('newest');
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [namesMap, setNamesMap] = useState<Record<string, string>>({});
+  const [locationOptions, setLocationOptions] = useState<{
+    provinces: any[];
+    wards: any[];
+    campuses: any[];
+  }>({ provinces: [], wards: [], campuses: [] });
 
-  // Fetch Category Names for Breadcrumbs
+  // Fetch Category Names & Filter Options
   useEffect(() => {
-    const loadNames = async () => {
+    const loadCommonData = async () => {
       try {
-        const [cats, subs] = await Promise.all([
+        const [cats, subs, locations] = await Promise.all([
           categoryServices.getCategories(),
-          categoryServices.getSubCategories()
+          categoryServices.getSubCategories(),
+          commonServices.getFilterOptions()
         ]);
+        
         const map: Record<string, string> = { 'all': 'Tất cả' };
         cats.forEach((c: any) => map[c._id] = c.name);
         subs.forEach((s: any) => map[s._id] = s.name);
         setNamesMap(map);
+        
+        if (locations.data.result) {
+          setLocationOptions(locations.data.result);
+        }
       } catch (e) {
-        console.error("Error loading category names:", e);
+        console.error("Error loading common data:", e);
       }
     };
-    loadNames();
+    loadCommonData();
   }, []);
 
   // Fetch real products from API
@@ -77,7 +93,9 @@ const Homepage: React.FC = () => {
           condition: p.condition < 100 ? 'Đã qua sử dụng' : 'Mới 100%',
           price: p.price,
           description: p.description,
-          campus: p.campus || 'Chưa cập nhật',
+          campus: p.address?.campus || p.campus || 'Chưa cập nhật',
+          province: p.address?.city || p.province || 'Chưa cập nhật',
+          ward: p.address?.address_line_2 || 'Chưa cập nhật',
           images: p.images || [],
           status: p.status === 1 ? 'Active' : 'SoldOut',
           is_featured: p.is_featured || false,
@@ -139,9 +157,15 @@ const Homepage: React.FC = () => {
       result = result.filter(p => p.status === selectedStatus);
     }
 
-    // 4. Location
-    if (selectedLocation !== 'all' && selectedLocation !== '') {
-      result = result.filter(p => p.campus === selectedLocation);
+    // 4. Location (Province, Ward, Campus)
+    if (selectedProvince !== 'all') {
+      result = result.filter(p => p.province === selectedProvince);
+    }
+    if (selectedWard !== 'all') {
+      result = result.filter(p => p.ward === selectedWard);
+    }
+    if (selectedCampus !== 'all') {
+      result = result.filter(p => p.campus === selectedCampus);
     }
 
     // 5. Price
@@ -163,20 +187,13 @@ const Homepage: React.FC = () => {
     selectedCategory,
     searchSubCategory,
     selectedStatus,
-    selectedLocation,
+    selectedProvince,
+    selectedWard,
+    selectedCampus,
     priceRange,
     sortBy,
     products
   ]);
-
-  // Unique campuses
-  const uniqueCampuses = useMemo(() => {
-    const locations = new Set<string>();
-    products.forEach(p => {
-      if (p.campus) locations.add(p.campus);
-    });
-    return Array.from(locations).map(label => ({ id: label, label }));
-  }, []);
 
   const displayProducts = filteredProducts;
 
@@ -228,7 +245,7 @@ const Homepage: React.FC = () => {
           <>
             {/* SIDEBAR */}
         <FilterSidebar 
-          locations={uniqueCampuses}
+          locationData={locationOptions}
           onCategoryChange={(cat) => {
             setSelectedCategory(cat);
             setCurrentPage(1);
@@ -237,8 +254,16 @@ const Homepage: React.FC = () => {
             setSelectedStatus(status);
             setCurrentPage(1);
           }}
-          onLocationChange={(loc) => {
-            setSelectedLocation(loc);
+          onProvinceChange={(prov) => {
+            setSelectedProvince(prov);
+            setCurrentPage(1);
+          }}
+          onWardChange={(ward) => {
+            setSelectedWard(ward);
+            setCurrentPage(1);
+          }}
+          onCampusChange={(camp) => {
+            setSelectedCampus(camp);
             setCurrentPage(1);
           }}
           onPriceChange={(min, max) => {

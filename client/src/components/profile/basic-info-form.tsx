@@ -1,20 +1,28 @@
 import React, { useState } from 'react';
 
-export const BasicInfoForm: React.FC = () => {
+interface BasicInfoFormProps {
+  initialData?: {
+    fullName: string;
+    phone: string;
+    email: string;
+  };
+  onUpdate?: (data: any) => void;
+}
+
+export const BasicInfoForm: React.FC<BasicInfoFormProps> = ({ initialData, onUpdate }) => {
   const [formData, setFormData] = useState({
-    fullName: 'Nguyễn Văn A',
-    phone: '0987654321',
-    email: 'nguyenvana@student.edu.vn',
-    address: 'Phường 1, Quận 1, TP.HCM',
+    fullName: initialData?.fullName || '',
+    phone: initialData?.phone || '',
+    email: initialData?.email || '',
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSave = () => {
-    console.log('Saving profile:', formData);
+    if (onUpdate) onUpdate(formData);
   };
 
   return (
@@ -65,23 +73,6 @@ export const BasicInfoForm: React.FC = () => {
             className="w-full px-4 py-2 border border-[#C9CFD2] rounded-lg bg-[#F2F4F5] text-[#686868] cursor-not-allowed"
           />
           <p className="text-xs text-[#686868] mt-1">Email sinh viên không thể thay đổi</p>
-        </div>
-
-        {/* Địa chỉ */}
-        <div>
-          <label className="block text-sm font-medium text-[#191C1F] mb-2">
-            Địa chỉ
-          </label>
-          <select
-            name="address"
-            value={formData.address}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border border-[#C9CFD2] rounded-lg focus:outline-none focus:border-[#1E40AF] focus:ring-1 focus:ring-[#1E40AF] transition-colors bg-white"
-          >
-            <option value="Phường 1, Quận 1, TP.HCM">Phường 1, Quận 1, TP.HCM</option>
-            <option value="Phường 2, Quận 2, TP.HCM">Phường 2, Quận 2, TP.HCM</option>
-            <option value="Phường 3, Quận 3, TP.HCM">Phường 3, Quận 3, TP.HCM</option>
-          </select>
         </div>
       </div>
 

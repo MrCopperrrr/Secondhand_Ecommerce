@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-route
 import Navbar from './components/common/Navbar';
 import Footer from './components/common/Footer';
 import { CartProvider } from './context/CartContext';
+import { LocationProvider } from './context/LocationContext';
 
 // Auth Pages
 import Login from './pages/auth/Login';
@@ -22,6 +23,8 @@ import UserProfile from './pages/profile/UserProfile';
 import AddressPayment from './pages/profile/AddressPayment';
 import Logout from './pages/profile/Logout';
 import ProductManagement from './pages/profile/ProductManagement';
+import MyOrders from './pages/profile/MyOrders';
+import MySales from './pages/profile/MySales';
 import SellerDashboard from './pages/seller/SellerDashboard';
 
 // Error Pages
@@ -53,11 +56,9 @@ const AppContent: React.FC = () => {
           <Route path="/profile/address" element={<AddressPayment />} />
           <Route path="/profile/password" element={<UserProfile />} />
           <Route path="/profile/products" element={<ProductManagement />} />
-          <Route path="/profile/track-order" element={<NotFound />} />
-          <Route path="/profile/favorites" element={<NotFound />} />
-          <Route path="/profile/history" element={<NotFound />} />
+          <Route path="/profile/orders" element={<MyOrders />} />
+          <Route path="/profile/sales" element={<MySales />} />
           <Route path="/seller/dashboard" element={<SellerDashboard />} />
-          <Route path="/seller/orders" element={<NotFound />} />
           <Route path="/logout" element={<Logout />} />
           
           {/* Error Routes */}
@@ -74,9 +75,11 @@ const AppContent: React.FC = () => {
 const App: React.FC = () => {
   return (
     <Router>
-      <CartProvider>
-        <AppContent />
-      </CartProvider>
+      <LocationProvider>
+        <CartProvider>
+          <AppContent />
+        </CartProvider>
+      </LocationProvider>
     </Router>
   );
 }

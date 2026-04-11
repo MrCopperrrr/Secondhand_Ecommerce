@@ -26,7 +26,10 @@ const UserProfile: React.FC = () => {
 
   const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
   const [addresses, setAddresses] = useState<Address[]>([]);
+
   const [studentCardFile, setStudentCardFile] = useState<File | null>(null);
   const [studentCardPreview, setStudentCardPreview] = useState<string | null>(null);
   const [avatarUrl, setAvatarUrl] = useState('https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=128&h=128&fit=crop');
@@ -44,20 +47,20 @@ const UserProfile: React.FC = () => {
           authService.getAddresses()
         ]);
 
-        console.log("Profile response status:", profileRes.status);
-        console.log("Addresses response status:", addressesRes.status);
-
         if (profileRes.status === 'fulfilled') {
           const user = profileRes.value.data.result;
-          console.log("User data loaded:", user.username);
           setFormData(prev => ({
             ...prev,
             fullName: user.username || 'Người dùng mới',
             phone: user.phone_number || '',
             email: user.email || '',
           }));
+          setIsVerified(user.is_verified || false);
           if (user.avatar) {
             setAvatarUrl(user.avatar);
+          }
+          if (user.student_card_image) {
+            setStudentCardPreview(user.student_card_image);
           }
         }
 
@@ -159,7 +162,10 @@ const UserProfile: React.FC = () => {
     e.stopPropagation();
     setStudentCardFile(null);
     setStudentCardPreview(null);
+    setIsVerified(false);
   };
+
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const handleSave = async () => {
     try {
@@ -172,12 +178,47 @@ const UserProfile: React.FC = () => {
       };
       
       await authService.updateMe(payload);
-      alert('Cập nhật hồ sơ thành công!');
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 3000);
     } catch (error: any) {
       console.error('Lỗi khi lưu hồ sơ:', error);
       alert('Có lỗi xảy ra khi lưu hồ sơ: ' + (error.response?.data?.message || error.message));
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleVerify = async () => {
+    if (!studentCardPreview) {
+      alert('Vui lòng tải ảnh thẻ sinh viên lên trước khi xác thực');
+      return;
+    }
+
+    try {
+      setIsVerifying(true);
+      
+      let imageToVerify = studentCardPreview;
+      
+      // If we have a local file, convert it to base64 because blob URLs won't work on the backend
+      if (studentCardFile) {
+        const reader = new FileReader();
+        const base64Promise = new Promise<string>((resolve) => {
+          reader.onloadend = () => resolve(reader.result as string);
+        });
+        reader.readAsDataURL(studentCardFile);
+        imageToVerify = await base64Promise;
+      }
+
+      const response = await authService.verifyStudentCard(imageToVerify);
+      if (response.data.result) {
+        setIsVerified(true);
+        alert('Xác thực thẻ sinh viên thành công!');
+      }
+    } catch (error: any) {
+      console.error('Lỗi khi xác thực:', error);
+      alert('Xác thực thất bại: ' + (error.response?.data?.message || error.message));
+    } finally {
+      setIsVerifying(false);
     }
   };
 
@@ -233,7 +274,7 @@ const UserProfile: React.FC = () => {
 
                 <div className="flex items-center gap-3 h-28">
                   <h3 className="text-3xl font-bold text-[#191C1F] whitespace-nowrap">{formData.fullName}</h3>
-                  <CheckCircle size={32} className="text-[#2DB224] fill-white" />
+                  {isVerified && <CheckCircle size={32} className="text-[#2DB224] fill-white" />}
                 </div>
               </div>
 
@@ -366,16 +407,31 @@ const UserProfile: React.FC = () => {
               </div>
 
               <div className="flex justify-end gap-4">
-                <button className="px-12 py-3 border-2 border-[#1E40AF] text-[#1E40AF] font-bold text-sm bg-white hover:bg-gray-50 transition-all rounded-none">
-                  XÁC THỰC
-                </button>
                 <button 
-                  onClick={handleSave}
-                  disabled={isSaving}
-                  className="px-12 py-3 bg-[#1E40AF] border-2 border-[#1E40AF] text-white font-bold text-sm hover:bg-blue-800 transition-all rounded-none disabled:bg-blue-300 disabled:border-blue-300 cursor-pointer"
+                  onClick={handleVerify}
+                  disabled={isVerifying || isVerified}
+                  className={`px-12 py-3 border-2 font-bold text-sm transition-all rounded-none ${
+                    isVerified 
+                      ? 'border-green-600 text-green-600 cursor-default bg-green-50' 
+                      : 'border-[#1E40AF] text-[#1E40AF] bg-white hover:bg-gray-50'
+                  }`}
                 >
-                  {isSaving ? 'ĐANG LƯU...' : 'LƯU'}
+                  {isVerifying ? 'ĐANG XỬ LÝ...' : isVerified ? 'ĐÃ XÁC THỰC' : 'XÁC THỰC'}
                 </button>
+                <div className="relative">
+                    <button 
+                      onClick={handleSave}
+                      disabled={isSaving}
+                      className="px-12 py-3 bg-[#1E40AF] border-2 border-[#1E40AF] text-white font-bold text-sm hover:bg-blue-800 transition-all rounded-none disabled:bg-blue-300 disabled:border-blue-300 cursor-pointer min-w-[140px]"
+                    >
+                      {isSaving ? 'ĐANG LƯU...' : 'LƯU'}
+                    </button>
+                    {showSuccess && (
+                        <div className="absolute top-full left-0 right-0 text-center mt-2 text-green-600 font-bold text-xs animate-in fade-in slide-in-from-top-1 duration-200">
+                            Cập nhật thành công!
+                        </div>
+                    )}
+                </div>
               </div>
             </section>
           </div>

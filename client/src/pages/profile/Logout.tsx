@@ -16,6 +16,7 @@ const Logout: React.FC = () => {
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
+      localStorage.removeItem('userInfo');
       localStorage.removeItem('access_token');
       localStorage.removeItem('refresh_token');
       localStorage.removeItem('user');

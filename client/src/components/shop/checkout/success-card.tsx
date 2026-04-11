@@ -37,7 +37,7 @@ export function SuccessCard({ orderId = '1001' }: SuccessCardProps) {
 
         {/* Primary Button - View Order */}
         <Link
-          to={`/order/${orderId}`}
+          to="/profile/orders"
           className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 bg-[#1E40AF] text-white rounded-none hover:bg-blue-800 transition-all duration-300 whitespace-nowrap shadow-md"
         >
           <span className="font-bold text-base">Xem đơn hàng</span>

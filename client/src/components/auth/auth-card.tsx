@@ -94,12 +94,16 @@ export function AuthCard({ initialTab = 'login' }: { initialTab?: 'login' | 'reg
   };
 
   const handleAuthSuccess = (result: any) => {
+    // Lưu token riêng
     localStorage.setItem('userInfo', JSON.stringify({
       access_token: result.access_token,
       refresh_token: result.refresh_token
     }));
-    alert(activeTab === 'login' ? 'Chào mừng bạn trở lại!' : 'Đăng ký thành công!');
+    // Lưu thông tin user riêng để Checkout và các trang khác dùng
+    localStorage.setItem('user', JSON.stringify(result.user));
+    
     navigate('/'); // Chuyển về trang chủ
+    window.location.reload(); // Reload để Navbar cập nhật trạng thái
   };
 
   return (

@@ -27,5 +27,9 @@ export const authService = {
   
   saveAddress: (data: any) => {
     return api.post('/users/me/address', data);
+  },
+
+  verifyStudentCard: (image: string) => {
+    return api.post('/users/me/verify-student-card', { image });
   }
 };

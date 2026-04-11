@@ -8,5 +8,9 @@ export const categoryServices = {
   getSubCategories: async () => {
     const response = await api.get('/categories/sub');
     return response.data.sub_categories;
+  },
+  getCategoryTree: async () => {
+    const response = await api.get('/categories/tree');
+    return response.data.categories;
   }
 };

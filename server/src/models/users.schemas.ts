@@ -11,6 +11,8 @@ interface UserType{
     password: string
     phone_number: string
     email_verify_token?: string
+    is_verified?: boolean
+    student_card_image?: string
     created_at: Date
 }
 export default class User {
@@ -24,6 +26,8 @@ export default class User {
     role: UserRole
     phone_number: string
     email_verify_token: string
+    is_verified: boolean
+    student_card_image: string
     created_at?: Date
     constructor(user: UserType){
         this._id=user._id
@@ -35,6 +39,8 @@ export default class User {
         this.password= user.password
         this.phone_number= user.phone_number
         this.email_verify_token=user.email_verify_token || ''
+        this.is_verified= user.is_verified || false
+        this.student_card_image= user.student_card_image || ''
         this.created_at= user.created_at || new Date()
         this.role=user.role || UserRole.User
     }

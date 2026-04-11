@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
   ShoppingCart,
   Bell,
@@ -31,17 +31,39 @@ import {
 } from '../ui/dropdown-menu';
 import { authService } from '../../services/auth.services';
 import { categoryServices } from '../../services/category.services';
+import { commonServices } from '../../services/common.services';
 
 const Navbar: React.FC = () => {
   const [categories, setCategories] = useState<any[]>([]);
   const [megaMenuData, setMegaMenuData] = useState<any[]>([]);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [campuses, setCampuses] = useState<string[]>([]);
   const navigate = useNavigate();
+  const location = useLocation();
   const { itemCount } = useCart();
   const [activeCat, setActiveCat] = useState(0);
 
   const [userMode, setUserMode] = useState<'buyer' | 'seller'>('buyer');
+  const [currentUser, setCurrentUser] = useState<any>(null);
+
+  useEffect(() => {
+    const userInfoStr = localStorage.getItem('userInfo');
+    if (userInfoStr) {
+      try {
+        const userInfo = JSON.parse(userInfoStr);
+        if (userInfo && userInfo.access_token) {
+          setCurrentUser(userInfo);
+        } else {
+          setCurrentUser(null);
+        }
+      } catch (e) {
+        setCurrentUser(null); // Clear if corrupted
+      }
+    } else {
+      setCurrentUser(null);
+    }
+  }, [location.pathname]);
 
   const iconMap: { [key: string]: any } = {
     'Đồ điện tử': Laptop,
@@ -56,31 +78,36 @@ const Navbar: React.FC = () => {
     'khác': MoreHorizontal,
   };
 
-  React.useEffect(() => {
-    const loadCategories = async () => {
+  useEffect(() => {
+    const loadInitialData = async () => {
       try {
-        const [cats, subs] = await Promise.all([
-          categoryServices.getCategories(),
-          categoryServices.getSubCategories()
+        const [treeData, provinceData] = await Promise.all([
+          categoryServices.getCategoryTree(),
+          commonServices.getProvinces()
         ]);
 
-        if (cats && cats.length > 0) {
-          const structuredData = cats.map((cat: any) => ({
+        if (treeData && treeData.length > 0) {
+          const structuredData = treeData.map((cat: any) => ({
             id: cat._id,
             name: cat.name,
             icon: iconMap[cat.name] || PlusCircle,
-            subs: subs
-              .filter((sub: any) => sub.parent_id === cat._id)
-              .map((sub: any) => ({ id: sub._id, name: sub.name }))
+            subs: cat.subs.map((sub: any) => ({ id: sub._id, name: sub.name }))
           }));
           setMegaMenuData(structuredData);
-          setCategories(cats);
+          setCategories(treeData);
+        }
+
+        if (provinceData.data.result) {
+            const allCampuses = provinceData.data.result.reduce((acc: string[], p: any) => {
+                return [...acc, ...(p.campus || [])];
+            }, []);
+            setCampuses(Array.from(new Set(allCampuses)).slice(0, 5));
         }
       } catch (error) {
-        console.error('Error loading mega menu data:', error);
+        console.error('Error loading initial data:', error);
       }
     };
-    loadCategories();
+    loadInitialData();
   }, []);
 
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
@@ -251,7 +278,7 @@ const Navbar: React.FC = () => {
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56 bg-white border-gray-100 shadow-2xl mt-2 p-0 rounded-none z-[60]">
-                {localStorage.getItem('userInfo') ? (
+                {currentUser ? (
                   <>
                     <DropdownMenuItem asChild className="cursor-pointer py-3.5 px-5 focus:bg-gray-50 outline-none rounded-none border-b border-gray-50">
                       <Link to="/profile" className="flex items-center gap-3 text-sm font-semibold text-[#191C1F]">
@@ -267,9 +294,9 @@ const Navbar: React.FC = () => {
                     </DropdownMenuItem>
                     <DropdownMenuItem 
                       onClick={() => {
-                        const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
-                        authService.logout(userInfo.refresh_token).finally(() => {
+                        authService.logout(currentUser.refresh_token).finally(() => {
                           localStorage.removeItem('userInfo');
+                          setCurrentUser(null);
                           window.location.href = '/login';
                         });
                       }}
@@ -369,9 +396,13 @@ const Navbar: React.FC = () => {
                         <div>
                             <h4 className="font-bold text-[#191C1F] mb-6 text-[16px] border-b pb-2 uppercase">Theo Campus</h4>
                             <ul className="grid grid-cols-1 gap-y-4 font-medium">
-                                {['Cơ sở Lý Thường Kiệt', 'Ký túc xá Bách Khoa', 'Cơ sở Dĩ An'].map(campus => (
-                                    <li key={campus} className="text-[14px] text-[#475156] hover:text-[#1E40AF] cursor-pointer">{campus}</li>
-                                ))}
+                                {campuses.length > 0 ? (
+                                    campuses.map(campus => (
+                                        <li key={campus} className="text-[14px] text-[#475156] hover:text-[#1E40AF] cursor-pointer">{campus}</li>
+                                    ))
+                                ) : (
+                                    <li className="text-[14px] text-gray-400 italic">Đang cập nhật...</li>
+                                )}
                             </ul>
                         </div>
                     </div>

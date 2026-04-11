@@ -11,13 +11,15 @@ import { AddToCartModal } from '../../components/shop/product-detail/add-to-cart
 
 import { useCart } from '../../context/CartContext';
 import { productService } from '../../services/product.services';
-import { Loader2 } from 'lucide-react';
+import { Loader2, MapPin } from 'lucide-react';
+import { useLocationContext, calculateDistance } from '../../context/LocationContext';
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { userLocation, provinces } = useLocationContext();
   const [product, setProduct] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [otherProductsCount, setOtherProductsCount] = useState(0);
@@ -30,9 +32,22 @@ const ProductDetail: React.FC = () => {
         const response = await productService.getProductById(id);
         const p = response.data.result;
         
-        // Campus from address of seller
-        const sellerCampus = p.seller?.address?.campus || p.campus || 'Chưa cập nhật';
+        // Province and Campus from address of seller
+        const provinceName = p.seller?.address?.city || p.province || '';
+        const campusName = p.seller?.address?.campus || p.campus || 'Chưa cập nhật';
         
+        let realProximity = 'Không rõ';
+        if (userLocation && provinces.length > 0) {
+           const pData = provinces.find((prov: any) => prov.name === provinceName);
+           if (pData) {
+             const cData = pData.campus_data?.find((c: any) => c.name === campusName) || { lat: pData.lat, lng: pData.lng };
+             if (cData && cData.lat !== undefined) {
+               const dist = calculateDistance(userLocation.lat, userLocation.lng, cData.lat, cData.lng);
+               realProximity = dist < 1 ? '< 1 km' : `${Math.round(dist)} km`;
+             }
+           }
+        }
+
         setProduct({
             ...p,
             product_id: p._id,
@@ -41,8 +56,8 @@ const ProductDetail: React.FC = () => {
                 : (p.category?.name || 'Sách giáo trình / Sách Đại cương'),
             condition: p.condition < 100 ? 'Đã qua sử dụng' : 'Mới 100%',
             statusLabel: p.status === 1 ? 'Còn hàng' : 'Hết hàng',
-            campus: sellerCampus,
-            proximity: '<1km'
+            campus: campusName,
+            proximity: realProximity
         });
 
         // Fetch other products to count for this seller

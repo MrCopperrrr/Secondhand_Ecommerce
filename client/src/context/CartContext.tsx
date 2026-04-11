@@ -8,6 +8,7 @@ export interface CartItem {
   description: string;
   quantity: number;
   inStock: boolean;
+  seller_id: string;
 }
 
 interface CartContextType {
@@ -42,13 +43,14 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return [
         ...prevItems,
         {
-          id: product.product_id,
+          id: product._id || product.product_id || product.id,
           name: product.name,
           price: product.price,
           image: product.images[0],
           description: product.description,
           quantity: 1,
-          inStock: product.status === 'Active' || product.status === 1,
+          inStock: product.status === 'Active' || product.status === 1 || product.status === '1',
+          seller_id: product.seller_id?.toString() || '',
         },
       ];
     });

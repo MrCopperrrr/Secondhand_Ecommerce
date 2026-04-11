@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Search, ChevronDown, Check } from 'lucide-react';
 
 interface LocationOption {
   id: string;
@@ -6,12 +7,100 @@ interface LocationOption {
 }
 
 interface FilterSidebarProps {
-  locations?: LocationOption[];
+  locationData?: {
+    provinces: LocationOption[];
+    wards: LocationOption[];
+    campuses: LocationOption[];
+  };
   onCategoryChange?: (category: string) => void;
-  onLocationChange?: (location: string) => void;
+  onProvinceChange?: (province: string) => void;
+  onWardChange?: (ward: string) => void;
+  onCampusChange?: (campus: string) => void;
   onPriceChange?: (min: number, max: number) => void;
   onStatusChange?: (status: string) => void;
 }
+
+const SearchableSelect: React.FC<{
+  label: string;
+  options: LocationOption[];
+  onSelect: (id: string) => void;
+  placeholder: string;
+  isOpen: boolean;
+  onToggle: () => void;
+}> = ({ label, options, onSelect, placeholder, isOpen, onToggle }) => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedLabel, setSelectedLabel] = useState('Tất cả');
+
+  const filteredOptions = options.filter(opt => 
+    opt.label.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  return (
+    <div className="mb-4">
+      <label className="text-[11px] font-bold text-[#686868] uppercase tracking-widest mb-2 block">{label}</label>
+      <div className="relative">
+        <div 
+          onClick={onToggle}
+          className="w-full border border-gray-200 p-3 text-sm text-[#191C1F] cursor-pointer bg-white flex justify-between items-center group hover:border-[#1E40AF] transition-all"
+        >
+          <span className={selectedLabel === 'Tất cả' ? 'text-gray-400' : 'text-[#191C1F] font-medium'}>
+            {selectedLabel}
+          </span>
+          <ChevronDown size={16} className={`text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        </div>
+
+        {isOpen && (
+          <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+            <div className="p-2 border-b border-gray-100 flex items-center gap-2">
+              <Search size={14} className="text-gray-400" />
+              <input 
+                autoFocus
+                type="text"
+                className="w-full text-sm outline-none placeholder:text-gray-300"
+                placeholder="Tìm nhanh..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <div className="max-h-56 overflow-y-auto custom-scrollbar">
+              <div 
+                className="p-3 text-sm hover:bg-[#F3F4F6] cursor-pointer flex justify-between items-center"
+                onClick={() => {
+                  onSelect('all');
+                  setSelectedLabel('Tất cả');
+                  onToggle();
+                  setSearchTerm('');
+                }}
+              >
+                <span>Tất cả</span>
+                {selectedLabel === 'Tất cả' && <Check size={14} className="text-[#1E40AF]" />}
+              </div>
+              {filteredOptions.length > 0 ? (
+                filteredOptions.map((opt) => (
+                  <div 
+                    key={opt.id}
+                    className="p-3 text-sm hover:bg-[#F3F4F6] cursor-pointer flex justify-between items-center transition-colors"
+                    onClick={() => {
+                      onSelect(opt.id);
+                      setSelectedLabel(opt.label);
+                      onToggle();
+                      setSearchTerm('');
+                    }}
+                  >
+                    <span className="truncate pr-4">{opt.label}</span>
+                    {selectedLabel === opt.label && <Check size={14} className="text-[#1E40AF]" />}
+                  </div>
+                ))
+              ) : (
+                <div className="p-4 text-xs text-gray-400 text-center italic">Không tìm thấy kết quả</div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
 const STATUS_OPTIONS = [
   { id: 'all', label: 'Tất cả' },
@@ -34,9 +123,11 @@ const MAX_LIMIT = 1000000000; // 1 tỷ VND
 const FIXED_STEP = 1000000;  // 1 triệu VND step cho tầm cao
 
 const FilterSidebar: React.FC<FilterSidebarProps> = ({
-  locations = [],
+  locationData = { provinces: [], wards: [], campuses: [] },
   onCategoryChange,
-  onLocationChange,
+  onProvinceChange,
+  onWardChange,
+  onCampusChange,
   onPriceChange,
   onStatusChange,
 }) => {
@@ -44,6 +135,11 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
   const [selectedPricePreset, setSelectedPricePreset] = useState('all');
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(MAX_LIMIT); 
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+
+  const toggleDropdown = (id: string) => {
+    setOpenDropdown(prev => prev === id ? null : id);
+  };
 
   // Format VND helpers
   const formatVND = (value: number) => value.toLocaleString('vi-VN');
@@ -109,24 +205,36 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
 
       <div className="border-t border-gray-200 my-6"></div>
 
-      {/* KHU VỰC (Động) */}
+      {/* KHU VỰC (Dropdown mới) */}
       <div className="mb-6">
-        <h3 className="text-sm font-bold text-[#191C1F] mb-4 tracking-tight">Khu vực</h3>
-        <div className="relative">
-          <select
-            className="w-full border border-gray-200 rounded-none p-3 text-sm text-[#191C1F] outline-none bg-white appearance-none pr-10 cursor-pointer"
-            onChange={(e) => onLocationChange?.(e.target.value)}
-            defaultValue="all"
-          >
-            <option value="all">Tất cả khu vực/Campus</option>
-            {locations.map((loc) => (
-              <option key={loc.id} value={loc.id}>{loc.label}</option>
-            ))}
-          </select>
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
-          </div>
-        </div>
+        <h3 className="text-sm font-bold text-[#191C1F] mb-6 tracking-tight">Khu vực & Campus</h3>
+        
+        <SearchableSelect 
+          label="Tỉnh / Thành phố"
+          options={locationData.provinces}
+          onSelect={(id) => onProvinceChange?.(id)}
+          placeholder="Chọn tỉnh..."
+          isOpen={openDropdown === 'province'}
+          onToggle={() => toggleDropdown('province')}
+        />
+
+        <SearchableSelect 
+          label="Phường"
+          options={locationData.wards}
+          onSelect={(id) => onWardChange?.(id)}
+          placeholder="Chọn phường..."
+          isOpen={openDropdown === 'ward'}
+          onToggle={() => toggleDropdown('ward')}
+        />
+
+        <SearchableSelect 
+          label="Trường Đại học"
+          options={locationData.campuses}
+          onSelect={(id) => onCampusChange?.(id)}
+          placeholder="Chọn campus..."
+          isOpen={openDropdown === 'campus'}
+          onToggle={() => toggleDropdown('campus')}
+        />
       </div>
 
       <div className="border-t border-gray-200 my-6"></div>

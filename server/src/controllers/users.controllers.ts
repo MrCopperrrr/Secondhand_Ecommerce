@@ -72,3 +72,20 @@ export const saveAddressController = async (req: Request, res: Response) => {
         result
     })
 }
+
+export const verifyStudentCardController = async (req: Request, res: Response) => {
+    try {
+        const { decoded_authorization } = req as any
+        const user_id = decoded_authorization.user_id
+        const { image } = req.body
+        const result = await userService.verifyStudentCard(user_id, image)
+        return res.json({
+            message: 'Xác thực thẻ sinh viên thành công!',
+            result
+        })
+    } catch (error: any) {
+        return res.status(400).json({
+            message: error.message || 'Xác thực thất bại'
+        })
+    }
+}
