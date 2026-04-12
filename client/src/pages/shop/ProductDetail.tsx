@@ -146,6 +146,7 @@ const ProductDetail: React.FC = () => {
                 price={product.price}
                 onAddToCart={handleAddToCart}
                 onBuyNow={handleBuyNow}
+                isDisabled={JSON.parse(localStorage.getItem('user') || '{}')._id === product.seller_id}
               />
             </div>
 

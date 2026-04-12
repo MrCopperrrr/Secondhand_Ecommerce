@@ -12,6 +12,11 @@ interface FilterSidebarProps {
     wards: LocationOption[];
     campuses: LocationOption[];
   };
+  selectedLocation?: {
+    province: string;
+    ward: string;
+    campus: string;
+  };
   onCategoryChange?: (category: string) => void;
   onProvinceChange?: (province: string) => void;
   onWardChange?: (ward: string) => void;
@@ -23,13 +28,17 @@ interface FilterSidebarProps {
 const SearchableSelect: React.FC<{
   label: string;
   options: LocationOption[];
+  value: string;
   onSelect: (id: string) => void;
   placeholder: string;
   isOpen: boolean;
   onToggle: () => void;
-}> = ({ label, options, onSelect, placeholder, isOpen, onToggle }) => {
+  listFontSize?: string;
+}> = ({ label, options, value, onSelect, placeholder, isOpen, onToggle, listFontSize = 'text-sm' }) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedLabel, setSelectedLabel] = useState('Tất cả');
+
+  const selectedOption = options.find(opt => opt.id === value);
+  const selectedLabel = selectedOption ? selectedOption.label : 'Tất cả';
 
   const filteredOptions = options.filter(opt => 
     opt.label.toLowerCase().includes(searchTerm.toLowerCase())
@@ -67,7 +76,6 @@ const SearchableSelect: React.FC<{
                 className="p-3 text-sm hover:bg-[#F3F4F6] cursor-pointer flex justify-between items-center"
                 onClick={() => {
                   onSelect('all');
-                  setSelectedLabel('Tất cả');
                   onToggle();
                   setSearchTerm('');
                 }}
@@ -79,10 +87,9 @@ const SearchableSelect: React.FC<{
                 filteredOptions.map((opt) => (
                   <div 
                     key={opt.id}
-                    className="p-3 text-sm hover:bg-[#F3F4F6] cursor-pointer flex justify-between items-center transition-colors"
+                    className={`p-3 ${listFontSize} hover:bg-[#F3F4F6] cursor-pointer flex justify-between items-center transition-colors`}
                     onClick={() => {
                       onSelect(opt.id);
-                      setSelectedLabel(opt.label);
                       onToggle();
                       setSearchTerm('');
                     }}
@@ -124,6 +131,7 @@ const FIXED_STEP = 1000000;  // 1 triệu VND step cho tầm cao
 
 const FilterSidebar: React.FC<FilterSidebarProps> = ({
   locationData = { provinces: [], wards: [], campuses: [] },
+  selectedLocation = { province: 'all', ward: 'all', campus: 'all' },
   onCategoryChange,
   onProvinceChange,
   onWardChange,
@@ -178,7 +186,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
   };
 
   return (
-    <aside className="w-full md:w-64 bg-white p-6 border-r border-gray-100 hidden md:block rounded-none select-none">
+    <aside className="w-full md:w-72 bg-white p-6 border-r border-gray-100 hidden md:block rounded-none select-none">
       
       {/* STATUS FILTER */}
       <div className="mb-6">
@@ -212,6 +220,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
         <SearchableSelect 
           label="Tỉnh / Thành phố"
           options={locationData.provinces}
+          value={selectedLocation.province}
           onSelect={(id) => onProvinceChange?.(id)}
           placeholder="Chọn tỉnh..."
           isOpen={openDropdown === 'province'}
@@ -221,6 +230,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
         <SearchableSelect 
           label="Phường"
           options={locationData.wards}
+          value={selectedLocation.ward}
           onSelect={(id) => onWardChange?.(id)}
           placeholder="Chọn phường..."
           isOpen={openDropdown === 'ward'}
@@ -230,10 +240,12 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
         <SearchableSelect 
           label="Trường Đại học"
           options={locationData.campuses}
+          value={selectedLocation.campus}
           onSelect={(id) => onCampusChange?.(id)}
           placeholder="Chọn campus..."
           isOpen={openDropdown === 'campus'}
           onToggle={() => toggleDropdown('campus')}
+          listFontSize="text-[12px] font-medium"
         />
       </div>
 

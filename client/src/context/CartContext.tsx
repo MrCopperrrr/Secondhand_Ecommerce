@@ -33,11 +33,23 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [cartItems]);
 
   const addToCart = (product: any) => {
+    // Check if current user is the owner of the product
+    const userInfoStr = localStorage.getItem('user');
+    if (userInfoStr) {
+      try {
+        const user = JSON.parse(userInfoStr);
+        if (user._id === product.seller_id) {
+          alert("Bạn không thể mua sản phẩm của chính mình.");
+          return;
+        }
+      } catch (e) {
+        console.error("Error parsing user info in cart:", e);
+      }
+    }
+
     setCartItems((prevItems) => {
-      const existingItem = prevItems.find((item) => item.id === product.product_id);
+      const existingItem = prevItems.find((item) => item.id === (product._id || product.product_id));
       if (existingItem) {
-        // Since each secondhand item is unique, we don't increment quantity.
-        // If it's already in the cart, we just keep the cart as is.
         return prevItems;
       }
       return [

@@ -48,7 +48,8 @@ const Homepage: React.FC = () => {
     provinces: any[];
     wards: any[];
     campuses: any[];
-  }>({ provinces: [], wards: [], campuses: [] });
+    masterData: any[];
+  }>({ provinces: [], wards: [], campuses: [], masterData: [] });
 
   // Fetch Category Names & Filter Options
   useEffect(() => {
@@ -74,6 +75,28 @@ const Homepage: React.FC = () => {
     };
     loadCommonData();
   }, []);
+
+  // Compute filtered location options
+  const displayLocationOptions = useMemo(() => {
+    if (selectedProvince === 'all') {
+      return locationOptions;
+    }
+
+    const provinceData = locationOptions.masterData.find(p => p.id === selectedProvince);
+    if (!provinceData) return locationOptions;
+
+    return {
+      ...locationOptions,
+      // Filtering campuses by province
+      campuses: locationOptions.campuses.filter(c => 
+        provinceData.campuses.includes(c.id)
+      ),
+      // Filtering wards by province
+      wards: locationOptions.wards.filter(w => 
+        provinceData.wards.includes(w.id)
+      ),
+    };
+  }, [selectedProvince, locationOptions]);
 
   // Fetch real products from API
   useEffect(() => {
@@ -245,7 +268,12 @@ const Homepage: React.FC = () => {
           <>
             {/* SIDEBAR */}
         <FilterSidebar 
-          locationData={locationOptions}
+          locationData={displayLocationOptions}
+          selectedLocation={{
+            province: selectedProvince,
+            ward: selectedWard,
+            campus: selectedCampus
+          }}
           onCategoryChange={(cat) => {
             setSelectedCategory(cat);
             setCurrentPage(1);
@@ -256,6 +284,8 @@ const Homepage: React.FC = () => {
           }}
           onProvinceChange={(prov) => {
             setSelectedProvince(prov);
+            setSelectedWard('all');
+            setSelectedCampus('all');
             setCurrentPage(1);
           }}
           onWardChange={(ward) => {

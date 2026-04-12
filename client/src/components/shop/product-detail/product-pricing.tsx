@@ -8,12 +8,14 @@ interface ProductPricingProps {
   price: number;
   onAddToCart: () => void;
   onBuyNow: () => void;
+  isDisabled?: boolean;
 }
 
 export function ProductPricing({
   price,
   onAddToCart,
   onBuyNow,
+  isDisabled = false,
 }: ProductPricingProps) {
   return (
     <div className="space-y-6 pt-4">
@@ -27,18 +29,33 @@ export function ProductPricing({
       {/* CTA Buttons */}
       <div className="grid grid-cols-2 gap-4">
         <button
-          onClick={onAddToCart}
-          className="bg-[#1E40AF] text-white py-3 px-4 rounded-none hover:bg-blue-800 transition-colors font-bold text-sm uppercase tracking-wider border border-[#1E40AF]"
+          onClick={isDisabled ? undefined : onAddToCart}
+          disabled={isDisabled}
+          className={`py-3 px-4 rounded-none transition-colors font-bold text-sm uppercase tracking-wider border transition-all ${
+            isDisabled 
+              ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-70' 
+              : 'bg-[#1E40AF] text-white hover:bg-blue-800 border-[#1E40AF]'
+          }`}
         >
-          THÊM VÀO GIỎ HÀNG
+          {isDisabled ? 'SẢN PHẨM CỦA BẠN' : 'THÊM VÀO GIỎ HÀNG'}
         </button>
         <button
-          onClick={onBuyNow}
-          className="bg-white text-[#1E40AF] py-3 px-4 rounded-none hover:bg-blue-50 transition-colors font-bold text-sm uppercase tracking-wider border border-[#1E40AF]"
+          onClick={isDisabled ? undefined : onBuyNow}
+          disabled={isDisabled}
+          className={`py-3 px-4 rounded-none transition-colors font-bold text-sm uppercase tracking-wider border transition-all ${
+            isDisabled
+              ? 'bg-gray-50 text-gray-300 border-gray-200 cursor-not-allowed opacity-70'
+              : 'bg-white text-[#1E40AF] hover:bg-blue-50 border-[#1E40AF]'
+          }`}
         >
-          MUA NGAY
+          {isDisabled ? 'KHÔNG THỂ MUA' : 'MUA NGAY'}
         </button>
       </div>
+      {isDisabled && (
+        <p className="text-[11px] text-gray-400 italic">
+          * Bạn không thể mua sản phẩm do chính mình đăng bán.
+        </p>
+      )}
     </div>
   );
 }

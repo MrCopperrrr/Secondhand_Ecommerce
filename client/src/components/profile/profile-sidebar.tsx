@@ -31,7 +31,7 @@ export const ProfileSidebar: React.FC<ProfileSidebarProps> = ({ activeTab = 'pro
         { id: 'orders', label: 'Đơn mua của tôi', href: '/profile/orders' },
         { id: 'reviews', label: 'Đánh giá', href: '/404' },
         { id: 'returns', label: 'Khiếu nại & Hoàn trả', href: '/404' },
-        { id: 'transactions', label: 'Lịch sử giao dịch', href: '/404' },
+        { id: 'transactions', label: 'Lịch sử giao dịch', href: '/profile/transactions' },
       ]
     },
     {
