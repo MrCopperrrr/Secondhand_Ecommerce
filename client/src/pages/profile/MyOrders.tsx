@@ -33,8 +33,9 @@ const MyOrders: React.FC = () => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     if (window.confirm('Bạn xác nhận đã nhận được hàng và hài lòng với sản phẩm?')) {
       try {
+        setLoading(true);
         await orderServices.updateOrderStatus(orderId, 'Completed', user._id);
-        fetchOrders(); // Refresh
+        await fetchOrders(); // Refresh
       } catch (error) {
         alert('Có lỗi xảy ra khi cập nhật đơn hàng.');
       }

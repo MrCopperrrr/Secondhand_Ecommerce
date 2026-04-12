@@ -109,12 +109,9 @@ export function AuthCard({ initialTab = 'login' }: { initialTab?: 'login' | 'reg
   return (
     <div className="relative z-10 w-full max-w-md">
       {/* Logo */}
-      <div className="flex flex-col items-center justify-center mb-8">
+      <div className="flex flex-col items-center justify-center mb-10">
         <Link to="/" className="flex flex-col items-center">
-            <div className="w-12 h-12 rounded-full border-2 border-[#191C1F] flex items-center justify-center mb-2">
-            <div className="w-8 h-8 rounded-full border border-[#191C1F]" />
-            </div>
-            <h1 className="text-2xl font-bold text-[#191C1F]">Uni2hand</h1>
+            <img src="/LOGOlongboldwhite.png" alt="Uni2hand Logo" className="h-14 w-auto" />
         </Link>
       </div>
 

@@ -21,6 +21,7 @@ import {
   Trophy,
   Sparkles,
   MoreHorizontal,
+  WandSparkles,
 } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import {
@@ -66,16 +67,16 @@ const Navbar: React.FC = () => {
   }, [location.pathname]);
 
   const iconMap: { [key: string]: any } = {
-    'Đồ điện tử': Laptop,
-    'Sách giáo trình': Book,
-    'Đồ gia dụng': Home,
-    'Dụng cụ học tập': PenTool,
-    'Quần áo': Shirt,
-    'Đồ nội thất': Armchair,
-    'Phương tiện di chuyển': Bike,
-    'Dụng cụ thể thao': Trophy,
-    'Mỹ phẩm & Chăm sóc': Sparkles,
-    'khác': MoreHorizontal,
+    'ĐỒ ĐIỆN TỬ': Laptop,
+    'SÁCH GIÁO TRÌNH': Book,
+    'ĐỒ GIA DỤNG': Home,
+    'DỤNG CỤ HỌC TẬP': PenTool,
+    'QUẦN ÁO': Shirt,
+    'ĐỒ NỘI THẤT': Armchair,
+    'PHƯƠNG TIỆN DI CHUYỂN': Bike,
+    'DỤNG CỤ THỂ THAO': Trophy,
+    'MỸ PHẨM & CHĂM SÓC': WandSparkles,
+    'KHÁC': MoreHorizontal,
   };
 
   useEffect(() => {
@@ -90,7 +91,7 @@ const Navbar: React.FC = () => {
           const structuredData = treeData.map((cat: any) => ({
             id: cat._id,
             name: cat.name,
-            icon: iconMap[cat.name] || PlusCircle,
+            icon: iconMap[cat.name.toUpperCase()] || PlusCircle,
             subs: cat.subs.map((sub: any) => ({ id: sub._id, name: sub.name }))
           }));
           setMegaMenuData(structuredData);
@@ -187,49 +188,14 @@ const Navbar: React.FC = () => {
       {/* Main Navigation Bar */}
       <div className="bg-[#57B7F5]">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between gap-6">
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <Link to="/" className="flex items-center gap-2">
-              <div className="w-9 h-9 rounded-full border-2 border-[#FFFFFF] flex items-center justify-center bg-white/10">
-                <div className="w-4 h-4 rounded-full border border-[#FFFFFF]"></div>
-              </div>
-              <span className="text-[#FFFFFF] font-bold text-2xl tracking-tight whitespace-nowrap">Uni2hand</span>
+          <div className="flex items-center flex-shrink-0">
+            <Link to="/">
+              <img src="/LOGOlongboldwhite.png" alt="Uni2hand Logo" className="h-[50px] w-auto" />
             </Link>
           </div>
 
           {/* Search Bar & Channel Toggle Area */}
           <div className="flex-1 max-w-3xl flex items-center gap-4">
-            {/* Professional Channel Toggle - Commented out as requested */}
-            {/* 
-            <div className="bg-white/20 p-1 rounded-full flex items-center relative min-w-[260px] h-12 border border-white/30">
-              <div 
-                className={`absolute h-10 rounded-full bg-white shadow-md transition-all duration-300 ease-in-out ${
-                  userMode === 'buyer' ? 'w-[126px] left-1' : 'w-[126px] left-[128px]'
-                }`}
-              />
-              <button 
-                onClick={() => {
-                   setUserMode('buyer');
-                   navigate('/');
-                }}
-                className={`flex-1 text-center relative z-10 text-[13px] font-extrabold transition-colors duration-300 ${
-                  userMode === 'buyer' ? 'text-[#1E40AF]' : 'text-white'
-                }`}
-              >
-                NGƯỜI MUA
-              </button>
-              <button 
-                onClick={() => {
-                   setUserMode('seller');
-                   navigate('/seller/dashboard');
-                }}
-                className={`flex-1 text-center relative z-10 text-[13px] font-extrabold transition-colors duration-300 ${
-                  userMode === 'seller' ? 'text-[#1E40AF]' : 'text-white'
-                }`}
-              >
-                NGƯỜI BÁN
-              </button>
-            </div>
-            */}
 
             {/* Replacement: Single Management Button - Rectangular, Dark Blue */}
             <Link 

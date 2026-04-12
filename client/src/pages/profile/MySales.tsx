@@ -33,8 +33,9 @@ const MySales: React.FC = () => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     if (window.confirm(`Xác nhận chuyển trạng thái sang "${status}"?`)) {
       try {
+        setLoading(true);
         await orderServices.updateOrderStatus(orderId, status, user._id);
-        fetchOrders();
+        await fetchOrders();
       } catch (error) {
         alert('Cập nhật thất bại.');
       }
