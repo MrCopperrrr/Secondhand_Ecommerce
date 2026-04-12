@@ -17,15 +17,26 @@ class OrderService {
         updated_at: new Date()
       });
       
-      console.log('Order Created in DB:', result.insertedId);
+      console.log('Order Created in DB:', result.insertedId)
 
-      // Also mark products as sold (status: 0)
       const updateResult = await databaseService.products.updateMany(
         { _id: { $in: data.product_ids.map((id: string) => new ObjectId(id)) } },
         { $set: { status: 0 } }
       );
 
-      console.log('Products status updated:', updateResult.modifiedCount);
+      console.log('Products status updated:', updateResult.modifiedCount)
+
+      await databaseService.transactions.insertOne({
+        user_id: new ObjectId(data.buyer_id),
+        order_id: result.insertedId, 
+        amount: data.total_amount,
+        type: 'PAYMENT',
+        payment_method: data.payment_method,
+        status: data.payment_method === 'cod' ? 'PENDING' : 'SUCCESS', 
+        created_at: new Date()
+      });
+      console.log('Transaction Created for Order:', result.insertedId);
+
       console.log('--- END CREATE ORDER SUCCESS ---');
       return result;
     } catch (error: any) {

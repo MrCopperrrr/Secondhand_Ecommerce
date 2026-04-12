@@ -61,6 +61,9 @@ class DatabaseService {
   get provinces(): Collection<any> {
     return this.db.collection('provinces')
   }
+  get transactions(): Collection<any>{
+    return this.db.collection('transactions')
+  }
 }
 
 const databaseService = new DatabaseService()
