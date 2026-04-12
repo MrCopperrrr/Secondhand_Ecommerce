@@ -25,6 +25,7 @@ import Logout from './pages/profile/Logout';
 import ProductManagement from './pages/profile/ProductManagement';
 import MyOrders from './pages/profile/MyOrders';
 import MySales from './pages/profile/MySales';
+import TransactionHistory from './pages/profile/TransactionHistory';
 import SellerDashboard from './pages/seller/SellerDashboard';
 
 // Error Pages
@@ -58,6 +59,7 @@ const AppContent: React.FC = () => {
           <Route path="/profile/products" element={<ProductManagement />} />
           <Route path="/profile/orders" element={<MyOrders />} />
           <Route path="/profile/sales" element={<MySales />} />
+          <Route path="/profile/transactions" element={<TransactionHistory />} />
           <Route path="/seller/dashboard" element={<SellerDashboard />} />
           <Route path="/logout" element={<Logout />} />
           
