@@ -199,7 +199,7 @@ const Navbar: React.FC = () => {
 
             {/* Replacement: Single Management Button - Rectangular, Dark Blue */}
             <Link 
-              to="/seller/dashboard" 
+              to={currentUser ? "/seller/dashboard" : "/login"} 
               className="h-9 px-6 bg-[#1E40AF] hover:bg-blue-900 text-white font-extrabold text-[13px] transition-all flex items-center gap-2 rounded-sm border border-[#1E40AF] whitespace-nowrap active:scale-95 shadow-lg"
             >
               <TrendingUp size={18} /> QUẢN LÝ SẢN PHẨM
