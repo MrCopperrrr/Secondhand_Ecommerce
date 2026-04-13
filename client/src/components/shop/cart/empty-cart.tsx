@@ -1,4 +1,4 @@
-import React from 'react';
+// React default import not needed with automatic JSX runtime
 import { Link } from 'react-router-dom';
 import { ShoppingCart } from 'lucide-react';
 

@@ -1,4 +1,4 @@
-import React from 'react';
+// React default import not required with automatic JSX runtime
 
 interface ProductTitleProps {
   title: string;

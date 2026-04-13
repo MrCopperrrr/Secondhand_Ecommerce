@@ -6,9 +6,7 @@ import {
   Users, 
   Package, 
   DollarSign, 
-  ShoppingCart, 
   ArrowUpRight,
-  ShieldCheck,
   Calendar,
   Loader2,
   Clock

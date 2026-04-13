@@ -11,7 +11,7 @@ import { AddToCartModal } from '../../components/shop/product-detail/add-to-cart
 
 import { useCart } from '../../context/CartContext';
 import { productService } from '../../services/product.services';
-import { Loader2, MapPin } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { useLocationContext, calculateDistance } from '../../context/LocationContext';
 
 const ProductDetail: React.FC = () => {

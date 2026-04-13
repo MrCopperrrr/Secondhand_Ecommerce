@@ -1,4 +1,4 @@
-import React from 'react';
+// React namespace import not required with new JSX runtime
 import { XCircle, CheckCircle2, Circle } from 'lucide-react';
 
 interface CartItemProps {

@@ -34,7 +34,7 @@ const SearchableSelect: React.FC<{
   isOpen: boolean;
   onToggle: () => void;
   listFontSize?: string;
-}> = ({ label, options, value, onSelect, placeholder, isOpen, onToggle, listFontSize = 'text-sm' }) => {
+}> = ({ label, options, value, onSelect, /* placeholder unused */ isOpen, onToggle, listFontSize = 'text-sm' }) => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const selectedOption = options.find(opt => opt.id === value);
@@ -132,7 +132,6 @@ const FIXED_STEP = 1000000;  // 1 triệu VND step cho tầm cao
 const FilterSidebar: React.FC<FilterSidebarProps> = ({
   locationData = { provinces: [], wards: [], campuses: [] },
   selectedLocation = { province: 'all', ward: 'all', campus: 'all' },
-  onCategoryChange,
   onProvinceChange,
   onWardChange,
   onCampusChange,

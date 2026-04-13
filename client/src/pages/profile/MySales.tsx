@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { orderServices } from '../../services/order.services';
-import OrderStatusTimeline from '../../components/shop/order/OrderStatusTimeline';
+// import OrderStatusTimeline from '../../components/shop/order/OrderStatusTimeline';
 import Breadcrumbs from '../../components/shop/Breadcrumbs';
 import { ProfileSidebar } from '../../components/profile/profile-sidebar';
 import { BarChart3, ChevronRight, Package, User, MapPin, Phone } from 'lucide-react';

@@ -1,4 +1,4 @@
-import React from 'react';
+// React default import not required with automatic JSX runtime
 import { Link } from 'react-router-dom';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { SuccessIcon } from './success-icon';

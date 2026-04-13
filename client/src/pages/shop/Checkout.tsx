@@ -5,7 +5,7 @@ import { BillingForm } from '../../components/shop/checkout/billing-form';
 import { PaymentMethodSelector } from '../../components/shop/checkout/payment-method-selector';
 import { CheckoutSummary } from '../../components/shop/checkout/checkout-summary';
 import { useCart } from '../../context/CartContext';
-import { productService } from '../../services/product.services';
+// import { productService } from '../../services/product.services';
 import { paymentServices } from '../../services/payment.services';
 import { authService } from '../../services/auth.services';
 import { orderServices } from '../../services/order.services';

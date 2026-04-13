@@ -4,7 +4,7 @@ import { SuccessCard } from '../../components/shop/checkout/success-card';
 import { paymentServices } from '../../services/payment.services';
 import { Loader2, XCircle } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
-import { productService } from '../../services/product.services';
+// import { productService } from '../../services/product.services';
 
 const CheckoutSuccess: React.FC = () => {
     const location = useLocation();

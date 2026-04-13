@@ -1,5 +1,5 @@
-import React from 'react';
-import { CreditCard, Wallet, Truck, DollarSign, PiggyBank, Banknote, Landmark } from 'lucide-react';
+// React default import not required with automatic JSX runtime
+import { CreditCard, Wallet, DollarSign, Landmark } from 'lucide-react';
 
 type PaymentMethod = 'cod' | 'bank' | 'ewallet' | 'card';
 

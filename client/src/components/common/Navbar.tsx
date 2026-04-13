@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
   ShoppingCart,
   Bell,
-  MessageCircle,
   User,
   Search,
   ChevronDown,
@@ -19,7 +18,6 @@ import {
   Armchair,
   Bike,
   Trophy,
-  Sparkles,
   MoreHorizontal,
   WandSparkles,
   ShieldCheck,
@@ -36,9 +34,8 @@ import { categoryServices } from '../../services/category.services';
 import { commonServices } from '../../services/common.services';
 
 const Navbar: React.FC = () => {
-  const [categories, setCategories] = useState<any[]>([]);
   const [megaMenuData, setMegaMenuData] = useState<any[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [campuses, setCampuses] = useState<string[]>([]);
   const navigate = useNavigate();
@@ -46,7 +43,7 @@ const Navbar: React.FC = () => {
   const { itemCount } = useCart();
   const [activeCat, setActiveCat] = useState(0);
 
-  const [userMode, setUserMode] = useState<'buyer' | 'seller'>('buyer');
+  const [userMode] = useState<'buyer' | 'seller'>('buyer');
   const [currentUser, setCurrentUser] = useState<any>(null);
 
   useEffect(() => {
@@ -98,14 +95,13 @@ const Navbar: React.FC = () => {
             subs: cat.subs.map((sub: any) => ({ id: sub._id, name: sub.name }))
           }));
           setMegaMenuData(structuredData);
-          setCategories(treeData);
         }
 
         if (provinceData.data.result) {
             const allCampuses = provinceData.data.result.reduce((acc: string[], p: any) => {
                 return [...acc, ...(p.campus || [])];
             }, []);
-            setCampuses(Array.from(new Set(allCampuses)).slice(0, 5));
+            setCampuses(Array.from(new Set(allCampuses)).slice(0, 5) as string[]);
         }
       } catch (error) {
         console.error('Error loading initial data:', error);
