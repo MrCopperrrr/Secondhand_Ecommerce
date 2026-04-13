@@ -32,7 +32,7 @@ const UserProfile: React.FC = () => {
 
   const [studentCardFile, setStudentCardFile] = useState<File | null>(null);
   const [studentCardPreview, setStudentCardPreview] = useState<string | null>(null);
-  const [avatarUrl, setAvatarUrl] = useState('https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=128&h=128&fit=crop');
+  const [avatarUrl, setAvatarUrl] = useState('https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg');
   const [dragActive, setDragActive] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
