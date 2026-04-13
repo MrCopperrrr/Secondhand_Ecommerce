@@ -12,7 +12,9 @@ export const createOrderController = async (req: Request, res: Response) => {
 
 export const getMyPurchasesController = async (req: Request, res: Response) => {
   try {
-    const { user_id } = req.params;
+    const rawUserId = req.params.user_id;
+    const user_id = Array.isArray(rawUserId) ? rawUserId[0] : rawUserId;
+    if (!user_id) return res.status(400).json({ message: 'user_id is required' });
     const result = await orderService.getMyPurchases(user_id);
     return res.json({ message: 'Success', result });
   } catch (error: any) {
@@ -22,7 +24,9 @@ export const getMyPurchasesController = async (req: Request, res: Response) => {
 
 export const getMySalesController = async (req: Request, res: Response) => {
   try {
-    const { user_id } = req.params;
+    const rawUserId = req.params.user_id;
+    const user_id = Array.isArray(rawUserId) ? rawUserId[0] : rawUserId;
+    if (!user_id) return res.status(400).json({ message: 'user_id is required' });
     const result = await orderService.getMySales(user_id);
     return res.json({ message: 'Success', result });
   } catch (error: any) {
@@ -32,7 +36,9 @@ export const getMySalesController = async (req: Request, res: Response) => {
 
 export const updateOrderStatusController = async (req: Request, res: Response) => {
   try {
-    const { order_id } = req.params;
+    const rawOrderId = req.params.order_id;
+    const order_id = Array.isArray(rawOrderId) ? rawOrderId[0] : rawOrderId;
+    if (!order_id) return res.status(400).json({ message: 'order_id is required' });
     const { status, user_id } = req.body;
     await orderService.updateOrderStatus(order_id, status, user_id);
     return res.json({ message: 'Status updated' });
