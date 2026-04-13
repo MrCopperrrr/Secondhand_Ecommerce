@@ -49,7 +49,7 @@ const Cart: React.FC = () => {
     });
 
     const serviceFee = Math.round(subtotal * SERVICE_FEE_PERCENTAGE);
-    const total = subtotal + SHIPPING_FEE + serviceFee;
+    const total = subtotal + serviceFee;
 
     return {
       itemCount,
