@@ -45,12 +45,35 @@ export const ProfileSidebar: React.FC<ProfileSidebarProps> = ({ activeTab = 'pro
       ]
     },
     {
-        title: 'HỆ THỐNG',
-        items: [
-          { id: 'logout', label: 'Đăng xuất', href: '/logout' },
-        ]
-      }
+      title: 'HỆ THỐNG',
+      items: [
+        { id: 'logout', label: 'Đăng xuất', href: '/logout' },
+      ]
+    }
   ];
+
+  // Get user role from localStorage
+  const userStr = localStorage.getItem('user');
+  let userRole = 1; // Default to User
+  let userEmail = '';
+  if (userStr) {
+    try {
+      const user = JSON.parse(userStr);
+      userRole = user.role;
+      userEmail = user.email;
+    } catch (e) {}
+  }
+
+  // Add Admin section if user is Admin
+  const isAdmin = userRole === 0 || userEmail === 'admin@admin.edu.vn';
+  if (isAdmin) {
+    sections.splice(3, 0, {
+      title: 'KÊNH QUẢN TRỊ',
+      items: [
+        { id: 'admin', label: 'Thống kê hệ thống', href: '/profile/admin' },
+      ]
+    });
+  }
 
   return (
     <div className="w-80 px-4 py-8 sticky top-24 self-start font-roboto">

@@ -22,6 +22,7 @@ import {
   Sparkles,
   MoreHorizontal,
   WandSparkles,
+  ShieldCheck,
 } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import {
@@ -50,16 +51,18 @@ const Navbar: React.FC = () => {
 
   useEffect(() => {
     const userInfoStr = localStorage.getItem('userInfo');
-    if (userInfoStr) {
+    const userStr = localStorage.getItem('user');
+    if (userInfoStr && userStr) {
       try {
         const userInfo = JSON.parse(userInfoStr);
+        const user = JSON.parse(userStr);
         if (userInfo && userInfo.access_token) {
-          setCurrentUser(userInfo);
+          setCurrentUser({ ...userInfo, ...user });
         } else {
           setCurrentUser(null);
         }
       } catch (e) {
-        setCurrentUser(null); // Clear if corrupted
+        setCurrentUser(null);
       }
     } else {
       setCurrentUser(null);
@@ -258,6 +261,14 @@ const Navbar: React.FC = () => {
                         Kênh Người Bán
                       </Link>
                     </DropdownMenuItem>
+                    { (currentUser.role === 0 || currentUser.email === 'admin@admin.edu.vn') && (
+                      <DropdownMenuItem asChild className="cursor-pointer py-3.5 px-5 focus:bg-gray-50 outline-none rounded-none border-b border-gray-50">
+                        <Link to="/profile/admin" className="flex items-center gap-3 text-sm font-semibold text-[#191C1F]">
+                          <ShieldCheck size={18} className="text-emerald-500" />
+                          Kênh Quản trị
+                        </Link>
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuItem 
                       onClick={() => {
                         authService.logout(currentUser.refresh_token).finally(() => {

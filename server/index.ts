@@ -10,6 +10,7 @@ import orderRouter from './src/routes/orders.routes.js'
 import express from 'express'
 import databaseService from './src/services/database.services'
 import transactionRouter from './src/routes/transactions.routes.js'
+import adminRouter from './src/routes/admin.routes'
 const app = express()
 const port = process.env.PORT || 3001
 app.use(cors())
@@ -22,6 +23,7 @@ app.use('/common', commonRouter)
 app.use('/payments', paymentRouter)
 app.use('/orders', orderRouter)
 app.use('/transactions',transactionRouter)
+app.use('/admin', adminRouter)
 databaseService.connect().then(() => {
     app.listen(port, () => {
         console.log(`Server is running accurately at: http://localhost:${port}`)
