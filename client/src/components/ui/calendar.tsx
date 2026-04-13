@@ -36,7 +36,7 @@ function Calendar({
       )}
       captionLayout={captionLayout}
       formatters={{
-        formatMonthDropdown: (date) =>
+        formatMonthDropdown: (date: Date) =>
           date.toLocaleString('default', { month: 'short' }),
         ...formatters,
       }}
@@ -125,20 +125,22 @@ function Calendar({
         ...classNames,
       }}
       components={{
-        Root: ({ className, rootRef, ...props }) => {
+        Root: (args: any) => {
+          const { className, rootRef, ...rest } = args || {}
           return (
             <div
               data-slot="calendar"
               ref={rootRef}
               className={cn(className)}
-              {...props}
+              {...rest}
             />
           )
         },
-        Chevron: ({ className, orientation, ...props }) => {
+        Chevron: (args: any) => {
+          const { className, orientation, ...rest } = args || {}
           if (orientation === 'left') {
             return (
-              <ChevronLeftIcon className={cn('size-4', className)} {...props} />
+              <ChevronLeftIcon className={cn('size-4', className)} {...rest} />
             )
           }
 
@@ -146,19 +148,20 @@ function Calendar({
             return (
               <ChevronRightIcon
                 className={cn('size-4', className)}
-                {...props}
+                {...rest}
               />
             )
           }
 
           return (
-            <ChevronDownIcon className={cn('size-4', className)} {...props} />
+            <ChevronDownIcon className={cn('size-4', className)} {...rest} />
           )
         },
         DayButton: CalendarDayButton,
-        WeekNumber: ({ children, ...props }) => {
+        WeekNumber: (args: any) => {
+          const { children, ...rest } = args || {}
           return (
-            <td {...props}>
+            <td {...rest}>
               <div className="flex size-(--cell-size) items-center justify-center text-center">
                 {children}
               </div>

@@ -10,12 +10,21 @@ import {
   ToastViewport,
 } from './toast'
 
+// Định nghĩa kiểu dữ liệu cho Toast
+interface ToastProps {
+  id: string;
+  title?: React.ReactNode;
+  description?: React.ReactNode;
+  action?: React.ReactNode;
+  [key: string]: any; // Cho phép các thuộc tính khác (spread props)
+}
+
 export function Toaster() {
   const { toasts } = useToast()
 
   return (
     <ToastProvider>
-      {toasts.map(function ({ id, title, description, action, ...props }) {
+      {toasts.map(function ({ id, title, description, action, ...props }: ToastProps) {
         return (
           <Toast key={id} {...props}>
             <div className="grid gap-1">
