@@ -1,16 +1,16 @@
 
 import 'dotenv/config';
 import cors from 'cors';
-import { userRouter } from './src/routes/users.routes'
-import { productRouter } from './src/routes/products.routes'
-import categoriesRouter from './src/routes/categories.routes'
-import commonRouter from './src/routes/common.routes'
+import { userRouter } from './src/routes/users.routes.js'
+import { productRouter } from './src/routes/products.routes.js'
+import categoriesRouter from './src/routes/categories.routes.js'
+import commonRouter from './src/routes/common.routes.js'
 import paymentRouter from './src/routes/payment.routes.js'
 import orderRouter from './src/routes/orders.routes.js'
 import express from 'express'
-import databaseService from './src/services/database.services'
+import databaseService from './src/services/database.services.js'
 import transactionRouter from './src/routes/transactions.routes.js'
-import adminRouter from './src/routes/admin.routes'
+import adminRouter from './src/routes/admin.routes.js'
 const app = express()
 const port = process.env.PORT || 3001
 app.use(cors())
@@ -28,6 +28,6 @@ databaseService.connect().then(() => {
     app.listen(port, () => {
         console.log(`Server is running accurately at: http://localhost:${port}`)
     })
-}).catch(err => {
+}).catch((err: any) => {
     console.error("Critical error starting server:", err)
 })
