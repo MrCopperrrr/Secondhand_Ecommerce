@@ -68,7 +68,7 @@ const Navbar: React.FC = () => {
 
   const iconMap: { [key: string]: any } = {
     'ĐỒ ĐIỆN TỬ': Laptop,
-    'SÁCH GIÁO TRÌNH': Book,
+    'SÁCH': Book,
     'ĐỒ GIA DỤNG': Home,
     'DỤNG CỤ HỌC TẬP': PenTool,
     'QUẦN ÁO': Shirt,
@@ -90,8 +90,8 @@ const Navbar: React.FC = () => {
         if (treeData && treeData.length > 0) {
           const structuredData = treeData.map((cat: any) => ({
             id: cat._id,
-            name: cat.name,
-            icon: iconMap[cat.name.toUpperCase()] || PlusCircle,
+            name: cat.name === 'Sách giáo trình' ? 'Sách' : cat.name,
+            icon: iconMap[(cat.name === 'Sách giáo trình' ? 'Sách' : cat.name).toUpperCase()] || PlusCircle,
             subs: cat.subs.map((sub: any) => ({ id: sub._id, name: sub.name }))
           }));
           setMegaMenuData(structuredData);

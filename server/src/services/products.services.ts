@@ -15,9 +15,42 @@ class ProductService{
     }
 
     async getProductsBySeller(seller_id: string){
-        const result= await databaseService.products.find({
-            seller_id: new ObjectId(seller_id)
-        }).toArray()
+        const pipeline = [
+            {
+                $match: {
+                    seller_id: new ObjectId(seller_id)
+                }
+            },
+            {
+                $lookup: {
+                    from: 'categories',
+                    localField: 'category_id',
+                    foreignField: '_id',
+                    as: 'category'
+                }
+            },
+            {
+                $unwind: {
+                    path: '$category',
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $lookup: {
+                    from: 'sub_categories',
+                    localField: 'sub_category_id',
+                    foreignField: '_id',
+                    as: 'subCategory'
+                }
+            },
+            {
+                $unwind: {
+                    path: '$subCategory',
+                    preserveNullAndEmptyArrays: true
+                }
+            }
+        ];
+        const result = await databaseService.products.aggregate(pipeline).toArray();
         return result
     }
 
@@ -34,6 +67,34 @@ class ProductService{
             {
                 $addFields: {
                     address: { $arrayElemAt: ['$addresses', 0] }
+                }
+            },
+            {
+                $lookup: {
+                    from: 'categories',
+                    localField: 'category_id',
+                    foreignField: '_id',
+                    as: 'category'
+                }
+            },
+            {
+                $unwind: {
+                    path: '$category',
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $lookup: {
+                    from: 'sub_categories',
+                    localField: 'sub_category_id',
+                    foreignField: '_id',
+                    as: 'subCategory'
+                }
+            },
+            {
+                $unwind: {
+                    path: '$subCategory',
+                    preserveNullAndEmptyArrays: true
                 }
             },
             {
