@@ -33,6 +33,7 @@ export interface Order {
     deliveryMethod: string;
     campus: string;
   };
+  vnp_txn_ref?: string;
   created_at: Date;
   updated_at: Date;
 }
@@ -49,6 +50,7 @@ export default class OrderSchema {
   payment_status: PaymentStatus;
   status: OrderStatus;
   shipping_details: any;
+  vnp_txn_ref?: string;
   created_at: Date;
   updated_at: Date;
 
@@ -64,6 +66,7 @@ export default class OrderSchema {
     this.payment_status = order.payment_status || PaymentStatus.Unpaid;
     this.status = order.status || OrderStatus.Pending;
     this.shipping_details = order.shipping_details;
+    this.vnp_txn_ref = order.vnp_txn_ref;
     this.created_at = order.created_at || new Date();
     this.updated_at = order.updated_at || new Date();
   }

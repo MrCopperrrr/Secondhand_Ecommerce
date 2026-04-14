@@ -13,6 +13,7 @@ class OrderService {
         buyer_id: new ObjectId(data.buyer_id),
         seller_id: new ObjectId(data.seller_id),
         product_ids: data.product_ids.map((id: string) => new ObjectId(id)),
+        vnp_txn_ref: data.vnp_txn_ref,
         created_at: new Date(),
         updated_at: new Date()
       });
@@ -32,8 +33,9 @@ class OrderService {
         amount: data.total_amount,
         type: 'PAYMENT',
         payment_method: data.payment_method,
-        status: data.payment_method === 'cod' ? 'PENDING' : 'SUCCESS', 
+        status: data.payment_method === 'cod' ? 'PENDING' : (data.payment_method === 'vnpay' ? 'PENDING' : 'SUCCESS'), 
         order_status: data.status || 'Pending',
+        vnp_txn_ref: data.vnp_txn_ref,
         created_at: new Date()
       });
       console.log('Transaction Created for Order:', result.insertedId);

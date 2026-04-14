@@ -100,6 +100,8 @@ const Checkout: React.FC = () => {
         itemsBySeller[sid].push(item);
       });
 
+      const vnpTxnRef = `VNP${Date.now()}`;
+
       if (paymentMethod === 'cod') {
         const orderPromises = Object.entries(itemsBySeller).map(async ([seller_id, items]) => {
           if (seller_id === 'unknown_seller') return null;
@@ -124,7 +126,8 @@ const Checkout: React.FC = () => {
         navigate('/checkout/success');
       } else {
         const response: any = await paymentServices.createPaymentUrl({ 
-          amount: totalAmount 
+          amount: totalAmount,
+          orderId: vnpTxnRef
         });
         
         if (response.data?.result) {
@@ -142,6 +145,7 @@ const Checkout: React.FC = () => {
               payment_method: 'vnpay',
               payment_status: 'Unpaid',
               status: 'Pending',
+              vnp_txn_ref: vnpTxnRef,
               shipping_details: formData
             });
           });

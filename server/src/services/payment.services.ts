@@ -6,7 +6,7 @@ import qs from 'qs'
 config()
 
 class PaymentService {
-  public createPaymentUrl(req: Request, amount: number, bankCode?: string) {
+  public createPaymentUrl(req: Request, amount: number, orderId?: string, bankCode?: string) {
     let date = new Date()
     let createDate = this.formatDate(date)
     
@@ -21,7 +21,7 @@ class PaymentService {
     let vnpUrl = process.env.VNP_URL
     let returnUrl = process.env.VNP_RETURN_URL
 
-    let orderId = createDate + Math.floor(Math.random() * 1000)
+    let vnp_TxnRef = orderId || (createDate + Math.floor(Math.random() * 1000))
     
     let vnp_Params: any = {}
     vnp_Params['vnp_Version'] = '2.1.0'
@@ -29,8 +29,8 @@ class PaymentService {
     vnp_Params['vnp_TmnCode'] = tmnCode
     vnp_Params['vnp_Locale'] = 'vn'
     vnp_Params['vnp_CurrCode'] = 'VND'
-    vnp_Params['vnp_TxnRef'] = orderId
-    vnp_Params['vnp_OrderInfo'] = 'Thanh toan don hang:' + orderId
+    vnp_Params['vnp_TxnRef'] = vnp_TxnRef
+    vnp_Params['vnp_OrderInfo'] = 'Thanh toan don hang:' + vnp_TxnRef
     vnp_Params['vnp_OrderType'] = 'other'
     vnp_Params['vnp_Amount'] = amount * 100
     vnp_Params['vnp_ReturnUrl'] = returnUrl
