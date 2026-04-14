@@ -33,6 +33,7 @@ class OrderService {
         type: 'PAYMENT',
         payment_method: data.payment_method,
         status: data.payment_method === 'cod' ? 'PENDING' : 'SUCCESS', 
+        order_status: data.status || 'Pending',
         created_at: new Date()
       });
       console.log('Transaction Created for Order:', result.insertedId);
@@ -92,6 +93,13 @@ class OrderService {
           { _id: new ObjectId(order_id) },
           { $set: updateData }
       );
+
+      // Sync order_status to transactions
+      await databaseService.transactions.updateMany(
+          { order_id: new ObjectId(order_id) },
+          { $set: { order_status: status } }
+      );
+
       return true;
   }
 }
